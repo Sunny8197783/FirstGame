@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"import pypdf; print\\('pypdf ok'\\)\")",
+      "Bash(python -c \"import fitz; print\\('fitz ok'\\)\")",
+      "Bash(python -c \"import pdfplumber; print\\('pdfplumber ok'\\)\")",
+      "Bash(pip install *)",
+      "Bash(python -c ' *)",
+      "Bash(python -m pip install pymupdf)",
+      "Bash(C:/Users/gram/AppData/Local/Python/pythoncore-3.14-64/python.exe --version)",
+      "Bash(C:/Users/gram/AppData/Local/Python/pythoncore-3.14-64/python.exe -c 'import fitz; print\\('\\\\''fitz ok'\\\\''\\)')",
+      "Bash(C:/Users/gram/AppData/Local/Python/pythoncore-3.14-64/python.exe -c ' *)",
+      "Bash(C:/Users/gram/AppData/Local/Python/pythoncore-3.14-64/python.exe -c 'import weasyprint; print\\('\\\\''weasy ok'\\\\''\\)')",
+      "Read(//c/Program Files \\(x86\\)/Microsoft/Edge/Application/**)",
+      "Read(//c/Program Files/Microsoft/Edge/Application/**)",
+      "Bash('C:/Program Files \\(x86\\)/Microsoft/Edge/Application/msedge.exe' --headless --disable-gpu --no-pdf-header-footer '--print-to-pdf=C:\\\\Users\\\\gram\\\\Downloads\\\\Csharp_시험대비_스터디가이드.pdf' file:///C:/Users/gram/Downloads/csharp_study_guide.html)",
+      "Bash('C:/Program Files \\(x86\\)/Microsoft/Edge/Application/msedge.exe' --headless --disable-gpu --no-pdf-header-footer '--print-to-pdf=C:\\\\Users\\\\gram\\\\Downloads\\\\Java_Study_Guide.pdf' file:///C:/Users/gram/Downloads/java_study_guide.html)",
+      "Bash(node \"C:/Users/gram/AppData/Local/Temp/claude/C--Users-gram-OneDrive---------------/45d5660e-0f3c-448d-aa6e-25bc59ba498e/scratchpad/test_challenge.js\")",
+      "Bash(node -e ' *)",
+      "Bash(node \"C:/Users/gram/AppData/Local/Temp/claude/C--Users-gram-OneDrive---------------/45d5660e-0f3c-448d-aa6e-25bc59ba498e/scratchpad/test_haggle.js\")",
+      "Bash(awk '{print $5, $9}')"
+    ]
+  }
+}
