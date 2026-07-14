@@ -2,3 +2,4 @@ node_modules/
 dist/
 *.zip
 src/_body_snippet.html
+*.pdf
