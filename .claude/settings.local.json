@@ -18,7 +18,14 @@
       "Bash(node \"C:/Users/gram/AppData/Local/Temp/claude/C--Users-gram-OneDrive---------------/45d5660e-0f3c-448d-aa6e-25bc59ba498e/scratchpad/test_challenge.js\")",
       "Bash(node -e ' *)",
       "Bash(node \"C:/Users/gram/AppData/Local/Temp/claude/C--Users-gram-OneDrive---------------/45d5660e-0f3c-448d-aa6e-25bc59ba498e/scratchpad/test_haggle.js\")",
-      "Bash(awk '{print $5, $9}')"
+      "Bash(awk '{print $5, $9}')",
+      "PowerShell($src = \"C:\\\\Users\\\\gram\\\\OneDrive\\\\바탕 화면\\\\게임 프로그래밍\"; $zip = Join-Path $src \"IdlePawnShop_게임데모.zip\"; if \\(Test-Path $zip\\) { Remove-Item $zip -Force -Confirm:$false }; Compress-Archive -Path \\(Join-Path $src \"index.html\"\\), \\(Join-Path $src \"README.md\"\\) -DestinationPath $zip; Get-Item $zip | Select-Object Name, @{n='SizeKB';e={[math]::Round\\($_.Length/1KB\\)}})",
+      "PowerShell(Add-Type -AssemblyName System.IO.Compression.FileSystem; $zip = [System.IO.Compression.ZipFile]::OpenRead\\(\"C:\\\\Users\\\\gram\\\\OneDrive\\\\바탕 화면\\\\게임 프로그래밍\\\\IdlePawnShop_게임데모.zip\"\\); $zip.Entries | Select-Object FullName, Length; $zip.Dispose\\(\\))",
+      "Bash(node \"C:/Users/gram/AppData/Local/Temp/claude/C--Users-gram-OneDrive---------------/45d5660e-0f3c-448d-aa6e-25bc59ba498e/scratchpad/split_modules.js\")",
+      "Bash(mkdir -p legacy)",
+      "Bash(cp index.html legacy/demo_v1.html)",
+      "Bash(npm install *)",
+      "Bash(npm run *)"
     ]
   }
 }

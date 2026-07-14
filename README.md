@@ -4,7 +4,34 @@
 
 ## 실행
 
-`index.html`을 브라우저로 열면 바로 실행됩니다. 빌드 도구·외부 라이브러리 없음 (바닐라 JS + CSS 단일 파일).
+```bash
+npm install
+npm run dev        # 개발 서버 (http://localhost:5173)
+npm run build      # 정적 빌드 → dist/
+npm run simulate   # 헤드리스 회귀 시뮬레이션 (흥정·스파링)
+```
+
+Vite + 바닐라 JS ES 모듈 (프레임워크 없음). 원본 단일 파일 데모는 `legacy/demo_v1.html`에 보존.
+
+## 구조 (Phase 1 모듈화)
+
+```
+src/config.js      모든 밸런스 수치 (데모 CONFIG 그대로)
+src/data/          items · customers · fighters · rumors · events · story
+src/systems/       haggle · appraisal · betting · sparring · market · economy · save
+src/ui/            title · day · night · fight · result · hud · pixelart · rig · debug
+src/audio/         Web Audio 삑삑이
+sim/               헤드리스 회귀 시뮬 (npm run simulate)
+```
+
+이식 원칙: 데모의 함수를 **원문 그대로** 모듈로 분리(로직 무변경), 모듈 간 호출·인라인 onclick은 globalThis 등록으로 해석. 회귀 시뮬로 흥정 매입가율·결렬률·스파링 승률이 데모와 동일 범위임을 확인함.
+
+## 저장 시스템 (Phase 1 신규)
+
+- **자동 저장**: 매일 아침(이벤트·손님 생성 전 시점) — 이어하기 시 그 아침부터 재개
+- **수동 저장**: 새벽 암시장 [💾 저장하기] — 새벽 시점부터 재개
+- **백업**: 타이틀·새벽의 [📤 내보내기]/[📥 가져오기] (JSON 파일)
+- localStorage 키 `pawnshop_save_v1`, 세이브에 version 필드 포함(마이그레이션 대비)
 
 ## 게임 구조 (3막 캠페인)
 

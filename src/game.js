@@ -1,0 +1,27 @@
+// 게임 전체 배럴 — 브라우저(main.js)와 헤드리스 시뮬(sim/)이 공용으로 임포트
+import './systems/util.js';
+import './config.js';
+import './data/items.js';
+import './data/customers.js';
+import './data/fighters.js';
+import './data/rumors.js';
+import './data/events.js';
+import './data/story.js';
+import './audio/audio.js';
+import './systems/state.js';
+import './ui/pixelart.js';
+import './ui/rig.js';
+import './ui/hud.js';
+import './ui/title.js';
+import './systems/appraisal.js';
+import './systems/haggle.js';
+import './systems/economy.js';
+import './systems/betting.js';
+import './systems/sparring.js';
+import './systems/market.js';
+import './systems/save.js';
+import './ui/day.js';
+import './ui/night.js';
+import './ui/fight.js';
+import './ui/result.js';
+import './ui/debug.js';
