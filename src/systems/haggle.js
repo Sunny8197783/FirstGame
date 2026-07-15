@@ -23,6 +23,7 @@ function makeOffer() {
   if (X >= H.D) { closeDeal(c, H.D, 'acceptEasy'); return; } // 요구가 이상이면 그 값에 즉시 성사
   if (X < c.M * CONFIG.INSULT_RATIO) {
     // 모욕적인 제시 — 인내심 -2, 요구가는 꿈쩍도 안 한다
+    S.stats.dealStreak = 0; // [Phase2] 모욕은 스트릭 리셋
     H.P -= 2;
     if (H.P <= 0) { walkOut(c, X); return; }
     haggleSay('insult');
@@ -59,7 +60,13 @@ function closeDeal(c, price, tone) {
   S.regularDeals[c.ctype.type] = (S.regularDeals[c.ctype.type] || 0) + 1; // 단골 카운트
   S.gold -= price;
   S.stats.buyRatioSum += price / c.V;
-  S.purchases.push({ item: c.item, V: c.V, price, jackpot: c.jackpot, stolen: c.stolen });
+  S.purchases.push({ item: c.item, V: c.V, price, jackpot: c.jackpot, stolen: c.stolen, hasTrap: c.hasTrap });
+  // [Phase2] 업적 훅
+  achieve('first-deal');
+  S.stats.dealStreak = (S.stats.dealStreak || 0) + 1;
+  if (S.stats.dealStreak >= 10) achieve('streak-10');
+  if (price <= c.asking * 0.5) achieve('cheap-buy');
+  if (S.stats.deals >= 10 && S.stats.buyRatioSum / S.stats.deals < 0.7) achieve('expert-70');
   updateHUD();
   sndGood();
   const cheap = price <= c.asking * 0.6;
@@ -77,6 +84,7 @@ function closeDeal(c, price, tone) {
 function walkOut(c, lastX) {
   S.haggle = null;
   S.stats.rejected++;
+  S.stats.dealStreak = 0; // [Phase2] 연속 성사 스트릭 리셋
   sndBad();
   showModal(`
     <h2 class="bad">💢 흥정 결렬!</h2>

@@ -1,6 +1,9 @@
 // 게임 전체 배럴 — 브라우저(main.js)와 헤드리스 시뮬(sim/)이 공용으로 임포트
 import './systems/util.js';
 import './config.js';
+import './systems/settings.js';
+import './systems/flow.js';
+import './systems/achievements.js';
 import './data/items.js';
 import './data/customers.js';
 import './data/fighters.js';
@@ -20,6 +23,8 @@ import './systems/betting.js';
 import './systems/sparring.js';
 import './systems/market.js';
 import './systems/save.js';
+import './ui/menus.js';
+import './ui/tips.js';
 import './ui/day.js';
 import './ui/night.js';
 import './ui/fight.js';

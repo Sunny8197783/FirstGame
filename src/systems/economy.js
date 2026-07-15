@@ -13,7 +13,11 @@ function startGame() {
   S.challenge = null; S.challengeOfferDay = 0;
   S.stats = { deals: 0, rejected: 0, tradePL: 0, buyRatioSum: 0, bestDeal: 0, jackpots: 0, stolenLost: 0,
               bets: 0, betWins: 0, betPL: 0, houseEstSum: 0, drops: 0, loans: 0, sponsorIncome: 0,
-              playerFights: 0, playerWins: 0, challengePL: 0 };
+              playerFights: 0, playerWins: 0, challengePL: 0,
+              // [Phase2] 업적 추적 카운터
+              dealStreak: 0, stolenSold: 0, clashWins: 0, feintStreak: 0, trapProfits: 0,
+              betToday: false, noBetRun: 0 };
+  S.history = []; // [Phase2] 일자별 통계 스냅샷
   // 파이터 초기화: 스탯 ±JITTER 랜덤 변동(매 판 다른 전력) + 초기 전적 시드
   const J = CONFIG.FIGHTER_STAT_JITTER;
   S.fighters = FIGHTERS_DATA.map(f => ({ ...f,
@@ -61,7 +65,26 @@ function startDay() {
 }
 
 
+// [Phase2] 아침마다 전일까지의 누적 통계를 스냅샷 (추이 그래프·업적 판정용)
+function recordHistory() {
+  const st = S.stats;
+  if (!S.history) S.history = [];
+  if (S.history.some(h => h.day === S.day)) return; // 같은 아침 중복 방지 (이어하기 재개 등)
+  S.history.push({
+    day: S.day, gold: S.gold, debt: S.debt, net: S.gold - S.debt,
+    deals: st.deals, rejected: st.rejected, bets: st.bets, betWins: st.betWins,
+    houseEstSum: st.houseEstSum, betPL: st.betPL, tradePL: st.tradePL,
+  });
+  // 🧘 금욕의 7일: 어제 베팅이 없었으면 연속일 증가
+  if (S.day > 1) {
+    st.noBetRun = st.betToday ? 0 : (st.noBetRun || 0) + 1;
+    if (st.noBetRun >= 7) achieve('no-bet-7');
+  }
+  st.betToday = false;
+}
+
 function beginDay() {
+  recordHistory(); // [Phase2] 통계 스냅샷 (저장 전에 기록해 세이브에 포함)
   saveGame('morning'); // [Phase 1] 매일 아침 자동 저장 (이벤트·손님 생성 전 시점)
   let loanMsg = '';
   if (S.gold < CONFIG.BANKRUPT_FLOOR) {
@@ -141,6 +164,11 @@ function renderEvening() {
     S.stats.tradePL += profit;
     S.stats.bestDeal = Math.max(S.stats.bestDeal, profit);
     total += profit;
+    // [Phase2] 업적 훅: 잭팟·장물 무사 처분·함정 극복·큰 이익
+    if (p.jackpot) { achieve('jackpot-1'); if (S.stats.jackpots >= 3) achieve('jackpot-3'); }
+    if (p.stolen) { S.stats.stolenSold = (S.stats.stolenSold || 0) + 1; if (S.stats.stolenSold >= 5) achieve('stolen-5'); }
+    if (p.hasTrap && profit > 0) { S.stats.trapProfits = (S.stats.trapProfits || 0) + 1; if (S.stats.trapProfits >= 5) achieve('trap-5'); }
+    if (profit >= 10000) achieve('big-profit');
     return `<tr>
       <td>${p.item.emoji} ${p.item.name}${tag}</td>
       <td>-${fmt(p.price)}</td><td>+${fmt(saleV)}</td>
@@ -170,5 +198,5 @@ function renderEvening() {
    밤 루프 — 지하 격투장 베팅
    ═══════════════════════════════════════════════════════════════ */
 
-Object.assign(globalThis, { startGame, startDay, beginDay, nextCustomer, startEvening, renderEvening });
-export { startGame, startDay, beginDay, nextCustomer, startEvening, renderEvening };
+Object.assign(globalThis, { startGame, startDay, beginDay, recordHistory, nextCustomer, startEvening, renderEvening });
+export { startGame, startDay, beginDay, recordHistory, nextCustomer, startEvening, renderEvening };

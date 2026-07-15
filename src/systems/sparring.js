@@ -174,12 +174,15 @@ function playerMove(mv) {
     setTimeout(() => playFightStep({ type: 'attack', att: 'B', def: 'A', dmg: d, heavy: false, mv: toFightMove(om, false) }), 240);
   } else if (MOVES[mv].beats === om) {
     // 내가 이김
+    // [Phase2] 페인트 간파 스트릭: 가짜 텔 라운드를 꿰뚫고 승리
+    if (!C.tellTruth) { S.stats.feintStreak = (S.stats.feintStreak || 0) + 1; if (S.stats.feintStreak >= 3) achieve('feint-3'); }
     const d = dmgOf(P, O);
     C.ohp = Math.max(0, C.ohp - d);
     line = `✅ ${MOVES[mv].name}(으)로 상대의 ${MOVES[om].name}을(를) 꺾었다! ${O.name}에게 ${d} 데미지!`;
     playFightStep({ type: 'attack', att: 'A', def: 'B', dmg: d, heavy: d >= 26, mv: toFightMove(mv, d >= 26), ko: C.ohp <= 0 });
   } else {
     // 상대가 이김
+    S.stats.feintStreak = 0; // [Phase2] 간파 스트릭 리셋
     const d = dmgOf(O, P);
     C.php = Math.max(0, C.php - d);
     line = `❌ 상대의 ${MOVES[om].name}에 당했다! ${C.tellTruth ? '' : '(예비 동작은 페인트였다!) '}${d} 데미지를 입었다...`;
@@ -195,7 +198,7 @@ function playerMove(mv) {
     C.resolving = false;
     if (C.php <= 0 || C.ohp <= 0) finishChallenge(C.ohp <= 0 && C.php > 0);
     else { C.round++; renderChallengeRound(); }
-  }, 1150);
+  }, 1150 / gameSpeed()); // [Phase2] 연출 배속
 }
 
 
@@ -209,6 +212,9 @@ function finishChallenge(win) {
     S.stats.playerWins++;
     S.stats.challengePL += payout - C.stake;
     P.w++; O.l++;
+    // [Phase2] 업적 훅: 첫 승·무피격 승리
+    achieve('spar-1');
+    if (C.php >= 100) achieve('spar-perfect');
     $('sprite-B') && $('sprite-B').classList.add('ko');
     $('sprite-A') && $('sprite-A').classList.add('win-pose');
     sndGood();

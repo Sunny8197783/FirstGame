@@ -27,9 +27,9 @@ function renderTitle() {
             <button class="btn-ghost" onclick="$('save-import').click()">📥 가져오기</button>
           </div>
           <div class="menu-row">
-            <button class="btn-ghost" onclick="toast('⚙️ 설정은 Phase 2에서 열린다')">⚙️ 설정</button>
-            <button class="btn-ghost" onclick="toast('📊 확률 정보는 Phase 2에서 열린다')">📊 확률 정보</button>
-            <button class="btn-ghost" onclick="toast('🏆 업적·통계는 Phase 2에서 열린다')">🏆 업적·통계</button>
+            <button class="btn-ghost" onclick="renderSettings()">⚙️ 설정</button>
+            <button class="btn-ghost" onclick="renderOddsInfo()">📊 확률 정보</button>
+            <button class="btn-ghost" onclick="renderAchievements()">🏆 업적</button>
           </div>
         </div>
         <input type="file" id="save-import" accept=".json,application/json" style="display:none"

@@ -22,6 +22,7 @@ function snapshotState(point) {
     player: { ...S.player },
     stats: { ...S.stats },
     fighters: S.fighters.map(f => ({ ...f })),
+    history: (S.history || []).map(h => ({ ...h })), // [Phase2] 통계 추이
   };
 }
 
@@ -67,7 +68,11 @@ function continueGame() {
   S.challengeOfferDay = 0;
   S.player = d.player;
   S.stats = d.stats;
+  // [Phase2] 구버전 세이브 호환: 새 카운터 필드 기본값 보충
+  const defaults = { dealStreak: 0, stolenSold: 0, clashWins: 0, feintStreak: 0, trapProfits: 0, betToday: false, noBetRun: 0 };
+  for (const k in defaults) if (S.stats[k] === undefined) S.stats[k] = defaults[k];
   S.fighters = d.fighters;
+  S.history = d.history || []; // [Phase2] 통계 추이
   // 진행 중이던 휘발 상태는 초기화
   S.challenge = null; S.haggle = null; S.currentBet = null;
   S.customers = []; S.custIdx = 0; S.purchases = [];

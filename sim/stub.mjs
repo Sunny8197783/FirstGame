@@ -5,21 +5,26 @@ export const mkEl = () => ({
   innerHTML: '', textContent: '', value: '1000', disabled: false, className: '',
   appendChild() {}, remove() {}, addEventListener() {}, click() {},
   querySelector() { return mkEl(); }, querySelectorAll() { return []; },
+  getBoundingClientRect() { return { left: 0, right: 0, top: 0, bottom: 0, width: 0, height: 0 }; },
   scrollTop: 0, scrollHeight: 0, children: [], lastChild: null, max: 0, files: [],
 });
 
 export const elCache = {};
 
 export function installStubs() {
+  const body = mkEl();
+  body.className = '';
   globalThis.document = {
     getElementById: (id) => (elCache[id] = elCache[id] || mkEl()),
     querySelector: () => mkEl(),
     querySelectorAll: () => [],
     createElement: () => mkEl(),
     addEventListener() {},
-    body: { className: '' },
+    body,
   };
   globalThis.window = globalThis;
+  globalThis.innerWidth = 1280;
+  globalThis.scrollY = 0;
   // 연출용 타이머는 즉시 실행 (로직만 검증)
   globalThis.setTimeout = (fn) => { fn(); return 0; };
   // 저장 시스템 스텁

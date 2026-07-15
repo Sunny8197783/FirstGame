@@ -82,6 +82,7 @@ function renderMatch() {
       </div>
     </div>`;
   updateDebug();
+  maybeTip('rumor'); // [Phase2] 1일차 온보딩 팁
 }
 
 Object.assign(globalThis, { statBar, fighterCardHTML, renderMatch });

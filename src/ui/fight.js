@@ -102,7 +102,26 @@ function runFight() {
 
   const log = $('fightlog');
   let idx = 0;
+  resetFightSkip(); // [Phase2] 이전 경기의 스킵 요청 잔여 제거
   const tick = () => {
+    // [Phase2] 스페이스 스킵: 남은 중계를 일괄 출력하고 즉시 정산
+    if (consumeFightSkip()) {
+      resetFightSkip();
+      for (; idx < steps.length; idx++) {
+        const st = steps[idx];
+        const div = document.createElement('div');
+        div.textContent = '▸ ' + st.line;
+        log.appendChild(div);
+        if (st.ko) { const d = $('sprite-' + st.def); if (d) d.className = 'sprite-pos ko'; }
+        if (st.type === 'win') { const w = $('sprite-' + st.win); if (w) w.classList.add('win-pose'); }
+      }
+      const last = steps[steps.length - 1];
+      $('hp-A').style.width = last.hpA + '%';
+      $('hp-B').style.width = last.hpB + '%';
+      log.scrollTop = log.scrollHeight;
+      settleFight(m, aWins);
+      return;
+    }
     if (idx >= steps.length) { settleFight(m, aWins); return; }
     const st = steps[idx++];
     const div = document.createElement('div');
@@ -112,7 +131,8 @@ function runFight() {
     $('hp-A').style.width = st.hpA + '%';
     $('hp-B').style.width = st.hpB + '%';
     playFightStep(st);
-    setTimeout(tick, st.type === 'awaken' ? 1250 : 700);
+    // [Phase2] 연출 배속 + 중계 텍스트 속도 설정 반영
+    setTimeout(tick, (st.type === 'awaken' ? 1250 : 700) / gameSpeed() / textSpeed());
   };
   tick();
 }

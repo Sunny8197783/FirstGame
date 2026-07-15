@@ -77,6 +77,7 @@ function renderDawnShop() {
       </div>
     </div>`;
   updateDebug();
+  maybeTip('dawn'); // [Phase2] 1일차 온보딩 팁
 }
 
 
@@ -105,7 +106,10 @@ function repayDebt(amt) {
   if (pay <= 0 || pay > S.gold) return;
   S.gold -= pay;
   S.debt -= pay;
-  if (S.debt <= 0) { S.debt = 0; sndDrop(); } else { sndGood(); }
+  if (S.debt <= 0) {
+    S.debt = 0; sndDrop();
+    if (S.day <= 5) achieve('debt-free-5'); // [Phase2] 조기 상환 업적
+  } else { sndGood(); }
   updateHUD();
   renderDawnShop();
 }

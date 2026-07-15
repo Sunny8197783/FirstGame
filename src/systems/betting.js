@@ -117,6 +117,7 @@ function confirmBet() {
   sndClick();
   S.currentBet.amount = amt;
   S.gold -= amt;
+  S.stats.betToday = true; // [Phase2] 금욕의 7일 판정용
   updateHUD();
   runFight();
 }
@@ -152,11 +153,20 @@ function settleFight(m, aWins) {
       sndGood();
       html += `<p class="good big">🎉 적중! +${fmt(payout)} G (순익 +${fmt(pl)} G)</p>`;
       if (pMul > 1) html += `<p class="dim" style="font-size:13px">✦ 부품 인맥 보너스 +${Math.round((pMul - 1) * 100)}% 포함</p>`;
+      // [Phase2] 업적 훅: 첫 적중·언더독·판단 우위·모순 간파·올인 파이널
+      achieve('bet-first-win');
+      if (estChosen <= 0.35) achieve('underdog');
+      if (S.stats.bets >= 10 && (S.stats.betWins / S.stats.bets - S.stats.houseEstSum / S.stats.bets) >= 0.10) achieve('edge-10');
+      const clash = [m.rumorsA, m.rumorsB].some(rs => rs.some(r => r.sign > 0) && rs.some(r => r.sign < 0));
+      if (clash) { S.stats.clashWins = (S.stats.clashWins || 0) + 1; if (S.stats.clashWins >= 5) achieve('clash-5'); }
+      const goldBeforeBet = S.gold - payout + bet.amount;
+      if (m.final && bet.amount >= goldBeforeBet * 0.5) achieve('allin-final');
       // 희귀 드롭: 언더독 적중일수록 확률 상승
       const dropP = CONFIG.DROP_BASE * (1 + (1 - estChosen) * CONFIG.DROP_UNDERDOG_COEF);
       if (Math.random() < dropP) {
         S.stats.drops++;
         sndDrop();
+        achieve('drop-1'); // [Phase2]
         html += `<p class="drop-fx blink">✦ 전설 부품 획득! (보유 ${S.stats.drops}개)</p>
                  <p class="dim">쓰러진 파이터의 주머니에서 굴러 나왔다... (드롭률 ${(dropP * 100).toFixed(1)}%)</p>`;
       }

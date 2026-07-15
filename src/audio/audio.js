@@ -4,10 +4,13 @@ let audioCtx = null;
 
 function beep(freq, dur, type) {
   try {
+    // [Phase2] SFX 볼륨 설정 반영 (0이면 완전 무음 — 노드 생성도 생략)
+    const vol = 0.12 * (typeof sfxVol === 'function' ? sfxVol() : 0.5);
+    if (vol <= 0.001) return;
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const o = audioCtx.createOscillator(), g = audioCtx.createGain();
     o.type = type || 'square'; o.frequency.value = freq;
-    g.gain.setValueAtTime(0.06, audioCtx.currentTime);
+    g.gain.setValueAtTime(vol, audioCtx.currentTime);
     g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
     o.connect(g); g.connect(audioCtx.destination);
     o.start(); o.stop(audioCtx.currentTime + dur);

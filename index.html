@@ -15,6 +15,12 @@
     <span id="hud-day">📅 1일차</span>
     <span id="hud-time" class="dim"></span>
     <span id="hud-parts" class="accent"></span>
+    <span class="hud-icons">
+      <button class="hud-ico" title="통계" onclick="renderStats()">📈</button>
+      <button class="hud-ico" title="확률 정보" onclick="renderOddsInfo()">📊</button>
+      <button class="hud-ico" title="업적" onclick="renderAchievements()">🏆</button>
+      <button class="hud-ico" title="설정" onclick="renderSettings()">⚙️</button>
+    </span>
     <button id="btn-endnow" class="btn-ghost" style="font-size:13px; padding:4px 10px; margin:0">결과 화면 보기</button>
   </div>
   <div id="event-banner" class="panel" style="display:none; padding:8px 16px; font-size:14px"></div>

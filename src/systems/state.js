@@ -5,9 +5,13 @@ const S = {
   customers: [], custIdx: 0, purchases: [],
   fighters: [], matches: [], matchIdx: 0,
   currentBet: null, // { fighterIdx, amount }
+  history: [], // [Phase2] 일자별 스냅샷 (통계 추이 그래프용)
   stats: {
     deals: 0, rejected: 0, tradePL: 0, buyRatioSum: 0, bestDeal: 0, jackpots: 0, stolenLost: 0,
     bets: 0, betWins: 0, betPL: 0, houseEstSum: 0, drops: 0, loans: 0,
+    // [Phase2] 업적 추적 카운터
+    dealStreak: 0, stolenSold: 0, clashWins: 0, feintStreak: 0, trapProfits: 0,
+    betToday: false, noBetRun: 0,
   },
 };
 

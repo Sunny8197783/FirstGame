@@ -90,6 +90,8 @@ function renderCustomer() {
   input.addEventListener('input', () => sync(+input.value));
   sync(start);
   updateDebug();
+  // [Phase2] 1일차 온보딩 팁
+  maybeTip('haggle'); maybeTip('inspect'); maybeTip('debt');
 }
 
 /* ── 밀당 흥정 엔진 ──

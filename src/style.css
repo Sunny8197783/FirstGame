@@ -391,3 +391,35 @@ body.theme-night .inspect-name { color: #00f0ff; }
 .menu-row { display: flex; gap: 8px; width: 320px; }
 .menu-row button { flex: 1; width: auto; font-size: 14px; padding: 8px 6px; }
 button.disabled-look { opacity: 0.45; cursor: not-allowed; }
+
+/* ── [Phase 2] 스킵 힌트 · HUD 아이콘 · 메뉴 컴포넌트 ── */
+.skip-hint { position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
+  font-size: 12px; opacity: 0.55; letter-spacing: 2px; }
+#overlay { flex-wrap: wrap; }
+.hud-icons { display: inline-flex; gap: 4px; }
+.hud-ico { font-size: 15px; padding: 4px 8px; margin: 0; background: rgba(0,0,0,0.35);
+  border-width: 2px; box-shadow: 0 2px 0 #000; line-height: 1; }
+.set-row { display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 14px; }
+.seg { font-size: 13px; padding: 6px 12px; margin: 0 2px; background: #333; }
+.seg-on { background: #a01a66; box-shadow: 0 0 8px rgba(255,68,170,0.5), 0 3px 0 #000; }
+.modal-scroll { max-height: 55vh; overflow-y: auto; padding-right: 6px; }
+.modal-scroll table td { font-size: 13px; padding: 5px 6px; }
+.ach-row { display: flex; align-items: center; gap: 10px; padding: 7px 4px;
+  border-bottom: 1px solid rgba(255,255,255,0.08); opacity: 0.55; }
+.ach-row.on { opacity: 1; }
+.ach-icon { font-size: 22px; width: 30px; text-align: center; }
+.ach-body { flex: 1; font-size: 13px; line-height: 1.4; }
+.ach-state { font-size: 12px; white-space: nowrap; }
+/* 컨텍스트 팁 말풍선 */
+.ctx-tip { position: absolute; z-index: 70; max-width: 270px; font-size: 13px; line-height: 1.6;
+  background: #14100a; color: #ffd98a; border: 3px solid #e8b23a; padding: 9px 12px;
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.5); animation: fade-up 0.35s both; }
+.ctx-tip .ctx-tip-x { font-size: 11px; padding: 1px 6px; margin: 0 0 0 6px; background: #333; }
+.ctx-tip.out { transition: opacity 0.5s; opacity: 0; }
+/* 폰트 크게 설정 */
+body.font-lg p, body.font-lg li, body.font-lg .hint, body.font-lg .bubble,
+body.font-lg td, body.font-lg th, body.font-lg .speech { font-size: 117%; }
+body.font-lg button { font-size: 108%; }
+/* 화면 흔들림 끔 */
+body.no-shake .sprite-pos.rx-hit { animation: none; }

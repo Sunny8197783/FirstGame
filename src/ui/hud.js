@@ -33,8 +33,11 @@ document.addEventListener('click', (e) => {
 
 function showTransition(html, cb, ms) {
   const ov = $('overlay');
-  ov.innerHTML = html; ov.classList.add('show');
-  setTimeout(() => { ov.classList.remove('show'); if (cb) cb(); }, ms || 1200);
+  // [Phase2] 배속 적용 + 스페이스 스킵 등록 + 스킵 힌트
+  ov.innerHTML = html + '<div class="skip-hint">SPACE ▸ 스킵</div>';
+  ov.classList.add('show');
+  const timer = setTimeout(() => { clearTransition(); ov.classList.remove('show'); if (cb) cb(); }, (ms || 1200) / gameSpeed());
+  registerTransition(timer, cb);
 }
 
 function showModal(html) { $('modal-body').innerHTML = html; $('modal').classList.add('show'); }
