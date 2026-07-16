@@ -67,6 +67,13 @@ function renderDawnShop() {
         ${debtPanel}
         ${sponsorPanel}
         ${items}
+        ${S.season > 0 ? `
+        <div class="panel" style="margin:6px 0; padding:12px; border-color:#8a5aa0">
+          <h3 style="font-size:16px">🏚️ 가게 이전 <span class="dim" style="font-size:12px">(프레스티지 ${S.prestige}회)</span></h3>
+          <p class="dim" style="font-size:13px">더 험한 동네로 옮긴다 — 아이템 가치 <b class="good">+${Math.round(CONFIG.PRESTIGE_VALUE_MUL * 100)}%</b>,
+            함정 힌트·헛소문 <b class="bad">+${Math.round(CONFIG.PRESTIGE_TRAP_ADD * 100)}%p</b> (영구 누적)</p>
+          <div class="center"><button class="btn-ghost" onclick="confirmPrestige()">이전을 알아본다</button></div>
+        </div>` : ''}
         <div class="center" style="margin-top:10px">
           <button class="btn-big" onclick="startDay()">잠자리에 든다 (다음 날로) →</button>
           <div style="margin-top:6px">
@@ -80,6 +87,30 @@ function renderDawnShop() {
   maybeTip('dawn'); // [Phase2] 1일차 온보딩 팁
 }
 
+
+// [Phase3] 가게 이전 프레스티지 — 위험과 보상을 함께 올리는 선택
+function confirmPrestige() {
+  sndClick();
+  showModal(`
+    <h2 class="accent">🏚️ 가게 이전</h2>
+    <p style="font-size:14px">간판을 내리고 더 깊은 골목으로 들어간다. 되돌릴 수 없다.</p>
+    <table style="margin:8px 0">
+      <tr><td class="good">아이템 가치</td><td>+${Math.round(CONFIG.PRESTIGE_VALUE_MUL * 100)}% (누적 ×${(1 + (S.prestige + 1) * CONFIG.PRESTIGE_VALUE_MUL).toFixed(1)})</td></tr>
+      <tr><td class="bad">함정 힌트</td><td>+${Math.round(CONFIG.PRESTIGE_TRAP_ADD * 100)}%p</td></tr>
+      <tr><td class="bad">헛소문 동반</td><td>+${Math.round(CONFIG.PRESTIGE_FAKE_ADD * 100)}%p</td></tr>
+    </table>
+    <div class="center" style="margin-top:10px">
+      <button class="btn-big" onclick="doPrestige()">이전한다</button>
+      <button class="btn-ghost" onclick="hideModal()">아직은...</button>
+    </div>`);
+}
+
+function doPrestige() {
+  hideModal();
+  S.prestige = (S.prestige || 0) + 1;
+  sndDrop();
+  renderInterlude('prestige', S.prestige, () => startDay());
+}
 
 function buyUpgrade(id) {
   const cost = CONFIG.UPGRADE_COSTS[id];
@@ -130,5 +161,5 @@ function signSponsor(i) {
    결과 화면 (7일 종료)
    ═══════════════════════════════════════════════════════════════ */
 
-Object.assign(globalThis, { renderDawnShop, buyUpgrade, borrowLoan, repayDebt, signSponsor });
-export { renderDawnShop, buyUpgrade, borrowLoan, repayDebt, signSponsor };
+Object.assign(globalThis, { renderDawnShop, buyUpgrade, borrowLoan, repayDebt, signSponsor, confirmPrestige, doPrestige });
+export { renderDawnShop, buyUpgrade, borrowLoan, repayDebt, signSponsor, confirmPrestige, doPrestige };

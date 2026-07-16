@@ -103,5 +103,13 @@ const FIGHT_COMEBACK_LINES = [
    유틸리티
    ═══════════════════════════════════════════════════════════════ */
 
+// [Phase3] 시즌 모드 신인 데뷔용 이름·필살기 풀
+const ROOKIE_RING = ['신성', '검은', '붉은', '강철', '미친', '유령', '폭풍', '철권', '무명', '야생'];
+const ROOKIE_NAMES = ['한별', '도윤', '시우', '재민', '태오', '건우', '유준', '민재', '석현', '태산'];
+const ROOKIE_SKILLS = ['라이징 어퍼', '스핀 킥', '헤드헌터', '기요틴 드롭', '스텔스 잽', '파일 드라이버', '카운터 블로우', '데스 클러치'];
+
+Object.assign(globalThis, { ROOKIE_RING, ROOKIE_NAMES, ROOKIE_SKILLS });
+export { ROOKIE_RING, ROOKIE_NAMES, ROOKIE_SKILLS };
+
 Object.assign(globalThis, { MOVES, BEAT_OF, TELLS, FIGHT_MOVES, LIGHT_MOVES, HEAVY_MOVES, PLAYER_COLOR, FIGHTERS_DATA, FIGHT_ATTACK_LINES, FIGHT_WEAK_LINES, FIGHT_HEAVY_LINES, FIGHT_DODGE_LINES, FIGHT_CROWD_LINES, FIGHT_COMEBACK_LINES });
 export { MOVES, BEAT_OF, TELLS, FIGHT_MOVES, LIGHT_MOVES, HEAVY_MOVES, PLAYER_COLOR, FIGHTERS_DATA, FIGHT_ATTACK_LINES, FIGHT_WEAK_LINES, FIGHT_HEAVY_LINES, FIGHT_DODGE_LINES, FIGHT_CROWD_LINES, FIGHT_COMEBACK_LINES };

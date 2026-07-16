@@ -1,39 +1,80 @@
-// ⚠️ Phase 1 자동 이식: 데모 index.html에서 원문 그대로 분리한 코드 (로직 변경 금지 구역)
-// 모듈 간 호출·인라인 onclick은 아래 globalThis 등록을 통해 해석된다.
+// ⚠️ Phase 1 자동 이식 + [Phase3] 문구 테마당 10개로 증량 (총 60문구)
+// 소문 테마 6종. 파이터에게 '실제 정황'이 있으면 그 테마의 소문이 진짜로 돈다.
+// 같은 아이콘 소문이 2개 겹치면 상호 검증(사실 확률↑), +/− 테마가 충돌하면 최소 하나는 거짓.
 const RUMOR_THEMES = [
   { id: 'injury', icon: '🩹', sign: -1, mag: [0.07, 0.13], rumors: [
     { text: '어제 훈련 중 다리를 절었다는 소문이 돈다', strength: 'weak' },
     { text: '대기실에서 다리에 붕대를 감는 걸 직접 봤다', strength: 'strong' },
     { text: '요즘 진통제를 달고 산다는 얘기가 있다', strength: 'weak' },
+    { text: '지난 경기 후유증으로 갈비뼈에 금이 갔다더라', strength: 'weak' },
+    { text: '주치의가 출전을 말렸다는 이야기가 돈다', strength: 'weak' },
+    { text: '어깨에 파스를 겹겹이 붙이는 걸 직접 봤다', strength: 'strong' },
+    { text: '무릎이 갔는지 계단에서 난간을 꽉 잡더라는 얘기다', strength: 'weak' },
+    { text: '주먹을 쥐었다 펴며 인상 쓰는 걸 직접 봤다', strength: 'strong' },
+    { text: '요즘 접골원에 드나든다는 소문이 있다', strength: 'weak' },
+    { text: '훈련 파트너가 "몸이 성한 데가 없다"고 흘렸다', strength: 'weak' },
   ]},
   { id: 'drink', icon: '🍶', sign: -1, mag: [0.06, 0.12], rumors: [
     { text: '새벽까지 술을 마시는 걸 직접 봤다', strength: 'strong' },
     { text: '어젯밤 도박장에서 만취했다는 얘기가 있다', strength: 'weak' },
     { text: '입장할 때 술 냄새가 났다는 수군거림이 있다', strength: 'weak' },
+    { text: '단골 술집 마담이 "어제도 왔다"고 했다더라', strength: 'weak' },
+    { text: '대기실에서 해장국을 들이켜는 걸 직접 봤다', strength: 'strong' },
+    { text: '눈이 시뻘겋게 충혈된 걸 직접 봤다', strength: 'strong' },
+    { text: '요즘 매일 밤을 술로 지샌다는 소문이 있다', strength: 'weak' },
+    { text: '골목에서 빈 병을 들고 비틀거렸다는 목격담이 있다', strength: 'weak' },
+    { text: '경기 전인데 손을 떨더라는 얘기가 돈다', strength: 'weak' },
+    { text: '트레이너가 술병을 압수하는 걸 직접 봤다', strength: 'strong' },
   ]},
   { id: 'slump', icon: '🌫️', sign: -1, mag: [0.05, 0.11], rumors: [
     { text: '가족 문제로 심란하다는 이야기가 들린다', strength: 'weak' },
     { text: '스파링에서 후배에게 밀렸다는 소문이 있다', strength: 'weak' },
     { text: '눈빛이 완전히 죽어 있는 걸 직접 봤다', strength: 'strong' },
+    { text: '빚 독촉 전화를 받고 얼굴이 하얘졌다더라', strength: 'weak' },
+    { text: '요즘 체육관에 코빼기도 안 비친다는 얘기가 있다', strength: 'weak' },
+    { text: '은퇴를 진지하게 고민 중이라는 소문이 돈다', strength: 'weak' },
+    { text: '대기실 구석에서 멍하니 벽만 보는 걸 직접 봤다', strength: 'strong' },
+    { text: '오래 만난 연인과 헤어졌다는 이야기가 파다하다', strength: 'weak' },
+    { text: '감량에 실패해서 초주검이 됐다는 얘기가 있다', strength: 'weak' },
+    { text: '한숨만 쉬며 줄넘기를 자꾸 놓치는 걸 직접 봤다', strength: 'strong' },
   ]},
   { id: 'training', icon: '🔥', sign: +1, mag: [0.06, 0.12], rumors: [
     { text: '비밀 특훈을 했다는 소문이 있다', strength: 'weak' },
     { text: '새벽마다 로드워크를 뛰는 걸 직접 봤다', strength: 'strong' },
     { text: '체육관 불이 밤새 켜져 있었다고 한다', strength: 'weak' },
+    { text: '전설의 노코치가 붙었다는 이야기가 돈다', strength: 'weak' },
+    { text: '산속 캠프에서 한 달을 담금질했다더라', strength: 'weak' },
+    { text: '이번 달에만 샌드백이 두 개 터졌다는 얘기가 있다', strength: 'weak' },
+    { text: '새 필살기를 봉인해 뒀다는 소문이 있다', strength: 'weak' },
+    { text: '미트 치는 소리가 벽 너머까지 울리는 걸 직접 들었다', strength: 'strong' },
+    { text: '지난 패배 영상을 수백 번 돌려봤다고 한다', strength: 'weak' },
+    { text: '몸이 한 둘레 두꺼워진 걸 직접 봤다', strength: 'strong' },
   ]},
   { id: 'form', icon: '⚡', sign: +1, mag: [0.07, 0.13], rumors: [
     { text: '워밍업에서 움직임이 날아다니는 걸 직접 봤다', strength: 'strong' },
     { text: '요즘 컨디션이 인생 최고라는 얘기가 있다', strength: 'weak' },
     { text: '스파링 파트너를 압도하는 걸 직접 봤다', strength: 'strong' },
+    { text: '감량이 완벽하게 떨어졌다는 얘기가 돈다', strength: 'weak' },
+    { text: '맥박이 교과서 수치라는 소문이 있다', strength: 'weak' },
+    { text: '섀도복싱만으로 관중이 몰렸다는 얘기가 있다', strength: 'weak' },
+    { text: '발놀림이 전성기 시절 같다고들 한다', strength: 'weak' },
+    { text: '줄넘기 이중뛰기를 백 개 넘게 치는 걸 직접 봤다', strength: 'strong' },
+    { text: '잽이 눈에 안 보일 만큼 빨라졌다는 얘기가 돈다', strength: 'weak' },
+    { text: '10라운드를 뛰고도 숨 하나 안 흐트러졌다더라', strength: 'weak' },
   ]},
   { id: 'focus', icon: '🎯', sign: +1, mag: [0.05, 0.11], rumors: [
     { text: '오늘따라 눈빛이 무섭게 날카로운 걸 직접 봤다', strength: 'strong' },
     { text: '오늘 무조건 이겨야 할 빚이 있다는 얘기가 있다', strength: 'weak' },
     { text: '가족이 처음 보러 왔다 — 각오가 다르다고 한다', strength: 'weak' },
+    { text: '상대에게 개인적인 원한이 있다는 소문이 돈다', strength: 'weak' },
+    { text: '이번이 마지막 경기라 배수진을 쳤다더라', strength: 'weak' },
+    { text: '대기실에서 미동도 없이 명상하는 걸 직접 봤다', strength: 'strong' },
+    { text: '아이 수술비가 이 경기에 걸려 있다는 이야기가 들린다', strength: 'weak' },
+    { text: '"오늘 죽어도 여한 없다"고 말했다는 얘기가 있다', strength: 'weak' },
+    { text: '상대의 경기 영상을 통째로 외웠다는 소문이 있다', strength: 'weak' },
+    { text: '입장 전에 이를 악물고 링을 노려보는 걸 직접 봤다', strength: 'strong' },
   ]},
 ];
-
-// 격투 중계 텍스트
 
 Object.assign(globalThis, { RUMOR_THEMES });
 export { RUMOR_THEMES };

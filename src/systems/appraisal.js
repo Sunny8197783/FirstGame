@@ -2,17 +2,29 @@
 // 모듈 간 호출·인라인 onclick은 아래 globalThis 등록을 통해 해석된다.
 function actOf() { return S.day <= CONFIG.ACT1_END ? 1 : S.day <= CONFIG.ACT2_END ? 2 : 3; }
 
+// [Phase3] 시즌 모드 헬퍼: 시즌 몇 일째인가 (캠페인 중엔 0)
+function seasonDayOf() {
+  if (!S.season || S.day <= CONFIG.DAYS) return 0;
+  return ((S.day - CONFIG.DAYS - 1) % CONFIG.SEASON_LEN) + 1;
+}
+// [Phase3] 프레스티지(가게 이전) 배율 — 아이템 가치가 험한 동네일수록 커진다
+function prestigeMul() { return 1 + (S.prestige || 0) * CONFIG.PRESTIGE_VALUE_MUL; }
+
 function customersPerDay() {
   return CONFIG.CUSTOMERS_PER_DAY
     + (S.upgrades && S.upgrades.expand ? 1 : 0)
-    + (S.upgrades && S.upgrades.remodel ? 1 : 0);
+    + (S.upgrades && S.upgrades.remodel ? 1 : 0)
+    + ((S.event && S.event.extraCustomer) || 0); // [Phase3] 손님 몰림 이벤트
 }
 
 
 function genCustomers() {
   const n = customersPerDay();
   // 현재 막에서 풀린 매물만 유통 + 현재 골드로 정가 매입이 가능한 아이템 우선 배치
-  const pool = ITEMS.filter(it => (it.act || 1) <= actOf());
+  // [Phase3] 전설 세트(set 필드)는 시즌 모드에서 현재 시즌 세트만 로테이션 유통
+  const curSet = S.season > 0 ? ((S.season - 1) % 3) + 1 : 0;
+  const pool = ITEMS.filter(it => (it.act || 1) <= actOf())
+    .filter(it => !it.set || it.set === curSet);
   const budget = Math.max(S.gold, 2000);
   const aff = shuffle(pool.filter(it => (it.lo + it.hi) / 2 * CONFIG.AFFORD_RATE <= budget));
   const rest = shuffle(pool.filter(it => !aff.includes(it)));
@@ -27,14 +39,14 @@ function genCustomers() {
   return Array.from({ length: n }, (_, i) => {
     const ctype = pick(CUSTOMER_TYPES);
     const item = itemPool[i % itemPool.length];
-    const V = Math.round(rand(item.lo, item.hi) / 100) * 100;
+    const V = Math.round(rand(item.lo, item.hi) * prestigeMul() / 100) * 100; // [Phase3] 프레스티지 배율
     // 단골: 같은 유형과 REGULAR_DEALS_REQ회 이상 거래 성사 → 더 싸게 넘겨준다
     const regular = (S.regularDeals[ctype.type] || 0) >= CONFIG.REGULAR_DEALS_REQ;
     const desperation = Math.max(0.5, rand(ctype.desp[0], ctype.desp[1]) - (regular ? CONFIG.REGULAR_DESP_DISCOUNT : 0));
     let M = Math.round(V * desperation);
     // 밀당 흥정 파라미터: 첫 요구가(앵커 — 유형별 뻥튀기/투매 성향), 인내심
     let asking = Math.max(M + 300, Math.round(V * rand(ctype.ask[0], ctype.ask[1]) / 100) * 100);
-    let patience = ctype.pat;
+    let patience = ctype.pat + ((S.event && S.event.patienceBonus) || 0); // [Phase3] 거리 악사 이벤트
     // 🚨 장물: 수상한 부류가 터무니없이 싸게 서둘러 던진다 — 너무 싼 건 이유가 있다
     const stolen = !!ctype.shady && Math.random() < CONFIG.STOLEN_RATE;
     if (stolen) {
@@ -56,7 +68,10 @@ function genCustomers() {
     }
     if (Math.random() < 0.5) hints.push({ text: pick(NEUTRAL_HINTS), trap: false });
     // 함정 힌트: 실제 방향과 반대를 가리키는 힌트로 교체
-    const trapRate = ctype.swindler ? CONFIG.TRAP_HINT_RATE_SWINDLER : CONFIG.TRAP_HINT_RATE;
+    // [Phase3] 손님 몰림 이벤트(trapBoost) + 프레스티지(험한 동네일수록 함정↑)
+    const trapRate = (ctype.swindler ? CONFIG.TRAP_HINT_RATE_SWINDLER : CONFIG.TRAP_HINT_RATE)
+      + ((S.event && S.event.trapBoost) || 0)
+      + (S.prestige || 0) * CONFIG.PRESTIGE_TRAP_ADD;
     let hasTrap = false;
     if (Math.random() < trapRate) {
       hasTrap = true;
@@ -70,7 +85,7 @@ function genCustomers() {
     const baseScore = clamp(Math.round(t * 4) + 1, 1, 5);
     const partsView = partNames.map(pn => {
       let sc = baseScore;
-      if (!S.upgrades.scale && Math.random() < CONFIG.VISUAL_NOISE_RATE) sc = clamp(sc + (Math.random() < 0.5 ? -1 : 1), 1, 5);
+      if (!S.upgrades.scale && !(S.event && S.event.noNoise) && Math.random() < CONFIG.VISUAL_NOISE_RATE) sc = clamp(sc + (Math.random() < 0.5 ? -1 : 1), 1, 5); // [Phase3] 감정 세미나: 당일 오차 없음
       return { name: pn, score: sc, desc: pick(STATE_DESC[sc - 1]) };
     });
     const avgScore = partsView.reduce((s, p) => s + p.score, 0) / partsView.length;
@@ -89,5 +104,5 @@ function genCustomers() {
   });
 }
 
-Object.assign(globalThis, { actOf, customersPerDay, genCustomers });
-export { actOf, customersPerDay, genCustomers };
+Object.assign(globalThis, { actOf, seasonDayOf, prestigeMul, customersPerDay, genCustomers });
+export { actOf, seasonDayOf, prestigeMul, customersPerDay, genCustomers };

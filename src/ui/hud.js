@@ -5,11 +5,14 @@ function setTheme(t) { document.body.className = 'theme-' + t; }
 function updateHUD() {
   const playing = !(S.phase === 'title' || S.phase === 'result');
   $('hud').style.display = playing ? 'flex' : 'none';
-  $('hud-day').textContent = `📅 ${S.day}일차/${CONFIG.DAYS} · ${actOf()}막`;
+  $('hud-day').textContent = S.season > 0
+    ? `🌆 시즌${S.season} · D${seasonDayOf()}/${CONFIG.SEASON_LEN}` // [Phase3]
+    : `📅 ${S.day}일차/${CONFIG.DAYS} · ${actOf()}막`;
   $('hud-gold').textContent = `💰 ${fmt(S.gold)} G`;
   $('hud-time').textContent = S.timeLabel || '';
   $('hud-debt').textContent = S.debt > 0 ? `💸 빚 ${fmt(S.debt)} G` : '✔ 빚 청산';
-  $('hud-parts').textContent = S.stats.drops ? `✦ ${S.stats.drops} 전설 부품` : '';
+  $('hud-parts').textContent = (S.stats.drops ? `✦ ${S.stats.drops} 전설 부품` : '')
+    + (S.prestige ? ` 🏚️×${S.prestige}` : ''); // [Phase3]
   const labels = { day: '☀️ 낮 — 전당포', evening: '🌆 저녁 — 정산', night: '🌙 밤 — 지하 격투장', dawn: '🌌 새벽 — 암시장' };
   $('hud-phase').textContent = labels[S.phase] || '';
   const eb = $('event-banner');

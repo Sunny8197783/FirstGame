@@ -45,15 +45,17 @@ function genMatches(count) {
       const out = [];
       if (Math.random() < CONFIG.RUMOR_COND_RATE) {
         // 실제 정황이 있다: 진짜 소문 1~2개 (같은 테마 = 상호 검증 가능)
+        // [Phase3] 찌라시(extraRumor) 이벤트: 확증 소문이 반드시 붙는다
         const theme = pick(RUMOR_THEMES);
-        const nTrue = Math.random() < CONFIG.RUMOR_SECOND_TRUE ? 2 : 1;
+        const nTrue = ((S.event && S.event.extraRumor) || Math.random() < CONFIG.RUMOR_SECOND_TRUE) ? 2 : 1;
         const picked = shuffle(theme.rumors).slice(0, nTrue);
         const mag = rand(theme.mag[0], theme.mag[1]) + (picked.length - 1) * CONFIG.RUMOR_CORROBORATION_BONUS;
         picked.forEach(src => out.push({
           text: src.text, strength: src.strength, icon: theme.icon, themeId: theme.id,
           sign: theme.sign, fake: false, effect: theme.sign * mag / picked.length,
         }));
-        if (Math.random() < CONFIG.RUMOR_EXTRA_FAKE) {
+        // [Phase3] 프레스티지: 험한 동네일수록 헛소문이 더 잘 낀다
+        if (Math.random() < CONFIG.RUMOR_EXTRA_FAKE + (S.prestige || 0) * CONFIG.PRESTIGE_FAKE_ADD) {
           out.push(fakeFrom(pick(RUMOR_THEMES.filter(t => t.id !== theme.id))));
         }
       } else {
@@ -63,8 +65,8 @@ function genMatches(count) {
       return shuffle(out);
     };
     const rumorsA = genRumors(), rumorsB = genRumors();
-    // 🕵️ 정보원: 경기당 소문 하나의 진위를 알려준다
-    if (S.upgrades.informant) {
+    // 🕵️ 정보원 (상시) 또는 [Phase3] 뒷골목 정보상(당일 이벤트): 경기당 소문 하나의 진위를 알려준다
+    if (S.upgrades.informant || (S.event && S.event.oneVerify)) {
       const all = rumorsA.concat(rumorsB);
       if (all.length) pick(all).verified = true;
     }
@@ -79,8 +81,9 @@ function genMatches(count) {
   for (let m = 0; m < count; m++) {
     matches.push(makeMatch(order[m * 2], order[m * 2 + 1]));
   }
-  // 👑 마지막 날 밤: 마지막 경기는 그랜드 파이널 — 랭킹(승률) 1·2위 격돌, 베팅 상한 해제
-  if (S.day >= CONFIG.DAYS && matches.length) {
+  // 👑 그랜드 파이널: 캠페인 21일차 밤 또는 시즌 마지막 밤 — 랭킹 1·2위 격돌, 베팅 상한 해제
+  const finalNight = (S.season > 0) ? (seasonDayOf() === CONFIG.SEASON_LEN) : (S.day >= CONFIG.DAYS);
+  if (finalNight && matches.length) {
     const ranked = S.fighters.map((_, i) => i)
       .sort((x, y) => winRate(S.fighters[y]) - winRate(S.fighters[x]) || S.fighters[y].w - S.fighters[x].w);
     matches[matches.length - 1] = { ...makeMatch(ranked[0], ranked[1]), final: true };

@@ -15,6 +15,8 @@ function snapshotState(point) {
     day: S.day,
     gold: S.gold,
     debt: S.debt,
+    season: S.season || 0,     // [Phase3]
+    prestige: S.prestige || 0, // [Phase3]
     endingId: S.endingId || null,
     upgrades: { ...S.upgrades },
     regularDeals: { ...S.regularDeals },
@@ -60,6 +62,8 @@ function continueGame() {
   S.day = d.day;
   S.gold = d.gold;
   S.debt = d.debt;
+  S.season = d.season || 0;     // [Phase3]
+  S.prestige = d.prestige || 0; // [Phase3]
   S.endingId = d.endingId || null;
   S.upgrades = d.upgrades || {};
   S.regularDeals = d.regularDeals || {};

@@ -18,6 +18,9 @@ function renderResult() {
     storyLine = '💸 8일째 아침, 김사장의 부하들이 들이닥쳤다. 갚을 돈이 없다. 전당포 열쇠는 그의 손에 넘어갔고, 당신은 뒷골목으로 사라졌다... <b>[배드 엔딩: 빚의 무게]</b>';
   } else if (S.endingId === 'act2_fail') {
     storyLine = '🚬 회장이 고개를 저었다. "아깝군." 당신의 눈은 이제 회장의 것이다 — 격투장 구석에서 남의 장물이나 감정하며 산다. <b>[엔딩: 회장의 감정사]</b>';
+  } else if (S.season > 0) {
+    // [Phase3] 시즌 모드 중간 결산 — 엔딩이 아니다
+    storyLine = `🌆 시즌 ${S.season} · ${seasonDayOf()}일째${S.prestige ? ` · 🏚️ 프레스티지 ×${S.prestige}` : ''} — 지하경제는 계속된다.`;
   } else if (S.day >= CONFIG.DAYS) {
     storyLine = net >= 100000
       ? '👑 그랜드 파이널의 함성이 잦아들 무렵, 거리의 모두가 알게 됐다 — 이 도시의 돈이 어디로 흐르는지를. <b>[진 엔딩: 지하경제의 왕]</b>'
@@ -29,7 +32,10 @@ function renderResult() {
       ? `💸 아직 빚 ${fmt(S.debt)} G가 남은 채 장부를 덮었다. (${S.day}일차 중간 결산 — 이야기는 계속된다)`
       : `📜 ${S.day}일차의 중간 결산. 이야기는 아직 끝나지 않았다.`;
   }
-  showTransition('<div>🌅</div><div>7일간의 장사가 끝났다...</div>', () => {
+  // [Phase3] 캠페인 정상 완주(엔딩 도달) 시 시즌 모드 해금 버튼 노출
+  const seasonUnlock = !S.endingId && S.season === 0 && S.day >= CONFIG.DAYS;
+  const canResume = typeof hasSave === 'function' && hasSave() && !S.endingId;
+  showTransition(`<div>🌅</div><div>${S.season > 0 ? '시즌 결산의 시간...' : '장부를 덮는다...'}</div>`, () => {
     $('screen').innerHTML = `
       <div class="panel center">
         <h1>📜 최종 결산</h1>
@@ -75,7 +81,9 @@ function renderResult() {
         <p class="dim" style="margin-top:6px">판단 우위가 +라면, 당신은 소문을 읽어 하우스보다 정확히 예측한 것이다.</p>
       </div>
       <div class="center" style="margin:16px 0">
-        <button class="btn-big" onclick="renderTitle()">다시 개업하기</button>
+        ${seasonUnlock ? '<button class="btn-big btn-pink" onclick="startSeasonMode()">🌆 시즌 모드로 계속한다</button>' : ''}
+        ${canResume ? '<button class="btn-big" onclick="continueGame()">게임으로 돌아간다 (오늘 아침부터)</button>' : ''}
+        <button class="${seasonUnlock || canResume ? 'btn-ghost' : 'btn-big'}" onclick="renderTitle()">타이틀로</button>
       </div>`;
   }, 1400);
 }

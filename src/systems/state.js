@@ -2,6 +2,7 @@
 // 모듈 간 호출·인라인 onclick은 아래 globalThis 등록을 통해 해석된다.
 const S = {
   day: 0, gold: 0, phase: 'title',
+  season: 0, prestige: 0, // [Phase3] 시즌 모드 · 가게 이전
   customers: [], custIdx: 0, purchases: [],
   fighters: [], matches: [], matchIdx: 0,
   currentBet: null, // { fighterIdx, amount }

@@ -25,7 +25,8 @@
       "Bash(mkdir -p legacy)",
       "Bash(cp index.html legacy/demo_v1.html)",
       "Bash(npm install *)",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(node sim/balance_report.mjs)"
     ]
   }
 }

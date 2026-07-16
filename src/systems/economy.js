@@ -3,6 +3,8 @@
 function startGame() {
   sndClick();
   S.day = 0; S.gold = CONFIG.START_GOLD;
+  S.season = 0;                 // [Phase3] 0 = 캠페인, 1+ = 시즌 모드
+  S.prestige = 0;               // [Phase3] 가게 이전 횟수
   S.endingId = null;            // 막 전환 판정에서 정해지는 엔딩 분기
   S.debt = CONFIG.DEBT_START;   // 김사장에게 진 빚 — 매일 아침 이자가 붙는다
   S.sponsorIdx = null;          // 후원 계약 중인 파이터 인덱스
@@ -33,8 +35,55 @@ function startGame() {
    ═══════════════════════════════════════════════════════════════ */
 // 막 전환 인터루드 (스토리 컷신 + 해금 안내)
 
+// [Phase3] 캠페인 클리어 후: 시즌 모드 진입 (결과 화면 버튼에서 호출)
+function startSeasonMode() {
+  sndClick();
+  S.season = 1;
+  S.endingId = null;
+  renderInterlude('season', S.gold - S.debt, () => startDay());
+}
+
+// [Phase3] 시즌 교체: 승률 하위 파이터 은퇴 → 신인 데뷔 (후원 파이터는 계약 보호)
+function rotateSeason() {
+  S.season = Math.floor((S.day - CONFIG.DAYS - 1) / CONFIG.SEASON_LEN) + 1;
+  const ranked = S.fighters.map((_, i) => i)
+    .sort((a, b) => winRate(S.fighters[a]) - winRate(S.fighters[b]));
+  const retired = [];
+  let replaced = 0;
+  for (let k = 0; k < ranked.length && replaced < CONFIG.SEASON_RETIRE; k++) {
+    const idx = ranked[k];
+    if (idx === S.sponsorIdx) continue;
+    retired.push(S.fighters[idx].name);
+    S.fighters[idx] = makeRookie();
+    replaced++;
+  }
+  // 시즌이 바뀌면 모든 전적을 절반으로 리셋 (신·구 격차 완화)
+  S.fighters.forEach(f => { f.w = Math.ceil(f.w / 2); f.l = Math.ceil(f.l / 2); });
+  S.sponsorOffersDay = 0; S.challengeOfferDay = 0;
+  const setName = ['왕실 예물', '전장 유물', '밀수 보물'][(S.season - 1) % 3];
+  toast(`🌆 시즌 ${S.season} 개막! ${retired.join('·')} 은퇴 → 신인 데뷔 · 전설 세트: ${setName}`, 4200);
+}
+
+function makeRookie() {
+  const name = pick(ROOKIE_RING) + ' ' + pick(ROOKIE_NAMES);
+  return {
+    name,
+    emoji: pick(['🐯', '🦁', '🐲', '🦈', '🐆', '🦍', '🦏', '🦊']),
+    color: pick(['#3a7a8a', '#8a3a5a', '#5a8a3a', '#8a6a2a', '#4a4a9a', '#7a3a8a']),
+    atk: randInt(4, 9), def: randInt(4, 9), spd: randInt(4, 9),
+    skill: pick(ROOKIE_SKILLS),
+    w: 0, l: 0,
+  };
+}
+
 function startDay() {
   S.day++;
+  // [Phase3] 시즌 모드: 막 판정 없음 — 시즌 첫날마다 리그 물갈이 + 세트 로테이션
+  if (S.season > 0) {
+    if (seasonDayOf() === 1) rotateSeason();
+    beginDay();
+    return;
+  }
   // ── 막 전환 판정 ──
   if (S.day === CONFIG.ACT1_END + 1) {
     // 8일차 아침: 김사장이 남은 빚을 강제 회수한다
@@ -103,17 +152,61 @@ function beginDay() {
     debtLine = `<div style="font-size:15px; color:#ff6b6b; margin-top:6px">💸 남은 빚 ${fmt(S.debt)} G (이자 +${Math.round(CONFIG.DEBT_INTEREST * 100)}% 반영)</div>`;
   }
   // 일일 이벤트 추첨 (1일차는 튜토리얼 성격으로 평범한 날 고정)
-  S.event = S.day === 1 ? DAILY_EVENTS[0] : pickWeighted(DAILY_EVENTS);
-  S.phase = 'day'; S.customers = genCustomers(); S.custIdx = 0; S.purchases = [];
+  // [Phase3] 선택지형 이벤트: 아침 전환 → 선택 모달 → 선택 결과를 반영해 손님 생성
+  const rolled = S.day === 1 ? DAILY_EVENTS[0] : pickWeighted(DAILY_EVENTS);
+  S.event = { id: rolled.id, name: rolled.name, desc: rolled.desc };
+  S.pendingEvent = rolled.choices ? rolled : null;
+  S.phase = 'day'; S.purchases = [];
   setTheme('day'); updateHUD();
   const evLine = S.event.id !== 'normal'
     ? `<div style="font-size:18px; color:#ffb347; margin-top:6px">${S.event.name}<br><span style="font-size:14px; opacity:0.85">${S.event.desc}</span></div>` : '';
-  // 막 목표 리마인더
-  const goalLine = actOf() === 2
-    ? `<div style="font-size:13px; color:#8fa3ff; margin-top:6px">🎯 회장의 시험: ${CONFIG.ACT2_END}일차까지 순자산 ${fmt(CONFIG.ACT2_TARGET)} G (현재 ${fmt(S.gold - S.debt)} G)</div>`
-    : actOf() === 3
-      ? `<div style="font-size:13px; color:#ff9edb; margin-top:6px">👑 ${CONFIG.DAYS}일차 밤, 그랜드 파이널 — 최대한 불려라</div>` : '';
-  showTransition(`<div>☀️</div><div>${S.day}일차 아침</div><div style="font-size:16px;opacity:0.7">전당포 문을 연다${loanMsg ? '' : '...'}</div>${loanMsg}${debtLine}${goalLine}${evLine}`, renderCustomer, S.event.id !== 'normal' || S.day === 1 ? 2000 : 1600);
+  // 막 목표 리마인더 / [Phase3] 시즌 모드 후일담
+  const goalLine = S.season > 0
+    ? (Math.random() < 0.25 ? `<div style="font-size:13px; color:#8fa3ff; margin-top:6px">${pick(EPILOGUE_LINES)}</div>` : '')
+    : actOf() === 2
+      ? `<div style="font-size:13px; color:#8fa3ff; margin-top:6px">🎯 회장의 시험: ${CONFIG.ACT2_END}일차까지 순자산 ${fmt(CONFIG.ACT2_TARGET)} G (현재 ${fmt(S.gold - S.debt)} G)</div>`
+      : actOf() === 3
+        ? `<div style="font-size:13px; color:#ff9edb; margin-top:6px">👑 ${CONFIG.DAYS}일차 밤, 그랜드 파이널 — 최대한 불려라</div>` : '';
+  const dayLabel = S.season > 0 ? `시즌 ${S.season} — ${seasonDayOf()}일째 아침` : `${S.day}일차 아침`;
+  showTransition(`<div>☀️</div><div>${dayLabel}</div><div style="font-size:16px;opacity:0.7">전당포 문을 연다${loanMsg ? '' : '...'}</div>${loanMsg}${debtLine}${goalLine}${evLine}`,
+    () => { if (S.pendingEvent) showEventChoice(); else startCustomers(); },
+    S.event.id !== 'normal' || S.day === 1 ? 2000 : 1600);
+}
+
+// [Phase3] 선택지 이벤트 모달 — 고른 선택지의 비용을 내고 효과를 S.event에 합친다
+function showEventChoice() {
+  const ev = S.pendingEvent;
+  if (!ev) { startCustomers(); return; }
+  showModal(`
+    <h2 class="accent">${ev.name}</h2>
+    <p style="font-size:14px">${ev.desc}</p>
+    <div style="margin-top:10px">
+      ${ev.choices.map((c, i) => `
+        <button class="btn-big" style="width:100%; margin:4px 0; font-size:15px" ${c.cost > S.gold ? 'disabled' : ''}
+          onclick="chooseEvent(${i})">${c.label}${c.cost ? ` (−${fmt(c.cost)} G)` : ''}
+          ${c.note ? `<span class="menu-sub">${c.note}</span>` : ''}</button>`).join('')}
+    </div>`);
+}
+
+function chooseEvent(i) {
+  const ev = S.pendingEvent;
+  if (!ev) return;
+  const c = ev.choices[i];
+  if (!c || c.cost > S.gold) return;
+  sndClick();
+  S.gold -= c.cost || 0;
+  S.event = { id: ev.id, name: ev.name, desc: c.note || c.label, ...c.fx };
+  S.pendingEvent = null;
+  hideModal();
+  updateHUD();
+  startCustomers();
+}
+
+// 이벤트 확정 후 손님 생성 → 첫 손님 응대
+function startCustomers() {
+  S.customers = genCustomers();
+  S.custIdx = 0;
+  renderCustomer();
 }
 
 
@@ -198,5 +291,5 @@ function renderEvening() {
    밤 루프 — 지하 격투장 베팅
    ═══════════════════════════════════════════════════════════════ */
 
-Object.assign(globalThis, { startGame, startDay, beginDay, recordHistory, nextCustomer, startEvening, renderEvening });
-export { startGame, startDay, beginDay, recordHistory, nextCustomer, startEvening, renderEvening };
+Object.assign(globalThis, { startGame, startDay, beginDay, recordHistory, showEventChoice, chooseEvent, startCustomers, nextCustomer, startEvening, renderEvening, startSeasonMode, rotateSeason, makeRookie });
+export { startGame, startDay, beginDay, recordHistory, showEventChoice, chooseEvent, startCustomers, nextCustomer, startEvening, renderEvening, startSeasonMode, rotateSeason, makeRookie };
