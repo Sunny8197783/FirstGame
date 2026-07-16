@@ -2,13 +2,40 @@
 // 모듈 간 호출·인라인 onclick은 아래 globalThis 등록을 통해 해석된다.
 function setTheme(t) { document.body.className = 'theme-' + t; }
 
+// [Phase4] 골드 카운트업 — 값 변화 시 이전값→새값으로 부드럽게 굴러간다.
+let _hudGoldShown = null; // 마지막으로 화면에 표시된 골드
+let _goldRAF = 0;
+function countUpGold(el, from, to) {
+  // 헤드리스 시뮬(브라우저 API 없음)·최초 표시·감속 모션 끔·미세 변화는 즉시 반영
+  if (!el || typeof requestAnimationFrame !== 'function' || from == null
+      || document.body.classList.contains('no-shake') || Math.abs(to - from) < 50) {
+    if (el) el.textContent = `💰 ${fmt(to)} G`;
+    return;
+  }
+  if (_goldRAF) cancelAnimationFrame(_goldRAF);
+  el.classList.remove('gold-up', 'gold-down');
+  void el.offsetWidth;                         // 리플로우로 애니메이션 재시작
+  el.classList.add(to >= from ? 'gold-up' : 'gold-down');
+  const dur = 550 / (gameSpeed() || 1);
+  const t0 = performance.now();
+  const step = (now) => {
+    const t = Math.min((now - t0) / dur, 1);
+    const e = 1 - Math.pow(1 - t, 3);          // easeOutCubic
+    el.textContent = `💰 ${fmt(Math.round(from + (to - from) * e))} G`;
+    if (t < 1) _goldRAF = requestAnimationFrame(step);
+    else { el.textContent = `💰 ${fmt(to)} G`; _goldRAF = 0; }
+  };
+  _goldRAF = requestAnimationFrame(step);
+}
+
 function updateHUD() {
   const playing = !(S.phase === 'title' || S.phase === 'result');
   $('hud').style.display = playing ? 'flex' : 'none';
   $('hud-day').textContent = S.season > 0
     ? `🌆 시즌${S.season} · D${seasonDayOf()}/${CONFIG.SEASON_LEN}` // [Phase3]
     : `📅 ${S.day}일차/${CONFIG.DAYS} · ${actOf()}막`;
-  $('hud-gold').textContent = `💰 ${fmt(S.gold)} G`;
+  countUpGold($('hud-gold'), playing ? _hudGoldShown : null, S.gold); // [Phase4] 카운트업
+  _hudGoldShown = playing ? S.gold : null; // 화면 밖(타이틀/결과)에선 추적 초기화
   $('hud-time').textContent = S.timeLabel || '';
   $('hud-debt').textContent = S.debt > 0 ? `💸 빚 ${fmt(S.debt)} G` : '✔ 빚 청산';
   $('hud-parts').textContent = (S.stats.drops ? `✦ ${S.stats.drops} 전설 부품` : '')

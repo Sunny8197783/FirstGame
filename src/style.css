@@ -6,6 +6,20 @@
 }
 :root {
   --px: 4px;
+  /* [Phase4] 디자인 토큰 — 8px 스페이싱 스케일 */
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 24px; --sp-6: 32px;
+  --radius: 0px;                 /* 픽셀 룩 — 각진 모서리 유지 */
+  --shadow-hard: 0 var(--px) 0 rgba(0,0,0,0.5);
+  /* [Phase4] 시맨틱 색 토큰 — 테마(낮 앰버 / 밤 네온)가 아래에서 덮어쓴다 */
+  --accent: #ffb347;             /* 강조 (금액·제목) */
+  --neon-pink: #ff44aa;          /* 밤 보조 강조 */
+  --good: #7dff7d;               /* 이익·승리 */
+  --bad: #ff6b6b;                /* 손실·패배 */
+  --gold: #ffd23e;               /* 골드 카운트 */
+  --panel-bg: #52351d;
+  --panel-border: #8a5a2b;
+  --bubble-bg: #f7ecd7;
+  --bubble-fg: #3a2413;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
@@ -18,32 +32,33 @@ body {
 }
 /* ── 낮 테마: 앰버/브라운 ───────────────────── */
 body.theme-day {
+  --accent: #ffb347; --panel-bg: #52351d; --panel-border: #8a5a2b;
   background: linear-gradient(180deg, #3a2417 0%, #241207 100%);
   color: #f5deb3;
 }
-body.theme-day .panel { background: #52351d; border-color: #8a5a2b; }
-body.theme-day .accent { color: #ffb347; }
 /* ── 저녁 테마 ───────────────────── */
 body.theme-evening {
+  --accent: #ff9e7a; --panel-bg: #4d2a35; --panel-border: #8a4a5b;
   background: linear-gradient(180deg, #4a2030 0%, #1e0e18 100%);
   color: #f0d8c8;
 }
-body.theme-evening .panel { background: #4d2a35; border-color: #8a4a5b; }
-body.theme-evening .accent { color: #ff9e7a; }
 /* ── 밤 테마: 네이비 + 네온 ───────────────────── */
 body.theme-night {
+  --accent: #00f0ff; --panel-bg: #141a45; --panel-border: #2f3a8f;
+  --bubble-bg: #0d1338; --bubble-fg: #cfe0ff;
   background: linear-gradient(180deg, #0d1030 0%, #050514 100%);
   color: #c8d8ff;
 }
-body.theme-night .panel { background: #141a45; border-color: #2f3a8f; }
-body.theme-night .accent { color: #00f0ff; }
-body.theme-night .neon-pink { color: #ff44aa; }
+/* 시맨틱 토큰 사용 — 테마가 값만 바꾼다 */
+.accent { color: var(--accent); }
+.neon-pink { color: var(--neon-pink); }
 
 /* 픽셀 테두리(계단식 box-shadow) */
 .panel {
-  border: var(--px) solid;
-  padding: 18px;
-  margin: 10px 0;
+  background: var(--panel-bg);
+  border: var(--px) solid var(--panel-border);
+  padding: var(--sp-4);
+  margin: var(--sp-3) 0;
   position: relative;
   box-shadow:
     0 var(--px) 0 rgba(0,0,0,0.45),
@@ -56,7 +71,13 @@ body.theme-night .neon-pink { color: #ff44aa; }
   display: flex; justify-content: space-between; align-items: center;
   font-size: 18px; padding: 10px 16px; margin-top: 8px;
 }
-#hud .gold { font-size: 22px; }
+#hud .gold { font-size: 22px; display: inline-block; }
+/* [Phase4] 골드 카운트업 강조 — 증가는 금빛 튐, 감소는 붉은 흔들림 */
+.gold-up { animation: gold-pop 0.55s ease-out; }
+.gold-down { animation: gold-dip 0.55s ease-out; }
+@keyframes gold-pop { 0% { transform: scale(1); } 30% { transform: scale(1.18); text-shadow: 0 0 12px var(--gold); color: var(--gold); } 100% { transform: scale(1); } }
+@keyframes gold-dip { 0% { transform: scale(1); } 30% { transform: scale(0.9); color: var(--bad); } 100% { transform: scale(1); } }
+body.no-shake .gold-up, body.no-shake .gold-down { animation: none; }
 h1 { font-size: 30px; text-align: center; line-height: 1.4; }
 h2 { font-size: 22px; margin-bottom: 10px; }
 h3 { font-size: 18px; margin-bottom: 6px; }
@@ -75,8 +96,7 @@ body.theme-night button { background: #23308f; }
 body.theme-night button.btn-pink { background: #a01a66; }
 button.btn-ghost { background: #444; }
 button.btn-big { font-size: 20px; padding: 14px 30px; }
-input[type=range] { width: 100%; accent-color: #ffb347; height: 28px; }
-body.theme-night input[type=range] { accent-color: #00f0ff; }
+input[type=range] { width: 100%; accent-color: var(--accent); height: 28px; }
 input[type=number] {
   font-family: inherit; font-size: 18px; width: 130px;
   padding: 6px; border: 3px solid #000; background: #1c1008; color: #ffd98a;
@@ -90,8 +110,7 @@ body.theme-night input[type=number] { background: #080a20; color: #9ff; }
 .speech { font-size: 16px; padding: 10px 14px; margin: 8px 0;
   background: rgba(0,0,0,0.25); border-left: 5px solid rgba(255,255,255,0.3); }
 .hint { padding: 6px 10px; margin: 4px 0; font-size: 15px;
-  background: rgba(255,255,255,0.06); border-left: 4px solid #ffb347; }
-body.theme-night .hint { border-left-color: #00f0ff; }
+  background: rgba(255,255,255,0.06); border-left: 4px solid var(--accent); }
 .tag { display: inline-block; padding: 2px 8px; font-size: 13px;
   background: rgba(0,0,0,0.4); border: 2px solid rgba(255,255,255,0.2); margin: 2px; }
 .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-start; }
@@ -104,8 +123,8 @@ body.theme-night .hint { border-left-color: #00f0ff; }
   border: 3px solid #000; border-radius: 4px; box-shadow: 0 3px 0 rgba(0,0,0,0.5);
   image-rendering: pixelated; animation: ending-fade 1.2s ease-out both; }
 @keyframes ending-fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-.good { color: #7dff7d; }
-.bad { color: #ff6b6b; }
+.good { color: var(--good); }
+.bad { color: var(--bad); }
 .dim { opacity: 0.65; font-size: 14px; }
 table { width: 100%; border-collapse: collapse; font-size: 15px; }
 td, th { padding: 6px 8px; border-bottom: 2px solid rgba(255,255,255,0.12); text-align: right; }
@@ -217,12 +236,12 @@ td:first-child, th:first-child { text-align: left; }
 @keyframes cust-shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 @keyframes cust-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
 @keyframes cust-nod { 0%,100% { transform: rotate(0); } 40% { transform: rotate(-7deg); } 70% { transform: rotate(4deg); } }
-.bubble { background: #f7ecd7; color: #3a2413; border: 3px solid #000; padding: 8px 10px;
+.bubble { background: var(--bubble-bg); color: var(--bubble-fg); border: 3px solid #000; padding: 8px 10px;
   font-size: 14px; line-height: 1.55; position: relative; margin-top: 12px;
   box-shadow: 3px 3px 0 rgba(0,0,0,0.5); }
 .bubble::before { content: ''; position: absolute; top: -13px; left: 22px;
   border: 7px solid transparent; border-bottom-color: #000; }
-body.theme-night .bubble { background: #0d1338; color: #cfe0ff; border-color: #3a4aa8; }
+body.theme-night .bubble { border-color: #3a4aa8; }
 .trust { font-size: 12px; margin-top: 4px; opacity: 0.9; }
 .trust.low { color: #c0392b; } .trust.mid { color: #8a6d1a; } .trust.high { color: #1e8449; }
 body.theme-night .trust.low { color: #ff6b6b; }
@@ -381,8 +400,7 @@ body.theme-night .trust.high { color: #7dff7d; }
 .inspect-row { display: flex; align-items: baseline; gap: 8px; font-size: 13px;
   padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
 .inspect-row:last-child { border-bottom: none; }
-.inspect-name { min-width: 72px; color: #ffb347; }
-body.theme-night .inspect-name { color: #00f0ff; }
+.inspect-name { min-width: 72px; color: var(--accent); }
 .inspect-desc { flex: 1; opacity: 0.9; }
 .inspect-dots { letter-spacing: 2px; font-size: 11px; color: #ffd23e; white-space: nowrap; }
 
@@ -397,8 +415,8 @@ body.theme-night .inspect-name { color: #00f0ff; }
 /* ── [Phase 1] 토스트 알림 ── */
 #toast-wrap { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
   z-index: 90; display: flex; flex-direction: column; gap: 8px; align-items: center; pointer-events: none; }
-.toast { background: #14100a; color: #ffd98a; border: 3px solid #8a5a2b; padding: 10px 18px;
-  font-size: 14px; box-shadow: 0 4px 0 rgba(0,0,0,0.5); animation: fade-up 0.3s both; }
+.toast { background: #14100a; color: #ffd98a; border: 3px solid var(--panel-border); padding: var(--sp-3) var(--sp-4);
+  font-size: 14px; box-shadow: var(--shadow-hard); animation: fade-up 0.3s both; }
 .toast.out { transition: opacity 0.3s; opacity: 0; }
 
 /* ── [Phase 1] 타이틀 메뉴 ── */
