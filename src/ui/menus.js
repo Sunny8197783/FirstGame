@@ -21,7 +21,7 @@ function renderSettings() {
     <div class="set-row"><span>중계 텍스트 속도</span><span>${seg('textSpeed', [1, 2, 3], ['1×', '2×', '3×'])}</span></div>
     <div class="set-row"><span>폰트 크기</span><span>${seg('fontScale', [1, 1.15], ['기본', '크게'])}</span></div>
     <div class="set-row"><span>화면 흔들림</span><span>${seg('shake', [true, false], ['켬', '끔'])}</span></div>
-    <p class="dim" style="font-size:12px; margin-top:8px">⏩ 진행 중 <b>SPACE</b>로 전환·경기 중계를 언제든 스킵할 수 있다.</p>
+    <p class="dim" style="font-size:12px; margin-top:8px">⌨️ 단축키 — <b>SPACE</b> 전환·중계 스킵 · <b>Enter</b> 주요 행동(흥정 제시 등) · <b>Esc</b> 창 닫기 · <b>D</b> 디버그</p>
     <div class="set-row" style="margin-top:6px"><span>세이브 데이터</span><span>
       <button class="btn-ghost seg" onclick="exportSave()">📤 내보내기</button>
       <button class="btn-ghost seg" onclick="$('save-import-menu').click()">📥 가져오기</button>

@@ -269,7 +269,7 @@ function renderEvening() {
     return `<tr>
       <td>${p.item.emoji} ${p.item.name}${tag}</td>
       <td>-${fmt(p.price)}</td><td>+${fmt(saleV)}</td>
-      <td class="${profit >= 0 ? 'good' : 'bad'}">${profit >= 0 ? '+' : ''}${fmt(profit)}</td>
+      <td>${plHTML(profit)}</td>
     </tr>`;
   }).join('');
   S.purchases = [];
@@ -281,8 +281,7 @@ function renderEvening() {
       ${rows ? `<table>
         <tr><th>매입 물건</th><th>매입가</th><th>되팔이</th><th>손익</th></tr>${rows}
       </table>` : '<p class="dim">오늘 매입한 물건이 없다. 정산할 것도 없다.</p>'}
-      <p class="big" style="margin-top:12px">오늘 장사 손익:
-        <span class="${total >= 0 ? 'good' : 'bad'}">${total >= 0 ? '+' : ''}${fmt(total)} G</span></p>
+      <p class="big" style="margin-top:12px">오늘 장사 손익: ${plHTML(total, ' G', { big: true })}</p>
       <p>현재 자산: <span class="accent big">${fmt(S.gold)} G</span></p>
       <div class="center" style="margin-top:14px">
         <button class="btn-big" onclick="startNight()">🌙 지하 격투장으로 내려간다</button>

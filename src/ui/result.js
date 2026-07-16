@@ -133,7 +133,7 @@ function renderResult() {
           <tr><td>최종 보유 골드</td><td>${fmt(S.gold)} G</td></tr>
           <tr><td>남은 빚 (김사장)</td><td class="${S.debt > 0 ? 'bad' : 'good'}">${S.debt > 0 ? '-' + fmt(S.debt) + ' G' : '청산 완료 ✔'}</td></tr>
           <tr><td>순자산</td><td class="accent big">${fmt(net)} G</td></tr>
-          <tr><td>시작 대비 (시작 순자산 ${fmt(CONFIG.START_GOLD - CONFIG.DEBT_START)} G)</td><td class="${delta >= 0 ? 'good' : 'bad'} big">${delta >= 0 ? '+' : ''}${fmt(delta)} G</td></tr>
+          <tr><td>시작 대비 (시작 순자산 ${fmt(CONFIG.START_GOLD - CONFIG.DEBT_START)} G)</td><td>${plHTML(delta, ' G', { big: true })}</td></tr>
           <tr><td>암시장 도구 투자</td><td>${Object.values(S.upgrades).filter(Boolean).length} / ${UPGRADES.length}종</td></tr>
           <tr><td>단골 확보</td><td>${Object.values(S.regularDeals).filter(v => v >= CONFIG.REGULAR_DEALS_REQ).length}개 유형</td></tr>
           ${st.loans ? `<tr><td>김사장 신세진 횟수</td><td class="bad">${st.loans}회</td></tr>` : ''}
@@ -147,14 +147,14 @@ function renderResult() {
           <tr><td>최고의 한 방 (단일 최대 이익)</td><td class="good">${st.bestDeal > 0 ? '+' + fmt(st.bestDeal) + ' G' : '-'}</td></tr>
           ${st.jackpots ? `<tr><td>🎉 숨은 진품 발굴</td><td class="accent">${st.jackpots}회</td></tr>` : ''}
           ${st.stolenLost ? `<tr><td>🚨 장물 압수 피해</td><td class="bad">${st.stolenLost}회</td></tr>` : ''}
-          <tr><td>장사 총손익</td><td class="${st.tradePL >= 0 ? 'good' : 'bad'}">${st.tradePL >= 0 ? '+' : ''}${fmt(st.tradePL)} G</td></tr>
+          <tr><td>장사 총손익</td><td>${plHTML(st.tradePL, ' G')}</td></tr>
         </table>
       </div>
       <div class="panel">
         <h3>🌙 밤 — 베팅 성적</h3>
         <table>
           <tr><td>베팅 횟수 / 적중</td><td>${st.bets}회 / ${st.betWins}회 (${st.bets ? (hitRate * 100).toFixed(0) : '-'}%)</td></tr>
-          <tr><td>베팅 총손익</td><td class="${st.betPL >= 0 ? 'good' : 'bad'}">${st.betPL >= 0 ? '+' : ''}${fmt(st.betPL)} G</td></tr>
+          <tr><td>베팅 총손익</td><td>${plHTML(st.betPL, ' G')}</td></tr>
           <tr><td>판단 우위 (적중률 − 하우스 추정)</td>
               <td class="${edge >= 0 ? 'good' : 'bad'}">${st.bets ? (edge >= 0 ? '+' : '') + (edge * 100).toFixed(1) + '%p' : '-'}</td></tr>
           <tr><td>전설 부품 ✦</td><td class="accent">${st.drops}개</td></tr>

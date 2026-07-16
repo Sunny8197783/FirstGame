@@ -16,7 +16,14 @@ const shuffle = (arr) => { const a = arr.slice(); for (let i = a.length - 1; i >
 
 const pickWeighted = (arr) => { const tot = arr.reduce((s, e) => s + e.w, 0); let r = Math.random() * tot; for (const e of arr) { if ((r -= e.w) < 0) return e; } return arr[0]; };
 
-// Web Audio 삑삑이 (선택사항 — 실패해도 무시)
+// [Phase4] 손익 이중코딩 — 색(good/bad)만이 아니라 방향 아이콘(▲/▼)을 함께 붙여
+// 색각 이상 사용자도 이익/손실을 구분할 수 있게 한다. (아이콘은 CSS ::before가 그림)
+const plHTML = (v, suffix, opts) => {
+  const o = opts || {};
+  const pos = v >= 0;
+  const body = (pos ? '+' : '-') + fmt(Math.abs(v)) + (suffix || '');
+  return `<span class="pl ${pos ? 'pl-pos' : 'pl-neg'}${o.big ? ' big' : ''}">${body}</span>`;
+};
 
-Object.assign(globalThis, { $, fmt, rand, randInt, pick, clamp, shuffle, pickWeighted });
-export { fmt, rand, randInt, pick, clamp, shuffle, pickWeighted };
+Object.assign(globalThis, { $, fmt, rand, randInt, pick, clamp, shuffle, pickWeighted, plHTML });
+export { fmt, rand, randInt, pick, clamp, shuffle, pickWeighted, plHTML };
