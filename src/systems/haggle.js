@@ -1,7 +1,19 @@
 // ⚠️ Phase 1 자동 이식: 데모 index.html에서 원문 그대로 분리한 코드 (로직 변경 금지 구역)
 // 모듈 간 호출·인라인 onclick은 아래 globalThis 등록을 통해 해석된다.
+// [Phase4] 손님 감정 변형 — 흥정 상태에 따라 표정 배지 + 프레임 애니메이션 전환
+function setCustMood(mood) {
+  const fr = $('cust-frame'), md = $('cust-mood');
+  if (!fr || !md) return;
+  fr.classList.remove('m-happy', 'm-angry', 'm-think');
+  if (mood === 'angry')      { md.textContent = '😠'; fr.classList.add('m-angry'); }
+  else if (mood === 'think') { md.textContent = '🤔'; fr.classList.add('m-think'); }
+  else if (mood === 'happy') { md.textContent = '😊'; fr.classList.add('m-happy'); }
+  else                       { md.textContent = '😐'; } // neutral
+}
+
 function haggleSay(kind, text) {
   const H = S.haggle, c = S.customers[S.custIdx];
+  setCustMood(kind === 'insult' ? 'angry' : kind === 'counter' ? 'think' : 'neutral');
   $('hg-demand').textContent = fmt(H.D) + ' G';
   $('hg-mood').innerHTML = `기분 ${MOOD_FACES[Math.min(Math.max(H.P, 0) + (kind === 'insult' ? 0 : 2), 5)]} · 인내심 ${'❤️'.repeat(Math.max(H.P, 0)) || '💢'}`;
   $('hg-say').innerHTML = text || pick(HAGGLE_LINES[kind]).replaceAll('{D}', fmt(H.D) + ' G');
@@ -69,6 +81,7 @@ function closeDeal(c, price, tone) {
   if (price <= c.asking * 0.5) achieve('cheap-buy');
   if (S.stats.deals >= 10 && S.stats.buyRatioSum / S.stats.deals < 0.7) achieve('expert-70');
   updateHUD();
+  setCustMood('happy'); // [Phase4] 성사 시 만족 표정
   sndHaggleOk(); // [Phase4] 거래 성사 상승음
   const cheap = price <= c.asking * 0.6;
   showModal(`
@@ -112,5 +125,5 @@ function passCustomer() {
     <div class="center"><button onclick="nextCustomer()">다음 →</button></div>`);
 }
 
-Object.assign(globalThis, { haggleSay, makeOffer, acceptDemand, closeDeal, walkOut, passCustomer });
-export { haggleSay, makeOffer, acceptDemand, closeDeal, walkOut, passCustomer };
+Object.assign(globalThis, { setCustMood, haggleSay, makeOffer, acceptDemand, closeDeal, walkOut, passCustomer });
+export { setCustMood, haggleSay, makeOffer, acceptDemand, closeDeal, walkOut, passCustomer };

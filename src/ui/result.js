@@ -1,5 +1,87 @@
 // ⚠️ Phase 1 자동 이식: 데모 index.html에서 원문 그대로 분리한 코드 (로직 변경 금지 구역)
 // 모듈 간 호출·인라인 onclick은 아래 globalThis 등록을 통해 해석된다.
+
+// [Phase4] 엔딩 분기별 SVG 일러스트 — 픽셀 테마 색(앰버/네온)으로 통일한 실루엣 삽화.
+function endingArt(key) {
+  const svg = (inner) => `<svg class="ending-art" viewBox="0 0 320 150" role="img" aria-label="엔딩 삽화" xmlns="http://www.w3.org/2000/svg">${inner}</svg>`;
+  const A = {
+    // 배드엔딩: 빚의 무게 — 붉게 물든 뒷골목으로 사라지는 실루엣
+    debt: svg(`
+      <rect width="320" height="150" fill="#140d0d"/>
+      <rect x="0" y="0" width="90" height="150" fill="#241618"/>
+      <rect x="230" y="0" width="90" height="150" fill="#241618"/>
+      <polygon points="90,0 130,0 120,150 90,150" fill="#1a1012"/>
+      <polygon points="230,0 190,0 200,150 230,150" fill="#1a1012"/>
+      <ellipse cx="160" cy="150" rx="70" ry="16" fill="#3a0e12"/>
+      <circle cx="160" cy="40" r="26" fill="#c0303a" opacity="0.25"/>
+      <g fill="#0a0608"><ellipse cx="160" cy="78" rx="13" ry="15"/><rect x="150" y="90" width="20" height="46" rx="6"/></g>
+      <text x="160" y="46" fill="#e05560" font-size="26" text-anchor="middle" font-weight="bold">빚</text>`),
+    // 회장의 감정사 — 스탠드 조명 아래 갇혀 감정만 하는 신세
+    appraiser: svg(`
+      <rect width="320" height="150" fill="#15141a"/>
+      <polygon points="205,10 235,10 300,140 140,140" fill="#e8b23a" opacity="0.12"/>
+      <rect x="205" y="4" width="30" height="12" rx="3" fill="#3a3a44"/>
+      <rect x="80" y="120" width="160" height="10" fill="#2a2620"/>
+      <circle cx="150" cy="112" r="16" fill="none" stroke="#c9cdd4" stroke-width="4"/>
+      <rect x="160" y="120" width="6" height="22" rx="3" fill="#8a8f9a" transform="rotate(38 163 131)"/>
+      <rect x="120" y="116" width="10" height="8" fill="#9cc8f0"/>
+      <g fill="#0a0810" opacity="0.9"><ellipse cx="250" cy="70" rx="14" ry="16"/><rect x="238" y="84" width="24" height="46" rx="6"/></g>`),
+    // 진엔딩: 지하경제의 왕 — 도시 스카이라인 위 황금 왕관
+    king: svg(`
+      <rect width="320" height="150" fill="#120f1a"/>
+      <g fill="#e8b23a" opacity="0.16"><rect x="10" y="90" width="26" height="60"/><rect x="46" y="70" width="26" height="80"/><rect x="82" y="100" width="26" height="50"/><rect x="212" y="95" width="26" height="55"/><rect x="248" y="72" width="26" height="78"/><rect x="284" y="88" width="26" height="62"/></g>
+      <circle cx="160" cy="70" r="60" fill="#e8b23a" opacity="0.10"/>
+      <polygon points="112,96 122,52 140,78 160,44 180,78 198,52 208,96" fill="#e8b23a" stroke="#a3711d" stroke-width="3"/>
+      <rect x="112" y="96" width="96" height="16" fill="#c8a24a" stroke="#a3711d" stroke-width="3"/>
+      <circle cx="122" cy="52" r="5" fill="#f0e08a"/><circle cx="160" cy="44" r="6" fill="#f0e08a"/><circle cx="198" cy="52" r="5" fill="#f0e08a"/>
+      <circle cx="160" cy="104" r="5" fill="#c0303a"/>
+      <text x="160" y="138" fill="#e8b23a" font-size="13" text-anchor="middle" font-weight="bold">지하경제의 왕</text>`),
+    // 격투장의 새 주인 — 네온 링 로프 위로 치켜든 주먹
+    ring: svg(`
+      <rect width="320" height="150" fill="#0f0d16"/>
+      <line x1="0" y1="46" x2="320" y2="46" stroke="#ff44aa" stroke-width="3" opacity="0.8"/>
+      <line x1="0" y1="70" x2="320" y2="70" stroke="#44d0ff" stroke-width="3" opacity="0.7"/>
+      <line x1="0" y1="94" x2="320" y2="94" stroke="#ff44aa" stroke-width="3" opacity="0.6"/>
+      <rect x="18" y="30" width="8" height="110" fill="#3a3a44"/><rect x="294" y="30" width="8" height="110" fill="#3a3a44"/>
+      <g fill="#0a0810"><ellipse cx="160" cy="96" rx="15" ry="17"/><rect x="150" y="108" width="20" height="34" rx="6"/><rect x="168" y="60" width="12" height="42" rx="6" transform="rotate(12 174 81)"/></g>
+      <circle cx="182" cy="52" r="11" fill="#c0303a" stroke="#7a1820" stroke-width="2"/>
+      <text x="160" y="24" fill="#ff66bb" font-size="13" text-anchor="middle" font-weight="bold">격투장의 새 주인</text>`),
+    // 이름난 전당포 주인 — 따뜻한 앰버 간판의 가게 앞
+    shop: svg(`
+      <rect width="320" height="150" fill="#171009"/>
+      <rect x="40" y="60" width="240" height="90" fill="#2a1c0e"/>
+      <rect x="40" y="46" width="240" height="18" fill="#5a3617"/>
+      <g fill="#8a5a2b"><rect x="40" y="64" width="240" height="14"/></g>
+      <path d="M40 64 h240 l-14 18 h-212 z" fill="#c8a24a" opacity="0.25"/>
+      <rect x="120" y="86" width="80" height="64" fill="#3a2a16"/>
+      <rect x="132" y="98" width="56" height="40" fill="#e8b23a" opacity="0.22"/>
+      <circle cx="220" cy="30" r="20" fill="#e8b23a" opacity="0.18"/>
+      <rect x="205" y="16" width="30" height="28" rx="3" fill="#241a10" stroke="#e8b23a" stroke-width="2"/>
+      <text x="220" y="38" fill="#e8b23a" font-size="20" text-anchor="middle" font-weight="bold">典</text>
+      <text x="160" y="140" fill="#f2efe6" font-size="12" text-anchor="middle">낮엔 감정 · 밤엔 베팅</text>`),
+    // 시즌/중간 결산 — 떠오르는 해와 장부
+    season: svg(`
+      <rect width="320" height="150" fill="#141019"/>
+      <circle cx="160" cy="150" r="60" fill="#e8b23a" opacity="0.14"/>
+      <circle cx="160" cy="150" r="40" fill="#ff9a3a" opacity="0.18"/>
+      <rect x="108" y="96" width="104" height="46" rx="4" fill="#2a2620" stroke="#8a5a2b" stroke-width="3"/>
+      <line x1="120" y1="108" x2="200" y2="108" stroke="#c9cdd4" stroke-width="2" opacity="0.5"/>
+      <line x1="120" y1="120" x2="200" y2="120" stroke="#c9cdd4" stroke-width="2" opacity="0.5"/>
+      <line x1="120" y1="132" x2="176" y2="132" stroke="#c9cdd4" stroke-width="2" opacity="0.5"/>`),
+  };
+  return A[key] || '';
+}
+
+// 엔딩 종류에서 삽화 키를 정한다(스토리 분기와 동일 기준)
+function endingKey() {
+  if (S.endingId === 'debt_fail') return 'debt';
+  if (S.endingId === 'act2_fail') return 'appraiser';
+  if (S.season > 0) return 'season';
+  const net = S.gold - S.debt;
+  if (S.day >= CONFIG.DAYS) return net >= 100000 ? 'king' : net >= 60000 ? 'ring' : 'shop';
+  return 'season'; // 중간 결산
+}
+
 function renderResult() {
   S.phase = 'result'; setTheme('night'); updateHUD();
   const st = S.stats;
@@ -39,6 +121,7 @@ function renderResult() {
     $('screen').innerHTML = `
       <div class="panel center">
         <h1>📜 최종 결산</h1>
+        ${endingArt(endingKey())}
         <p class="huge accent" style="margin:10px 0">${grade}</p>
         <p class="big">"${comment}"</p>
         <p style="margin-top:10px; font-size:15px">${storyLine}</p>
@@ -92,5 +175,5 @@ function renderResult() {
    디버그 패널 ([D] 토글 — 밸런스 검증용)
    ═══════════════════════════════════════════════════════════════ */
 
-Object.assign(globalThis, { renderResult });
-export { renderResult };
+Object.assign(globalThis, { renderResult, endingArt, endingKey });
+export { renderResult, endingArt, endingKey };

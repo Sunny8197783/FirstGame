@@ -485,6 +485,22 @@ const PIXEL_ART = {
 ]},
 };
 
+// [Phase4] 픽셀 테마 팔레트 — 전 아이템이 하나의 통일된 픽셀 룩으로 읽히도록
+// 구조색(외곽선·금·은 계열)을 아래 정식 12색 안으로 정규화한다.
+// 각 아이템 고유의 강조색(보석 블루·홍색·비취 등)은 그대로 보존 → 다양성 유지.
+const PX_THEME = {
+  ink:'#241a10',                          // 외곽선(모든 아이템 공통)
+  gold:'#e8b23a', goldSh:'#a3711d', brass:'#c8a24a', // 금·황동
+  silver:'#c9cdd4', silverSh:'#8a8f9a', steel:'#3a3a44', // 은·강철
+  wood:'#8a5a2b', woodSh:'#5a3617',       // 목재
+  cream:'#f2efe6', dark:'#3a3226', ice:'#9cc8f0', // 상아·먹·보석광
+};
+// 안전 정규화: 의미가 일관된 구조 문자만 정식값으로 통일(강조색 문자는 미변경)
+const PX_NORM = { O:PX_THEME.ink, G:PX_THEME.gold, g:PX_THEME.goldSh, S:PX_THEME.silver, s:PX_THEME.silverSh };
+for (const a of Object.values(PIXEL_ART)) {
+  for (const ch in PX_NORM) if (ch in a.p) a.p[ch] = PX_NORM[ch];
+}
+
 // 픽셀아트 렌더러: 1px 격자를 box-shadow로 그린다. 데이터가 없으면 이모지 폴백.
 
 function pixelArtHTML(item, sc) {
@@ -504,5 +520,5 @@ function pixelArtHTML(item, sc) {
 
 // 실물 검수: 아이템별 감정 포인트 3부위 (부위 점수 1~5로 상태를 보여준다)
 
-Object.assign(globalThis, { PIXEL_ART, pixelArtHTML });
-export { PIXEL_ART, pixelArtHTML };
+Object.assign(globalThis, { PIXEL_ART, pixelArtHTML, PX_THEME });
+export { PIXEL_ART, pixelArtHTML, PX_THEME };

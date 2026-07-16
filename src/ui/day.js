@@ -17,7 +17,7 @@ function renderCustomer() {
       <div class="shop-counter"></div>
       <div class="day-grid">
         <div class="panel walk-in">
-          <div class="center"><span class="pframe"><span class="face">${c.ctype.emoji}</span></span><span class="carry">${c.item.emoji}</span></div>
+          <div class="center"><span class="pframe" id="cust-frame"><span class="face">${c.ctype.emoji}</span><span class="mood-badge" id="cust-mood">😐</span></span><span class="carry">${c.item.emoji}</span></div>
           <h3 class="center" style="margin-top:6px">${c.ctype.type}</h3>
           ${c.regular ? '<p class="center accent" style="font-size:13px">⭐ 단골 — 값을 잘 쳐주는 가게라 소문났다</p>' : ''}
           <p class="center dim" style="font-size:13px">${c.name} · 손님 ${S.custIdx + 1}/${S.customers.length}</p>
