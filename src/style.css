@@ -10,6 +10,7 @@
   --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 24px; --sp-6: 32px;
   --radius: 0px;                 /* 픽셀 룩 — 각진 모서리 유지 */
   --shadow-hard: 0 var(--px) 0 rgba(0,0,0,0.5);
+  --app-max: 1000px;             /* [Phase4] 반응형 컨테이너 폭 (큰 화면에서 확장) */
   /* [Phase4] 시맨틱 색 토큰 — 테마(낮 앰버 / 밤 네온)가 아래에서 덮어쓴다 */
   --accent: #ffb347;             /* 강조 (금액·제목) */
   --neon-pink: #ff44aa;          /* 밤 보조 강조 */
@@ -66,9 +67,9 @@ body.theme-night {
     var(--px) var(--px) 0 rgba(0,0,0,0.45),
     inset 0 var(--px) 0 rgba(255,255,255,0.07);
 }
-#app { width: 100%; max-width: 1000px; padding: 12px; }
+#app { width: 100%; max-width: var(--app-max, 1000px); padding: 12px; }
 #hud {
-  display: flex; justify-content: space-between; align-items: center;
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px 12px;
   font-size: 18px; padding: 10px 16px; margin-top: 8px;
 }
 #hud .gold { font-size: 22px; display: inline-block; }
@@ -227,7 +228,7 @@ td:first-child, th:first-child { text-align: left; }
 .shop-counter { position: absolute; bottom: 0; left: 0; right: 0; height: 44px; pointer-events: none;
   background: repeating-linear-gradient(90deg, #7a4a22 0 32px, #6b3f1c 32px 64px);
   border-top: 4px solid #2a1608; box-shadow: inset 0 6px 8px rgba(0,0,0,0.3); }
-.day-grid { position: relative; display: grid; grid-template-columns: 250px 1fr 250px;
+.day-grid { position: relative; display: grid; grid-template-columns: clamp(210px, 20vw, 300px) 1fr clamp(210px, 20vw, 300px);
   gap: 12px; margin-top: 86px; margin-bottom: 30px; z-index: 2; align-items: start; }
 @media (max-width: 860px) { .day-grid, .night-grid { grid-template-columns: 1fr !important; } }
 /* 초상 프레임 + 말풍선 + 신뢰도 라벨 */
@@ -270,7 +271,7 @@ body.theme-night .trust.high { color: #7dff7d; }
 .neon-r { right: 5%; background: #00f0ff; box-shadow: 0 0 20px 5px rgba(0,240,255,0.8); }
 .hp-row { position: relative; z-index: 2; display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
 .hp-row .hpbar-wrap { flex: 1; }
-.night-grid { position: relative; z-index: 2; display: grid; grid-template-columns: 240px 1fr 240px;
+.night-grid { position: relative; z-index: 2; display: grid; grid-template-columns: clamp(200px, 19vw, 290px) 1fr clamp(200px, 19vw, 290px);
   gap: 10px; align-items: start; margin-bottom: 10px; }
 .night-grid .panel { margin: 0; padding: 10px; }
 .ring { position: relative; height: 300px; background: #12173d; border: 4px solid #000; overflow: hidden;
@@ -468,3 +469,31 @@ body.font-lg td, body.font-lg th, body.font-lg .speech { font-size: 117%; }
 body.font-lg button { font-size: 108%; }
 /* 화면 흔들림 끔 */
 body.no-shake .sprite-pos.rx-hit { animation: none; }
+
+/* ═══════════════════════════════════════════════════════════════
+   [Phase4] 반응형 — 1280×720 ~ 1920×1080 대응 + 60fps 합성 힌트
+   ═══════════════════════════════════════════════════════════════ */
+/* 큰 화면: 남는 여백 대신 콘텐츠 폭을 키운다(측면 패널은 clamp로 자동 확장) */
+@media (min-width: 1400px) { :root { --app-max: 1180px; } }
+@media (min-width: 1700px) { :root { --app-max: 1320px; } }
+/* 낮은 높이(≈720): 상단 여백·로고를 줄여 세로 오버플로를 막는다 */
+@media (max-height: 780px) {
+  .day-grid { margin-top: 62px; margin-bottom: 16px; }
+  .shop-shelf.sh1 { top: 6px; } .shop-shelf.sh2 { top: 40px; }
+  .game-logo { margin: 8px 0 18px; }
+  .logo-main { font-size: 56px; }
+  h1 { font-size: 26px; }
+  .ring { height: 250px; }
+}
+@media (max-height: 640px) {
+  .logo-main { font-size: 44px; }
+  .day-grid { margin-top: 52px; }
+  .ring { height: 220px; }
+}
+/* 60fps: 매 프레임 변형되는 요소만 합성 레이어로 승격(transform/opacity 기반) */
+.sprite-pos, .px-wrap, .item-stage .item-body { will-change: transform; }
+/* 접근성: 모션 최소화 선호 사용자는 장식 애니메이션을 끈다 */
+@media (prefers-reduced-motion: reduce) {
+  .logo-main, .btn-start, .face, .intro-art, .px-wrap, .item-stage .item-body,
+  .pframe.m-think, .drop-in, .walk-in { animation: none !important; }
+}
