@@ -3,6 +3,7 @@
 // [Phase 1 개편] 타이틀 = 메뉴 화면 (새 게임 / 이어하기 미리보기 / 백업 / 설정·확률·업적 자리)
 function renderTitle() {
   S.phase = 'title'; setTheme('night'); updateHUD();
+  setBgm('title'); // [Phase4] 타이틀 BGM
   const sav = loadSaveData();
   const act = sav ? (sav.day <= CONFIG.ACT1_END ? 1 : sav.day <= CONFIG.ACT2_END ? 2 : 3) : 0;
   const preview = sav

@@ -133,6 +133,7 @@ function recordHistory() {
 }
 
 function beginDay() {
+  setBgm('day'); // [Phase4] 낮 BGM(lo-fi)
   recordHistory(); // [Phase2] 통계 스냅샷 (저장 전에 기록해 세이브에 포함)
   saveGame('morning'); // [Phase 1] 매일 아침 자동 저장 (이벤트·손님 생성 전 시점)
   let loanMsg = '';
@@ -231,10 +232,12 @@ function renderEvening() {
   S.timeLabel = '오후 6:30';
   updateHUD();
   let total = 0;
+  let anyJackpot = false, anySeize = false; // [Phase4] 정산 SFX 트리거
   const mul = (S.event && S.event.resaleMul) || 1; // 호황/불황 이벤트 반영
   const rows = S.purchases.map(p => {
     // 🚨 장물: 매입한 게 장물이면 경찰에 압수될 수 있다 (매입가 전액 손실)
     if (p.stolen && Math.random() < CONFIG.STOLEN_CONFISCATE) {
+      anySeize = true;
       S.stats.stolenLost++;
       S.stats.tradePL -= p.price;
       total -= p.price;
@@ -248,6 +251,7 @@ function renderEvening() {
     let saleV = Math.round(p.V * mul);
     let tag = p.stolen ? ' <span class="dim">(장물이었지만 무사통과)</span>' : '';
     if (p.jackpot) {
+      anyJackpot = true;
       saleV = Math.round(saleV * CONFIG.JACKPOT_MUL);
       tag = ' <span class="drop-fx" style="font-size:14px">🎉 진품 판정! ×' + CONFIG.JACKPOT_MUL + '</span>';
       S.stats.jackpots++;
@@ -284,6 +288,10 @@ function renderEvening() {
         <button class="btn-big" onclick="startNight()">🌙 지하 격투장으로 내려간다</button>
       </div>
     </div>`;
+  // [Phase4] 정산 결과 SFX — 잭팟이 압수보다 청각적으로 우선
+  if (anyJackpot) sndJackpot();
+  else if (anySeize) sndSeize();
+  else if (total > 0) sndCoin();
   updateDebug();
 }
 

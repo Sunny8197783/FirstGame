@@ -150,7 +150,7 @@ function playFightStep(st) {
       outD.classList.add(st.mv.rx);
       arenaFx(st.def, st.mv.fx);
       arenaFloat(st.def, '-' + st.dmg, st.heavy ? 'crit' : '');
-      beep(st.heavy ? 150 : rand(190, 260), st.heavy ? 0.12 : 0.06);
+      sndHit(st.heavy); // [Phase4] 펀치 임팩트(강타=묵직)
       if (st.ko) {
         setTimeout(() => { outD.className = 'sprite-pos ko'; arenaFx(st.def, '💫'); }, 380);
       }
@@ -175,7 +175,7 @@ function playFightStep(st) {
     arenaFx(st.side, '✨');
     setTimeout(() => arenaFx(st.side, '⚡'), 300);
     setTimeout(() => arenaFx(st.side, '✨'), 600);
-    sndDrop();
+    sndAwaken(); // [Phase4] 각성 파워업 스윕
     setTimeout(() => out.classList.remove('awaken'), 1900);
   } else if (st.type === 'win') {
     $('sprite-' + st.win).classList.add('win-pose');

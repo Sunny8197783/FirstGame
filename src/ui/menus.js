@@ -13,7 +13,7 @@ function renderSettings() {
       <input type="range" min="0" max="1" step="0.1" value="${SETTINGS.sfxVol}" style="width:150px"
         oninput="setSetting('sfxVol', +this.value)" onchange="sndGood()">
       <span class="dim" style="font-size:12px">${Math.round(SETTINGS.sfxVol * 100)}%</span></div>
-    <div class="set-row"><span>BGM 볼륨 <span class="dim" style="font-size:11px">(트랙은 추후 추가)</span></span>
+    <div class="set-row"><span>BGM 볼륨 <span class="dim" style="font-size:11px">(낮 lo-fi · 밤 신스)</span></span>
       <input type="range" min="0" max="1" step="0.1" value="${SETTINGS.bgmVol}" style="width:150px"
         oninput="setSetting('bgmVol', +this.value)">
       <span class="dim" style="font-size:12px">${Math.round(SETTINGS.bgmVol * 100)}%</span></div>

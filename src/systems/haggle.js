@@ -26,6 +26,7 @@ function makeOffer() {
     S.stats.dealStreak = 0; // [Phase2] 모욕은 스트릭 리셋
     H.P -= 2;
     if (H.P <= 0) { walkOut(c, X); return; }
+    sndInsult(); // [Phase4] 모욕 제시 불협음
     haggleSay('insult');
   } else if (X >= c.M) {
     // 수락 가능한 가격대: 충분히 후하거나 인내심이 바닥이면 수락, 아니면 한 번 더 밀당
@@ -68,7 +69,7 @@ function closeDeal(c, price, tone) {
   if (price <= c.asking * 0.5) achieve('cheap-buy');
   if (S.stats.deals >= 10 && S.stats.buyRatioSum / S.stats.deals < 0.7) achieve('expert-70');
   updateHUD();
-  sndGood();
+  sndHaggleOk(); // [Phase4] 거래 성사 상승음
   const cheap = price <= c.asking * 0.6;
   showModal(`
     <h2 class="good">🤝 거래 성사!</h2>
@@ -85,7 +86,7 @@ function walkOut(c, lastX) {
   S.haggle = null;
   S.stats.rejected++;
   S.stats.dealStreak = 0; // [Phase2] 연속 성사 스트릭 리셋
-  sndBad();
+  sndHaggleFail(); // [Phase4] 문 쾅 결렬음
   showModal(`
     <h2 class="bad">💢 흥정 결렬!</h2>
     <div class="speech">"${c.ctype.angry}"</div>

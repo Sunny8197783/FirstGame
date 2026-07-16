@@ -2,6 +2,7 @@
 // 모듈 간 호출·인라인 onclick은 아래 globalThis 등록을 통해 해석된다.
 function startNight() {
   sndClick();
+  setBgm('night'); // [Phase4] 밤 BGM(신스)
   S.phase = 'night'; S.matchIdx = 0; S.timeLabel = '오후 11:30';
   S.matches = genMatches((S.event && S.event.nightMatches) || CONFIG.MATCHES_PER_NIGHT);
   setTheme('night'); updateHUD();
@@ -153,7 +154,7 @@ function settleFight(m, aWins) {
       S.gold += payout;
       const pl = payout - bet.amount;
       S.stats.betWins++; S.stats.betPL += pl;
-      sndGood();
+      sndBetWin(); // [Phase4] 베팅 적중 코인+팡파레
       html += `<p class="good big">🎉 적중! +${fmt(payout)} G (순익 +${fmt(pl)} G)</p>`;
       if (pMul > 1) html += `<p class="dim" style="font-size:13px">✦ 부품 인맥 보너스 +${Math.round((pMul - 1) * 100)}% 포함</p>`;
       // [Phase2] 업적 훅: 첫 적중·언더독·판단 우위·모순 간파·올인 파이널
@@ -175,7 +176,7 @@ function settleFight(m, aWins) {
       }
     } else {
       S.stats.betPL -= bet.amount;
-      sndBad();
+      sndBetLose(); // [Phase4] 베팅 빗나감 하강음
       html += `<p class="bad big">💸 빗나갔다... -${fmt(bet.amount)} G</p>`;
     }
   } else {

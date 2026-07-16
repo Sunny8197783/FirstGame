@@ -43,7 +43,7 @@ function achieve(id) {
   unlocked[id] = Date.now();
   try { localStorage.setItem(ACH_KEY, JSON.stringify(unlocked)); } catch (e) { /* 무시 */ }
   toast(`🏆 업적 달성 — ${a.icon} ${a.name}`, 3000);
-  sndDrop();
+  sndLevelUp(); // [Phase4] 업적 달성 상승 4음
 }
 
 function isUnlocked(id) { return !!unlocked[id]; }
