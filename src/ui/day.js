@@ -21,7 +21,9 @@ function renderCustomer() {
       <div class="shop-counter"></div>
       <div class="day-grid">
         <div class="panel walk-in">
-          <div class="center"><span class="pframe" id="cust-frame"><span class="face">${c.ctype.emoji}</span><span class="mood-badge" id="cust-mood">😐</span></span><span class="carry">${c.item.emoji}</span></div>
+          <div class="center"><span class="pframe" id="cust-frame">${
+            artHTML('customers', c.ctype.type, `<span class="face">${c.ctype.emoji}</span>`)
+          }<span class="mood-badge" id="cust-mood">😐</span></span><span class="carry">${c.item.emoji}</span></div>
           <h3 class="center" style="margin-top:6px">${c.ctype.type}</h3>
           ${c.rival ? '<p class="center rival-badge">⚔️ 황금손과 경합 중 — 밀봉 입찰</p>' : ''}
           ${c.regular ? '<p class="center accent" style="font-size:13px">⭐ 단골 — 값을 잘 쳐주는 가게라 소문났다</p>' : ''}

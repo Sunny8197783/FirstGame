@@ -1,5 +1,6 @@
 // 게임 전체 배럴 — 브라우저(main.js)와 헤드리스 시뮬(sim/)이 공용으로 임포트
 import './systems/util.js';
+import './systems/art.js';
 import './config.js';
 import './systems/settings.js';
 import './systems/flow.js';

@@ -405,6 +405,26 @@ body.theme-night .trust.high { color: #7dff7d; }
 .btn-start { background: #a01a66; font-size: 22px; padding: 16px 40px;
   animation: fade-up 0.5s 0.8s both, pulse 1.5s 1.5s ease-in-out infinite; }
 
+/* ── [아트] 외부 일러스트 슬롯 ──
+   그림 파일(public/art/…)이 있으면 그걸 쓰고, 없으면 폴백(픽셀아트/이모지)이 그대로 보인다.
+   display:contents — 슬롯이 박스를 만들지 않아 기존 픽셀아트의 절대 위치가 안 깨진다. */
+.art-slot { display: contents; }
+.art-img { display: none; }
+.art-img.ok { display: block; }
+.art-slot.has-art .art-fb { display: none; }
+/* 아이템 진열대: 그림을 무대 중앙에 띄운다 */
+.item-stage .art-img.ok { position: absolute; left: 50%; top: 50%;
+  max-width: 88%; max-height: 84%; width: auto; height: auto;
+  image-rendering: auto; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.55));
+  animation: art-float 2.4s ease-in-out infinite; }
+@keyframes art-float {
+  0%, 100% { transform: translate(-50%, -52%); }
+  50%      { transform: translate(-50%, -58%); }
+}
+body.no-shake .item-stage .art-img.ok { animation: none; transform: translate(-50%, -52%); }
+/* 손님 초상 프레임: 그림이 프레임을 꽉 채운다 */
+.pframe .art-img.ok { width: 100%; height: 100%; object-fit: cover; image-rendering: auto; }
+
 /* ── [2막] 🏪 라이벌 밀봉 입찰 ── */
 .panel-rival { border-color: #c8a24a; box-shadow: 0 var(--px) 0 rgba(0,0,0,0.45), 0 0 18px rgba(200,162,74,0.35); }
 .rival-badge { font-size: 12px; color: #ffd23e; background: rgba(200,162,74,0.16);

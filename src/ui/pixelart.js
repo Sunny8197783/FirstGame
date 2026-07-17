@@ -562,7 +562,12 @@ for (const a of Object.values(PIXEL_ART)) {
 
 // 픽셀아트 렌더러: 1px 격자를 box-shadow로 그린다. 데이터가 없으면 이모지 폴백.
 
+// [아트] 외부 일러스트가 있으면 그걸 쓰고, 없으면 아래 픽셀아트로 폴백한다.
 function pixelArtHTML(item, sc) {
+  return artHTML('items', item.name, pixelGridHTML(item, sc), 'art-item');
+}
+
+function pixelGridHTML(item, sc) {
   const art = PIXEL_ART[item.name];
   if (!art) return `<span class="item-body">${item.emoji}</span>`;
   sc = sc || 6;
@@ -579,5 +584,5 @@ function pixelArtHTML(item, sc) {
 
 // 실물 검수: 아이템별 감정 포인트 3부위 (부위 점수 1~5로 상태를 보여준다)
 
-Object.assign(globalThis, { PIXEL_ART, pixelArtHTML, PX_THEME });
-export { PIXEL_ART, pixelArtHTML, PX_THEME };
+Object.assign(globalThis, { PIXEL_ART, pixelArtHTML, pixelGridHTML, PX_THEME });
+export { PIXEL_ART, pixelArtHTML, pixelGridHTML, PX_THEME };
