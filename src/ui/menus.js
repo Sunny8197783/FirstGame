@@ -21,6 +21,8 @@ function renderSettings() {
     <div class="set-row"><span>중계 텍스트 속도</span><span>${seg('textSpeed', [1, 2, 3], ['1×', '2×', '3×'])}</span></div>
     <div class="set-row"><span>폰트 크기</span><span>${seg('fontScale', [1, 1.15], ['기본', '크게'])}</span></div>
     <div class="set-row"><span>화면 흔들림</span><span>${seg('shake', [true, false], ['켬', '끔'])}</span></div>
+    <div class="set-row"><span>🥋 스파링 제한시간 <span class="dim" style="font-size:11px">(넘기면 그대로 맞는다)</span></span>
+      <span>${seg('sparTime', [0, 1.5, 1], ['없음', '넉넉히', '보통'])}</span></div>
     <p class="dim" style="font-size:12px; margin-top:8px">⌨️ 단축키 — <b>SPACE</b> 전환·중계 스킵 · <b>Enter</b> 주요 행동(흥정 제시 등) · <b>Esc</b> 창 닫기 · <b>D</b> 디버그</p>
     <div class="set-row" style="margin-top:6px"><span>세이브 데이터</span><span>
       <button class="btn-ghost seg" onclick="exportSave()">📤 내보내기</button>

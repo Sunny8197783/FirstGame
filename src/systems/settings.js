@@ -8,6 +8,7 @@ const DEFAULT_SETTINGS = {
   textSpeed: 1,   // 중계 텍스트 표시 간격 배속 1× / 2× / 3×
   fontScale: 1,   // 폰트 크기 1 = 기본, 1.15 = 크게
   shake: true,    // 피격 화면 흔들림
+  sparTime: 1,    // 스파링 제한시간 배율 (0 = 없음 / 1 = 보통 4초 / 1.5 = 넉넉히 6초)
 };
 
 let SETTINGS = { ...DEFAULT_SETTINGS };
@@ -37,6 +38,11 @@ function gameSpeed() { return SETTINGS.speed || 1; }
 function textSpeed() { return SETTINGS.textSpeed || 1; }
 function sfxVol() { return SETTINGS.sfxVol; }
 function bgmVol() { return SETTINGS.bgmVol; }
+// 스파링 라운드 제한시간(ms). 0이면 제한 없음(접근성).
+function sparTimeMs() {
+  const m = SETTINGS.sparTime;
+  return m > 0 ? CONFIG.SPAR_TIME_MS * m : 0;
+}
 
-Object.assign(globalThis, { SETTINGS, setSetting, applySettings, gameSpeed, textSpeed, sfxVol, bgmVol });
-export { SETTINGS, setSetting, applySettings, gameSpeed, textSpeed, sfxVol, bgmVol };
+Object.assign(globalThis, { SETTINGS, setSetting, applySettings, gameSpeed, textSpeed, sfxVol, bgmVol, sparTimeMs });
+export { SETTINGS, setSetting, applySettings, gameSpeed, textSpeed, sfxVol, bgmVol, sparTimeMs };

@@ -139,6 +139,8 @@ function renderChallengeRound() {
         <div class="panel" id="night-console" style="margin-bottom:0">
           <div class="tell-box">👁️ ${O.name}의 움직임 — ${C.tell}</div>
           ${C.log.length ? `<p class="dim" style="font-size:13px">${C.log[C.log.length - 1]}</p>` : ''}
+          ${sparTimeMs() ? `<div class="spar-timer" id="spar-timer"><div class="spar-fill" id="spar-fill"></div>
+            <span class="spar-txt" id="spar-txt"></span></div>` : ''}
           <div class="center" style="margin-top:8px" id="move-btns">
             <button class="move-btn" onclick="playerMove('rush')">👊 러시<small>견제를 이긴다</small></button>
             <button class="move-btn" onclick="playerMove('poke')">🦶 견제<small>카운터를 이긴다</small></button>
@@ -147,14 +149,52 @@ function renderChallengeRound() {
         </div>
       </div>
     </div>`;
+  startSparTimer();
   updateDebug();
 }
 
+/* ── ⏱️ 라운드 제한시간 ── */
+let sparRAF = 0, sparWarned = false;
 
+function stopSparTimer() {
+  if (sparRAF && typeof cancelAnimationFrame === 'function') cancelAnimationFrame(sparRAF);
+  sparRAF = 0;
+}
+
+function startSparTimer() {
+  stopSparTimer();
+  const dur = sparTimeMs();
+  // 제한 없음 설정이거나, 헤드리스 시뮬(브라우저 API 없음)이면 타이머를 걸지 않는다
+  if (!dur || typeof requestAnimationFrame !== 'function') return;
+  const C = S.challenge;
+  if (!C) return;
+  C.tStart = performance.now();
+  sparWarned = false;
+  const tick = () => {
+    const cur = S.challenge;
+    if (!cur || cur !== C || cur.resolving) return;   // 라운드가 끝났으면 조용히 멈춘다
+    const left = dur - (performance.now() - C.tStart);
+    const fill = $('spar-fill'), txt = $('spar-txt'), bar = $('spar-timer');
+    if (!fill) return;
+    if (left <= 0) { playerMove(null); return; }       // 시간 초과 → 움찔
+    fill.style.width = Math.max(0, (left / dur) * 100) + '%';
+    if (txt) txt.textContent = (left / 1000).toFixed(1) + 's';
+    if (left <= CONFIG.SPAR_TIME_WARN && !sparWarned) {
+      sparWarned = true;
+      if (bar) bar.classList.add('urgent');
+      for (let i = 0; i < 3; i++) tone(880, 0.06, 'square', { when: i * 0.45, vol: 0.8 });
+    }
+    sparRAF = requestAnimationFrame(tick);
+  };
+  sparRAF = requestAnimationFrame(tick);
+}
+
+// mv === null 이면 시간 초과(움찔) — 망설인 대가로 상대 공격이 그대로 들어온다
 function playerMove(mv) {
   const C = S.challenge; if (!C || C.resolving || C.php <= 0 || C.ohp <= 0) return;
   C.resolving = true;
-  sndClick();
+  stopSparTimer();
+  if (mv) sndClick();
   const O = S.fighters[C.oppIdx], P = S.player;
   const om = C.oppMove;
   const dmgOf = (att, dfn) => clamp(18 + att.atk * 2 - dfn.def, 12, 34);
@@ -165,7 +205,17 @@ function playerMove(mv) {
   };
   let line;
   document.querySelectorAll('#move-btns button').forEach(b => b.disabled = true);
-  if (mv === om) {
+  if (mv === null) {
+    // ⏱️ 시간 초과 — 링 위에서 망설이면 그냥 맞는다
+    S.stats.feintStreak = 0;
+    S.stats.sparTimeouts = (S.stats.sparTimeouts || 0) + 1;
+    const d = Math.round(dmgOf(O, P) * CONFIG.SPAR_FLINCH_MUL);
+    C.php = Math.max(0, C.php - d);
+    // 조사를 피해 문장을 끊는다 ('러시이(가)'처럼 어색해지지 않게)
+    line = `⏱️ 망설였다! ${O.name}의 <b>${MOVES[om].name}</b> — 그대로 꽂혔다. ${d} 데미지!`;
+    sndBad();
+    playFightStep({ type: 'attack', att: 'B', def: 'A', dmg: d, heavy: true, mv: toFightMove(om, true), ko: C.php <= 0 });
+  } else if (mv === om) {
     // 동수 — 서로 정면으로 부딪히며 잔타 교환
     const d = randInt(6, 12);
     C.php = Math.max(0, C.php - d); C.ohp = Math.max(0, C.ohp - d);
@@ -203,6 +253,7 @@ function playerMove(mv) {
 
 
 function finishChallenge(win) {
+  stopSparTimer(); // 경기가 끝났으면 타이머도 확실히 멈춘다
   const C = S.challenge, O = S.fighters[C.oppIdx], P = S.player;
   S.stats.playerFights++;
   let html = '';
@@ -251,5 +302,5 @@ function finishChallenge(win) {
    새벽 암시장 — 밤 수익으로 낮을 강화하는 역방향 고리
    ═══════════════════════════════════════════════════════════════ */
 
-Object.assign(globalThis, { proceedAfterChallenge, renderChallengeOffer, selectChallengeOpp, rollOppMove, startChallenge, renderChallengeRound, playerMove, finishChallenge });
+Object.assign(globalThis, { proceedAfterChallenge, renderChallengeOffer, selectChallengeOpp, rollOppMove, startChallenge, renderChallengeRound, startSparTimer, stopSparTimer, playerMove, finishChallenge });
 export { proceedAfterChallenge, renderChallengeOffer, selectChallengeOpp, rollOppMove, startChallenge, renderChallengeRound, playerMove, finishChallenge };

@@ -744,3 +744,17 @@ body.no-shake .sprite-pos.rx-hit { animation: none; }
   .cine-stage * { animation: none !important; }
   .cine-cap .c3 { opacity: 1; }
 }
+
+/* ── ⏱️ 스파링 라운드 제한시간 ── */
+.spar-timer { position: relative; height: 22px; margin: 8px 0 2px;
+  background: rgba(0,0,0,0.55); border: 3px solid #000;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.7); overflow: hidden; }
+.spar-fill { height: 100%; width: 100%;
+  background: linear-gradient(90deg, #00f0ff, #4488ff); transition: none; }
+.spar-txt { position: absolute; inset: 0; text-align: center; line-height: 22px;
+  font-size: 12px; color: #fff; text-shadow: 0 1px 3px #000; }
+.spar-timer.urgent .spar-fill { background: linear-gradient(90deg, #ff44aa, #ff3030); }
+.spar-timer.urgent { animation: spar-pulse 0.4s steps(2) infinite;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.7), 0 0 14px rgba(255,60,60,0.7); }
+@keyframes spar-pulse { 50% { border-color: #ff3030; } }
+body.no-shake .spar-timer.urgent { animation: none; }
