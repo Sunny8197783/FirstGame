@@ -7,9 +7,13 @@ function renderCustomer() {
   // 밀당 흥정 상태 초기화: D = 손님의 현재 요구가, P = 남은 인내심
   S.haggle = { D: c.asking, P: c.patience, maxP: c.patience };
   const sliderMin = Math.max(100, Math.round(c.item.lo * 0.3 / 100) * 100);
-  const sliderMax = c.asking;
-  // 시작 제시가: 요구가의 55% 부근 (흥정을 유도), 보유 골드로 클램프
-  const start = clamp(Math.round(c.asking * 0.55 / 100) * 100, sliderMin, Math.max(sliderMin, Math.min(sliderMax, Math.floor(S.gold / 100) * 100)));
+  // [2막] 라이벌 입찰은 손님이 요구가를 부르지 않는다 — 시세 상단까지 자유롭게 부른다
+  const sliderMax = c.rival
+    ? Math.max(sliderMin, Math.min(Math.floor(S.gold / 100) * 100, Math.round(c.item.hi * 1.1 / 100) * 100))
+    : c.asking;
+  // 시작 제시가: 요구가(또는 시세 중앙)의 55% 부근, 보유 골드로 클램프
+  const anchor = c.rival ? (c.item.lo + c.item.hi) / 2 : c.asking;
+  const start = clamp(Math.round(anchor * 0.55 / 100) * 100, sliderMin, Math.max(sliderMin, Math.min(sliderMax, Math.floor(S.gold / 100) * 100)));
   $('screen').innerHTML = `
     <div class="scene scene-day">
       <div class="shop-shelf sh1">🏺&nbsp;📚&nbsp;🕰️&nbsp;🎻&nbsp;📻&nbsp;⚱️&nbsp;🖼️&nbsp;📚&nbsp;🏺</div>
@@ -19,6 +23,7 @@ function renderCustomer() {
         <div class="panel walk-in">
           <div class="center"><span class="pframe" id="cust-frame"><span class="face">${c.ctype.emoji}</span><span class="mood-badge" id="cust-mood">😐</span></span><span class="carry">${c.item.emoji}</span></div>
           <h3 class="center" style="margin-top:6px">${c.ctype.type}</h3>
+          ${c.rival ? '<p class="center rival-badge">⚔️ 황금손과 경합 중 — 밀봉 입찰</p>' : ''}
           ${c.regular ? '<p class="center accent" style="font-size:13px">⭐ 단골 — 값을 잘 쳐주는 가게라 소문났다</p>' : ''}
           <p class="center dim" style="font-size:13px">${c.name} · 손님 ${S.custIdx + 1}/${S.customers.length}</p>
           <div class="bubble">"${c.line}"
@@ -58,6 +63,26 @@ function renderCustomer() {
             : '<div class="hint" style="border-left-color:#7dff7d">📖 학회지 대조: 정보에 특이사항 없음</div>') : ''}
           <p class="dim" style="font-size:12px; margin-top:6px">🔍 검수 점수가 높을수록 진품·상급일 확률이 높다. 구두 힌트(👁️)와 교차 검증하라.</p>
         </div>
+        ${c.rival ? `
+        <div class="panel panel-rival">
+          <h3 class="accent">🏪 밀봉 입찰</h3>
+          <div class="bubble" style="font-size:13px">${c.rivalLine}</div>
+          <p class="rival-warn">⚔️ <b>${RIVAL.name}</b>도 이 물건을 노린다.<br>
+            <b>단 한 번</b>만 부를 수 있다 — 높은 쪽이 가져간다.</p>
+          ${c.rivalTell
+            ? `<div class="hint rival-tell">🕵️ ${c.rivalTell.text}</div>`
+            : '<div class="hint" style="opacity:0.6">🕵️ 나사장의 낌새를 읽을 단서가 없다 — 감으로 불러야 한다.</div>'}
+          <p style="font-size:13px; margin-top:10px">내 입찰가</p>
+          <input type="range" id="offer-slider" min="${sliderMin}" max="${sliderMax}" step="100" value="${start}">
+          <div class="row" style="align-items:center; margin-top:4px">
+            <input type="number" id="bid-input" min="${sliderMin}" max="${sliderMax}" step="100" value="${start}" style="width:110px">
+            <span>G</span>
+          </div>
+          <p class="bad" id="gold-warn" style="display:none; font-size:13px">⚠️ 보유 골드를 넘는 금액이다!</p>
+          <button class="btn-big" id="btn-offer" style="width:100%; margin:10px 0 4px" onclick="submitBid()">이 값으로 입찰한다</button>
+          <button class="btn-ghost" style="width:100%; margin:0" onclick="passCustomer()">입찰 포기</button>
+          <p class="dim" style="font-size:11px; margin-top:6px">낮게 부르면 뺏기고, 높게 부르면 낙찰돼도 손해다. 나사장의 성향을 읽어라.</p>
+        </div>` : `
         <div class="panel">
           <h3 class="accent">💰 밀당 흥정</h3>
           <p style="font-size:13px; margin-top:2px">손님의 요구가</p>
@@ -75,10 +100,10 @@ function renderCustomer() {
           <button class="btn-ghost" id="btn-take" style="width:100%; margin:0 0 4px" onclick="acceptDemand()" ${c.asking > S.gold ? 'disabled' : ''}>요구가에 산다 (${fmt(c.asking)} G)</button>
           <button class="btn-ghost" style="width:100%; margin:0" onclick="passCustomer()">거절하고 보낸다</button>
           <p class="dim" style="font-size:11px; margin-top:6px">깎을수록 남는다 — 하지만 너무 후려치면 화내며 떠난다. 진짜 가치는 저녁 정산에서 판명된다.</p>
-        </div>
+        </div>`}
       </div>
     </div>`;
-  const slider = $('offer-slider'), input = $('offer-input');
+  const slider = $('offer-slider'), input = $(c.rival ? 'bid-input' : 'offer-input');
   const sync = (v) => {
     v = clamp(Math.round(v / 100) * 100 || sliderMin, sliderMin, sliderMax);
     slider.value = v; input.value = v;

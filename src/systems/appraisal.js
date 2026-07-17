@@ -96,11 +96,23 @@ function genCustomers() {
     const marks = shuffle(DEFECTS).slice(0, nDef).map(e => ({ e, spark: false }))
       .concat(Array.from({ length: nSpark }, () => ({ e: '✨', spark: true })))
       .map(mk => ({ ...mk, x: randInt(6, 74), y: randInt(6, 62) }));
-    return {
+    const c = {
       name: pick(CUSTOMER_NAMES), ctype, item, V, M, desperation, regular, t,
       asking, patience, stolen, jackpot,
       hints: shuffle(hints), hasTrap, line: pick(ctype.lines), marks, nDef, nSpark, partsView,
     };
+    // [2막] 🏪 라이벌 전당포: 2막부터 일부 손님은 황금손도 노린다 → 밀봉 입찰 1회 승부.
+    // 장물은 라이벌도 손대지 않는다(뒤탈 나는 물건은 서로 피한다).
+    if (actOf() >= 2 && !stolen && Math.random() < CONFIG.RIVAL_RATE) {
+      const tell = Math.random() < CONFIG.RIVAL_TELL_RATE ? pick(RIVAL_TELLS) : null;
+      const aggr = tell ? tell.aggr : 1;
+      // 라이벌도 눈이 있다 — 진짜 가치 기반으로 입찰하되 성향(aggr)만큼 세게/약하게 부른다
+      c.rival = true;
+      c.rivalTell = tell;
+      c.rivalBid = Math.max(100, Math.round(V * rand(CONFIG.RIVAL_BID_LO, CONFIG.RIVAL_BID_HI) * aggr / 100) * 100);
+      c.rivalLine = pick(RIVAL_INTRO);
+    }
+    return c;
   });
 }
 

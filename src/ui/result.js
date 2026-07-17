@@ -78,7 +78,7 @@ function endingKey() {
   if (S.endingId === 'act2_fail') return 'appraiser';
   if (S.season > 0) return 'season';
   const net = S.gold - S.debt;
-  if (S.day >= CONFIG.DAYS) return net >= 100000 ? 'king' : net >= 60000 ? 'ring' : 'shop';
+  if (S.day >= CONFIG.DAYS) return net >= CONFIG.ENDING_TRUE ? 'king' : net >= CONFIG.ENDING_RING ? 'ring' : 'shop';
   return 'season'; // 중간 결산
 }
 
@@ -104,9 +104,9 @@ function renderResult() {
     // [Phase3] 시즌 모드 중간 결산 — 엔딩이 아니다
     storyLine = `🌆 시즌 ${S.season} · ${seasonDayOf()}일째${S.prestige ? ` · 🏚️ 프레스티지 ×${S.prestige}` : ''} — 지하경제는 계속된다.`;
   } else if (S.day >= CONFIG.DAYS) {
-    storyLine = net >= 100000
+    storyLine = net >= CONFIG.ENDING_TRUE
       ? '👑 그랜드 파이널의 함성이 잦아들 무렵, 거리의 모두가 알게 됐다 — 이 도시의 돈이 어디로 흐르는지를. <b>[진 엔딩: 지하경제의 왕]</b>'
-      : net >= 60000
+      : net >= CONFIG.ENDING_RING
         ? '🥊 회장이 은퇴를 선언하며 당신에게 잔을 건넸다. 지하 격투장의 새 주인이 탄생했다. <b>[엔딩: 격투장의 새 주인]</b>'
         : '🏪 전당포는 이제 거리의 명물이 됐다. 낮에는 감정, 밤에는 베팅 — 나쁘지 않은 인생이다. <b>[엔딩: 이름난 전당포 주인]</b>';
   } else {

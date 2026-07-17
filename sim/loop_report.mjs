@@ -14,7 +14,7 @@ const pad = (s, w, right) => (right ? String(s).padStart(w) : String(s).padEnd(w
 console.log(`\n═══ 하루 루프 밸런스 리포트 (${CONFIG.DAYS}일 × ${RUNS}회/봇) ═══`);
 console.log(`시작 순자산 ${fmt(CONFIG.START_GOLD - CONFIG.DEBT_START)} G · 빚 ${fmt(CONFIG.DEBT_START)} G(이자 ${Math.round(CONFIG.DEBT_INTEREST * 100)}%/일)\n`);
 
-const bots = [B.BOT_IDLE, B.BOT_RANDOM, B.BOT_SMART];
+const bots = [B.BOT_IDLE, B.BOT_RANDOM, B.BOT_AVERAGE, B.BOT_SMART];
 const results = bots.map((bot) => {
   const runs = [];
   for (let i = 0; i < RUNS; i++) runs.push(B.runCampaign(bot));
@@ -22,7 +22,7 @@ const results = bots.map((bot) => {
   const curve = [];
   for (let d = 0; d < CONFIG.DAYS; d++) curve.push(median(runs.map(r => r.curve[d])));
   const endings = {};
-  runs.forEach(r => { const e = endingOf(r); endings[e] = (endings[e] || 0) + 1; });
+  runs.forEach(r => { const e = endingOf(r, CONFIG); endings[e] = (endings[e] || 0) + 1; });
   return { bot, runs, curve, endings, netMed: median(runs.map(r => r.net)) };
 });
 

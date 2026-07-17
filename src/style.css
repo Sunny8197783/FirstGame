@@ -405,6 +405,16 @@ body.theme-night .trust.high { color: #7dff7d; }
 .btn-start { background: #a01a66; font-size: 22px; padding: 16px 40px;
   animation: fade-up 0.5s 0.8s both, pulse 1.5s 1.5s ease-in-out infinite; }
 
+/* ── [2막] 🏪 라이벌 밀봉 입찰 ── */
+.panel-rival { border-color: #c8a24a; box-shadow: 0 var(--px) 0 rgba(0,0,0,0.45), 0 0 18px rgba(200,162,74,0.35); }
+.rival-badge { font-size: 12px; color: #ffd23e; background: rgba(200,162,74,0.16);
+  border: 2px solid #c8a24a; padding: 3px 6px; margin-top: 4px; animation: rival-pulse 1.6s ease-in-out infinite; }
+.rival-warn { font-size: 13px; line-height: 1.6; margin-top: 8px; padding: 6px 8px;
+  background: rgba(200,162,74,0.12); border-left: 4px solid #c8a24a; }
+.hint.rival-tell { border-left-color: #ffd23e; background: rgba(255,210,62,0.10); }
+@keyframes rival-pulse { 0%,100% { box-shadow: 0 0 0 rgba(200,162,74,0); } 50% { box-shadow: 0 0 10px rgba(255,210,62,0.55); } }
+body.no-shake .rival-badge { animation: none; }
+
 /* ── 실물 검수 카드 ── */
 .inspect { background: rgba(0,0,0,0.28); border: 3px solid rgba(255,255,255,0.15);
   padding: 8px 10px; margin: 8px 0; }

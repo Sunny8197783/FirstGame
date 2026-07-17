@@ -27,6 +27,14 @@ export function makeBots(G) {
     G.hideModal();
   };
 
+  // [2막] 라이벌 밀봉 입찰 한 건 (흥정과 다른 경로 — 단 한 번만 부른다)
+  const bidWith = (c, amount) => {
+    const x = Math.min(Math.max(100, Math.round(amount / 100) * 100), Math.floor(S.gold / 100) * 100);
+    G.document.getElementById('bid-input').value = String(x); // 스텁 엘리먼트는 조회 시 생성된다
+    G.submitBid();
+    G.hideModal();
+  };
+
   // 베팅 확정 (confirmBet은 runFight 연출을 호출하므로 상태만 직접 세팅)
   const placeBet = (side, amount) => {
     const amt = Math.min(Math.floor(amount / 100) * 100, Math.floor(S.gold * G.betCapRate()));
@@ -65,14 +73,25 @@ export function makeBots(G) {
 
   const BOT_RANDOM = {
     name: 'BOT_RANDOM (무작위)',
-    haggle(c) { haggleWith(c, (cc) => Math.round(cc.asking * G.rand(0.3, 1.0) / 100) * 100); },
+    haggle(c) {
+      if (c.rival) return bidWith(c, (c.item.lo + c.item.hi) / 2 * G.rand(0.3, 1.1)); // 감으로 지른다
+      haggleWith(c, (cc) => Math.round(cc.asking * G.rand(0.3, 1.0) / 100) * 100);
+    },
     bet() { placeBet(Math.random() < 0.5 ? 'A' : 'B', S.gold * G.rand(0.02, 0.10)); },
   };
 
   const BOT_SMART = {
     name: 'BOT_SMART (정보 활용)',
     // 숨은 최저 수락가 바로 위를 노린다 = 검수·힌트를 완벽히 읽어낸 플레이어
-    haggle(c) { haggleWith(c, (cc) => Math.max(100, Math.round(cc.M * 1.04 / 100) * 100)); },
+    haggle(c) {
+      // [2막] 라이벌 입찰: 나사장을 딱 한 끗 넘겨 부른다 — 단, 이익이 남을 때만
+      if (c.rival) {
+        const need = Math.max(c.M, c.rivalBid + 100);
+        if (need >= c.V * 0.95) return;                // 승자의 저주 회피 — 포기
+        return bidWith(c, need);
+      }
+      haggleWith(c, (cc) => Math.max(100, Math.round(cc.M * 1.04 / 100) * 100));
+    },
     // 소문의 진짜 효과를 읽어 실제 승률을 추정 → 기대값(+)일 때만 베팅
     bet(m) {
       const eff = (rs) => rs.reduce((s, r) => s + r.effect, 0);
@@ -81,6 +100,29 @@ export function makeBots(G) {
       const best = evA >= evB ? { side: 'A', ev: evA } : { side: 'B', ev: evB };
       if (best.ev <= 0.05) return; // 우위가 없으면 관망 (방치가 아니라 절제)
       placeBet(best.side, S.gold * 0.08);
+    },
+  };
+
+  // [Phase5] 보통 플레이어 — 정보를 보긴 하지만 완벽히 읽지 못한다(실난이도 측정용).
+  // 흥정: 최저가를 ±18% 오차로 추정 / 베팅: 헛소문을 걸러내지 못하고 액면 그대로 믿는다
+  const BOT_AVERAGE = {
+    name: 'BOT_AVERAGE (보통)',
+    haggle(c) {
+      // [2막] 라이벌 입찰: 성향 힌트를 보긴 하지만 세기를 정확히 모른다 → 시세 기준 ±오차로 지른다
+      if (c.rival) {
+        const lean = c.rivalTell ? (c.rivalTell.aggr > 1 ? 1.08 : 0.94) : 1; // 방향만 읽고 크기는 못 읽음
+        return bidWith(c, c.V * G.rand(0.62, 0.92) * lean);
+      }
+      const guess = c.M * G.rand(0.82, 1.18);
+      haggleWith(c, () => Math.max(100, Math.round(guess * 1.05 / 100) * 100));
+    },
+    bet(m) {
+      const naive = (rs) => rs.reduce((s, r) => s + Math.abs(r.effect) * r.sign, 0); // 진짜/헛소문 구분 못함
+      const p = G.clamp(m.est + naive(m.rumorsA) - naive(m.rumorsB), CONFIG.WINPROB_MIN, CONFIG.WINPROB_MAX);
+      const evA = p * m.oddsA - 1, evB = (1 - p) * m.oddsB - 1;
+      const best = evA >= evB ? { side: 'A', ev: evA } : { side: 'B', ev: evB };
+      if (best.ev <= 0.05) return;
+      placeBet(best.side, S.gold * 0.06);
     },
   };
 
@@ -109,15 +151,15 @@ export function makeBots(G) {
              deals: S.stats.deals, bets: S.stats.bets, debt: S.debt };
   };
 
-  return { resolveMatch, haggleWith, placeBet, runDay, runCampaign, BOT_IDLE, BOT_RANDOM, BOT_SMART };
+  return { resolveMatch, haggleWith, placeBet, runDay, runCampaign, BOT_IDLE, BOT_RANDOM, BOT_AVERAGE, BOT_SMART };
 }
 
-// 엔딩 판정 (result.js의 분기 기준과 동일)
-export function endingOf(run) {
+// 엔딩 판정 (result.js의 분기 기준과 동일 — 임계는 CONFIG에서 읽는다)
+export function endingOf(run, CONFIG) {
   if (run.ending === 'debt_fail') return '💸 배드: 빚의 무게';
   if (run.ending === 'act2_fail') return '🚬 회장의 감정사';
-  if (run.net >= 100000) return '👑 진엔딩: 지하경제의 왕';
-  if (run.net >= 60000) return '🥊 격투장의 새 주인';
+  if (run.net >= CONFIG.ENDING_TRUE) return '👑 진엔딩: 지하경제의 왕';
+  if (run.net >= CONFIG.ENDING_RING) return '🥊 격투장의 새 주인';
   return '🏪 이름난 전당포 주인';
 }
 
