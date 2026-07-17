@@ -12,6 +12,7 @@ function prestigeMul() { return 1 + (S.prestige || 0) * CONFIG.PRESTIGE_VALUE_MU
 
 function customersPerDay() {
   return CONFIG.CUSTOMERS_PER_DAY
+    + ((CONFIG.ACT_CUSTOMER_BONUS && CONFIG.ACT_CUSTOMER_BONUS[actOf()]) || 0) // [밸런스] 막별 물량 증가
     + (S.upgrades && S.upgrades.expand ? 1 : 0)
     + (S.upgrades && S.upgrades.remodel ? 1 : 0)
     + ((S.event && S.event.extraCustomer) || 0); // [Phase3] 손님 몰림 이벤트
