@@ -30,6 +30,7 @@ const ACHIEVEMENTS = [
   // ── 스타일 ──
   { id: 'no-bet-7',      icon: '🧘', name: '금욕의 7일',     desc: '7일 연속 베팅 없이 보내기' },
   { id: 'debt-free-5',   icon: '⛓️', name: '조기 상환',      desc: '5일차 안에 김사장 빚 완납' },
+  { id: 'work-3',        icon: '💪', name: '정직한 노동',    desc: '알바로 하루를 버틴 날 3회' },
 ];
 
 let unlocked = {};

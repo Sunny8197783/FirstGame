@@ -170,7 +170,8 @@ function beginDay() {
         ? `<div style="font-size:13px; color:#ff9edb; margin-top:6px">👑 ${CONFIG.DAYS}일차 밤, 그랜드 파이널 — 최대한 불려라</div>` : '';
   const dayLabel = S.season > 0 ? `시즌 ${S.season} — ${seasonDayOf()}일째 아침` : `${S.day}일차 아침`;
   showTransition(`<div>☀️</div><div>${dayLabel}</div><div style="font-size:16px;opacity:0.7">전당포 문을 연다${loanMsg ? '' : '...'}</div>${loanMsg}${debtLine}${goalLine}${evLine}`,
-    () => { if (S.pendingEvent) showEventChoice(); else startCustomers(); },
+    // 자금이 마른 아침엔 알바 선택지를 먼저 띄운다 (가게를 열지, 몸을 쓸지)
+    () => offerWork(() => { if (S.pendingEvent) showEventChoice(); else startCustomers(); }),
     S.event.id !== 'normal' || S.day === 1 ? 2000 : 1600);
 }
 

@@ -26,6 +26,7 @@ import './systems/economy.js';
 import './systems/betting.js';
 import './systems/sparring.js';
 import './systems/market.js';
+import './systems/work.js';
 import './systems/save.js';
 import './ui/menus.js';
 import './ui/tips.js';

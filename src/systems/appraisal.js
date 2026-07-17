@@ -26,12 +26,23 @@ function genCustomers() {
   const curSet = S.season > 0 ? ((S.season - 1) % 3) + 1 : 0;
   const pool = ITEMS.filter(it => (it.act || 1) <= actOf())
     .filter(it => !it.set || it.set === curSet);
+  // [매물 진행] 자산에 맞는 물건만 들어온다 — 자산이 늘수록 매물이 점점 비싸진다.
+  // ⚠️ 예전 코드는 감당 가능/불가능을 나눈 뒤 전체를 shuffle해서 필터가 무력화됐다.
+  //    (1일차 5,000G에 12만G짜리가 뜨던 원인) 이제 보이는 n명분을 직접 구성한다.
   const budget = Math.max(S.gold, 2000);
-  const aff = shuffle(pool.filter(it => (it.lo + it.hi) / 2 * CONFIG.AFFORD_RATE <= budget));
-  const rest = shuffle(pool.filter(it => !aff.includes(it)));
-  const itemPool = shuffle(aff.slice(0, n - 1)
-    .concat(rest.length ? [rest[0]] : [])
-    .concat(aff.slice(n - 1)).concat(rest.slice(1)));
+  const midOf = (it) => (it.lo + it.hi) / 2;
+  const cost = (it) => midOf(it) * CONFIG.AFFORD_RATE; // 흥정 후 대략적인 매입 예상가
+  const floor = budget * CONFIG.ITEM_FLOOR_RATE;       // 자산이 커지면 푼돈 물건은 발길이 끊긴다
+  let aff = pool.filter(it => cost(it) <= budget && midOf(it) >= floor);
+  if (aff.length < 3) aff = pool.filter(it => cost(it) <= budget);         // 풀이 마르면 바닥 해제
+  if (!aff.length) aff = [...pool].sort((a, b) => midOf(a) - midOf(b)).slice(0, 3); // 극빈 구제
+  aff = shuffle(aff);
+  // 도전 매물: 예산을 '살짝' 넘는 물건 1개. 엄두도 못 낼 물건은 아예 안 나온다.
+  const stretch = shuffle(pool.filter(it => cost(it) > budget && cost(it) <= budget * CONFIG.STRETCH_MAX_RATE));
+  const list = [];
+  for (let i = 0; i < n; i++) list.push(aff[i % aff.length]);
+  if (S.day >= CONFIG.STRETCH_FROM_DAY && stretch.length) list[randInt(0, n - 1)] = stretch[0];
+  const itemPool = shuffle(list);
   // 큰손 이벤트 또는 '큰손 인맥' 업그레이드: 손님 하나는 반드시 고가품을 들고 온다
   if ((S.event && S.event.vip) || S.upgrades.bigshot) {
     const lux = pool.filter(it => it.hi >= 18000);
