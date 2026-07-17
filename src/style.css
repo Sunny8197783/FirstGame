@@ -259,6 +259,22 @@ body.theme-night .trust.low { color: #ff6b6b; }
 body.theme-night .trust.mid { color: #ffd98a; }
 body.theme-night .trust.high { color: #7dff7d; }
 .loupe { position: absolute; right: -12px; bottom: -6px; font-size: 30px; filter: drop-shadow(0 0 3px #000); }
+/* ── 🔍 돋보기 검수 — 숨은 지점을 훑어서 찾는다 ── */
+.item-stage { cursor: crosshair; }
+.loupe-hint { font-size: 12px; opacity: 0.75; margin: 2px 0 6px; }
+.spot { position: absolute; width: 20px; height: 20px; margin: -10px 0 0 -10px;
+  font-size: 15px; line-height: 20px; text-align: center; pointer-events: none;
+  opacity: 0; transition: opacity 0.2s; filter: drop-shadow(0 0 2px #000); }
+.spot.found { opacity: 1; animation: spot-pop 0.4s cubic-bezier(.34,1.56,.64,1) both; }
+@keyframes spot-pop { from { transform: scale(0.2); } to { transform: scale(1); } }
+/* 돋보기 렌즈 — 커서를 따라다니며 그 아래를 확대한 듯 밝힌다 */
+.loupe-lens { position: absolute; width: 54px; height: 54px; margin: -27px 0 0 -27px;
+  border: 3px solid rgba(255,210,62,0.9); border-radius: 50%; pointer-events: none;
+  opacity: 0; transition: opacity 0.15s;
+  background: radial-gradient(circle, rgba(255,255,255,0.16), rgba(255,255,255,0.03) 70%);
+  box-shadow: 0 0 12px rgba(255,210,62,0.5), inset 0 0 10px rgba(255,255,255,0.15); }
+.loupe-lens.active { opacity: 1; }
+.inspect-row.dim { opacity: 0.5; font-style: italic; }
 /* 밤: 지하 격투장 — 관중, 네온, 링 */
 .scene-night { background: linear-gradient(180deg, #0a0d28 0%, #05051a 100%); }
 .crowd { position: absolute; left: 0; right: 0; bottom: 0; height: 55%; pointer-events: none; opacity: 0.8;
@@ -434,6 +450,21 @@ body.no-shake .item-stage .art-img.ok { animation: none; transform: translate(-5
 .hint.rival-tell { border-left-color: #ffd23e; background: rgba(255,210,62,0.10); }
 @keyframes rival-pulse { 0%,100% { box-shadow: 0 0 0 rgba(200,162,74,0); } 50% { box-shadow: 0 0 10px rgba(255,210,62,0.55); } }
 body.no-shake .rival-badge { animation: none; }
+
+/* ── 💡 소문 진위 공개 (경기 후 학습 피드백) ── */
+.rumor-reveal { margin-top: 6px; }
+.rv-side { margin: 6px 0; padding: 6px 8px; background: rgba(0,0,0,0.3);
+  border-left: 3px solid rgba(255,255,255,0.2); font-size: 13px; }
+.rv-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: baseline;
+  padding: 4px 0 4px 6px; margin-top: 3px; border-left: 3px solid transparent; }
+.rv-row.rv-true { border-left-color: var(--good); background: rgba(125,255,125,0.07); }
+.rv-row.rv-fake { border-left-color: var(--bad); background: rgba(255,107,107,0.07); }
+.rv-tag { font-size: 11px; white-space: nowrap; font-weight: bold; }
+.rv-true .rv-tag { color: var(--good); }
+.rv-fake .rv-tag { color: var(--bad); }
+.rv-text { flex: 1; min-width: 160px; opacity: 0.9; }
+.rv-fake .rv-text { text-decoration: line-through; opacity: 0.6; }
+.rv-eff { font-size: 11px; white-space: nowrap; }
 
 /* ── 🎓 튜토리얼 스포트라이트 ── */
 #tut { position: absolute; inset: 0; z-index: 80; display: none; pointer-events: none; }

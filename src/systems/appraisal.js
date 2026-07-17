@@ -95,10 +95,14 @@ function genCustomers() {
     // 부위마다 VISUAL_NOISE_RATE 확률로 ±1 오차가 생긴다 (⚖️ 정밀 저울 보유 시 오차 없음)
     const partNames = ITEM_PARTS[item.name] || ['외관', '상태', '마감'];
     const baseScore = clamp(Math.round(t * 4) + 1, 1, 5);
-    const partsView = partNames.map(pn => {
+    // 검수 부위마다 진열대 위 좌표를 준다 — 돋보기로 훑어서 하나씩 찾아내는 지점이다.
+    // ⚠️ 점수·오차 로직은 그대로다. 바뀐 건 '한꺼번에 보여주기 → 찾아내기'라는 표현 방식뿐.
+    const spotSlots = shuffle([[28, 30], [70, 34], [36, 68], [66, 70], [50, 48]]);
+    const partsView = partNames.map((pn, pi) => {
       let sc = baseScore;
       if (!S.upgrades.scale && !(S.event && S.event.noNoise) && Math.random() < CONFIG.VISUAL_NOISE_RATE) sc = clamp(sc + (Math.random() < 0.5 ? -1 : 1), 1, 5); // [Phase3] 감정 세미나: 당일 오차 없음
-      return { name: pn, score: sc, desc: pick(STATE_DESC[sc - 1]) };
+      const [sx, sy] = spotSlots[pi % spotSlots.length];
+      return { name: pn, score: sc, desc: pick(STATE_DESC[sc - 1]), x: sx, y: sy, found: false };
     });
     const avgScore = partsView.reduce((s, p) => s + p.score, 0) / partsView.length;
     // 진열대 마크는 검수 점수와 일치하도록 파생 (정보 채널이 어긋나지 않게)

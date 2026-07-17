@@ -37,33 +37,21 @@ function renderCustomer() {
         </div>
         <div class="panel">
           <h2 class="center" style="font-size:19px">${c.item.emoji} ${c.item.name}</h2>
-          <p class="dim center" style="font-size:12px; margin-top:2px">${c.item.lore || ''}</p>
-          <p class="dim center">시장 시세: ${fmt(c.item.lo)} ~ ${fmt(c.item.hi)} G</p>
-          <div class="drop-in" style="width:150px; margin:8px auto 10px">
-            <div class="item-stage">
-              <div class="shelf"></div>
-              ${pixelArtHTML(c.item)}
-              <span class="loupe">🔍</span>
-              ${c.marks.map(mk => `<span class="mark${mk.spark ? ' sparkle' : ''}" style="left:${mk.x}%;top:${mk.y}%">${mk.e}</span>`).join('')}
-            </div>
-            <p class="dim center" style="font-size:12px; margin-top:4px">실물 상태</p>
+          <p class="dim center" style="font-size:12px">시세 ${fmt(c.item.lo)} ~ ${fmt(c.item.hi)} G</p>
+          <div class="drop-in" style="width:150px; margin:8px auto 6px">
+            ${stageHTML(c)}
           </div>
+          <p class="loupe-hint center" id="loupe-hint">🔍 물건 위를 훑어 살펴본다</p>
           <div class="inspect">
-            <p style="font-size:12px; margin-bottom:3px">🔍 실물 검수 ${S.upgrades.scale
-              ? '<span class="good">(⚖️ 정밀 저울 — 오차 없음)</span>'
-              : '<span class="dim">(눈대중 — 부위별 오차 있음)</span>'}</p>
-            ${c.partsView.map(p => `<div class="inspect-row">
-              <span class="inspect-name">${p.name}</span>
-              <span class="inspect-desc">${p.desc}</span>
-              <span class="inspect-dots">${'●'.repeat(p.score)}${'○'.repeat(5 - p.score)}</span>
-            </div>`).join('')}
+            <div id="inspect-rows"></div>
+            <button class="btn-ghost" id="btn-scan" style="width:100%; font-size:12px; padding:5px; margin:6px 0 0"
+              onclick="scanAll()">대충 훑어본다 (전체 확인)</button>
           </div>
           ${c.hints.map(h => `<div class="hint">👁️ ${h.text}</div>`).join('')}
-          ${S.upgrades.lens ? `<div class="hint" style="border-left-color:#7dff7d">🔎 감정 렌즈 소견: 가치가 시세 <b>${c.t < 0.33 ? '하단' : c.t < 0.66 ? '중단' : '상단'}권</b>으로 보인다</div>` : ''}
+          ${S.upgrades.lens ? `<div class="hint" style="border-left-color:#7dff7d">🔎 감정 렌즈: 시세 <b>${c.t < 0.33 ? '하단' : c.t < 0.66 ? '중단' : '상단'}권</b></div>` : ''}
           ${S.upgrades.journal ? (c.hasTrap
-            ? '<div class="hint" style="border-left-color:#ff6b6b">📖 학회지 대조: 이 손님의 정보 중 <b>하나가 수상하다!</b></div>'
-            : '<div class="hint" style="border-left-color:#7dff7d">📖 학회지 대조: 정보에 특이사항 없음</div>') : ''}
-          <p class="dim" style="font-size:12px; margin-top:6px">🔍 검수 점수가 높을수록 진품·상급일 확률이 높다. 구두 힌트(👁️)와 교차 검증하라.</p>
+            ? '<div class="hint" style="border-left-color:#ff6b6b">📖 학회지: 정보 중 <b>하나가 수상하다!</b></div>'
+            : '<div class="hint" style="border-left-color:#7dff7d">📖 학회지: 특이사항 없음</div>') : ''}
         </div>
         ${c.rival ? `
         <div class="panel panel-rival">
@@ -101,7 +89,6 @@ function renderCustomer() {
           <button class="btn-big" id="btn-offer" style="width:100%; margin:10px 0 4px" onclick="makeOffer()">이 가격을 제시한다</button>
           <button class="btn-ghost" id="btn-take" style="width:100%; margin:0 0 4px" onclick="acceptDemand()" ${c.asking > S.gold ? 'disabled' : ''}>요구가에 산다 (${fmt(c.asking)} G)</button>
           <button class="btn-ghost" style="width:100%; margin:0" onclick="passCustomer()">거절하고 보낸다</button>
-          <p class="dim" style="font-size:11px; margin-top:6px">깎을수록 남는다 — 하지만 너무 후려치면 화내며 떠난다. 진짜 가치는 저녁 정산에서 판명된다.</p>
         </div>`}
       </div>
     </div>`;
@@ -116,6 +103,7 @@ function renderCustomer() {
   slider.addEventListener('input', () => sync(+slider.value));
   input.addEventListener('input', () => sync(+input.value));
   sync(start);
+  renderInspectRows(); // 🔍 아직 못 찾은 상태로 시작 — 돋보기로 훑어야 드러난다
   updateDebug();
   // 1일차 첫 손님: 단계별 튜토리얼이 화면 요소를 짚어 준다.
   // 라이벌 입찰 손님은 흥정 UI가 없어 튜토리얼 앵커가 안 맞으므로 제외(2막부터라 1일차엔 안 걸린다).

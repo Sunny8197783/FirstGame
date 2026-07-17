@@ -182,11 +182,23 @@ function settleFight(m, aWins) {
   } else {
     html += `<p class="dim">관망했다. 잃은 것도, 얻은 것도 없다.</p>`;
   }
-  // 헛소문 공개 (학습 피드백)
-  const fakes = [...m.rumorsA, ...m.rumorsB].filter(r => r.fake);
-  if (fakes.length) {
-    html += `<p class="dim" style="margin-top:6px">💡 헛소문이었다: ${fakes.map(r => `"${r.text}"`).join(' / ')}</p>`;
-  }
+  // 소문 진위 공개 (학습 피드백) — 헛소문만이 아니라 '진실이었던 것'도 함께 채점해 준다.
+  // 어느 소문을 믿었어야 했는지 눈으로 확인해야 다음 판에 추리가 는다.
+  const verdictOf = (rs, f) => {
+    if (!rs.length) return `<div class="rv-side"><b>${f.emoji} ${f.name}</b>
+      <div class="rv-row dim">돌던 소문이 없었다.</div></div>`;
+    return `<div class="rv-side"><b>${f.emoji} ${f.name}</b>` + rs.map(r => `
+      <div class="rv-row ${r.fake ? 'rv-fake' : 'rv-true'}">
+        <span class="rv-tag">${r.fake ? '❌ 이건 헛소문이었다' : '✅ 이건 진실이었다'}</span>
+        <span class="rv-text">"${r.text}"</span>
+        ${r.fake ? '' : `<span class="rv-eff ${r.sign > 0 ? 'good' : 'bad'}">${r.sign > 0 ? '▲' : '▼'} 승률 ${Math.abs(Math.round(r.effect * 100))}%p</span>`}
+      </div>`).join('') + '</div>';
+  };
+  html += `<div class="rumor-reveal">
+    <p style="margin-top:8px; font-size:14px"><b>💡 소문의 진실</b>
+      <span class="dim" style="font-size:12px">— 하우스는 이걸 몰랐다. 배당에 안 들어간 정보다.</span></p>
+    ${verdictOf(m.rumorsA, A)}${verdictOf(m.rumorsB, B)}
+  </div>`;
   updateHUD();
   const isLast = S.matchIdx >= S.matches.length - 1;
   $('fight-after').innerHTML = html + `
