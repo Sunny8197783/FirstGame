@@ -93,7 +93,15 @@ function renderIntroBeat() {
 function nextIntroBeat() { sndClick(); introIdx++; renderIntroBeat(); }
 
 
+// 🎬 막 전환엔 먼저 장면을 보여 준다 (act2 습격 / act3 지분) — 그 뒤 기존 인터루드 텍스트.
+// _cineDone 플래그는 재진입 때 켜진 상태여야 한다 (끄고 재호출하면 장면이 무한 반복된다).
 function renderInterlude(key, val, next) {
+  if (CINE[key] && !S._cineDone) {
+    S._cineDone = true;
+    playCine(key, () => renderInterlude(key, val, next));
+    return;
+  }
+  S._cineDone = false; // 다음 인터루드를 위해 리셋
   setTheme('night'); S.timeLabel = ''; updateHUD();
   const it = INTERLUDES[key](val);
   S._afterInterlude = next;

@@ -604,3 +604,143 @@ body.no-shake .sprite-pos.rx-hit { animation: none; }
 
 /* 손님 외모 인상 — 유형과 별개로 매번 다른 사람이 온다는 느낌을 준다 */
 .look-desc { font-size: 12px; opacity: 0.72; line-height: 1.5; margin-top: 2px; font-style: italic; }
+
+/* ═══════════════════════════════════════════════════════════════
+   🎬 시네마틱 — 막 전환 / 밤 이동 (아트 없이 CSS 실루엣으로 그린다)
+   --cine-ms = 장면 전체 길이 (배속 설정이 반영된 값)
+   ═══════════════════════════════════════════════════════════════ */
+#cine { position: fixed; inset: 0; z-index: 85; display: none; background: #000; }
+#cine.show { display: block; animation: fadein 0.3s; }
+.cine-stage { position: absolute; inset: 0; overflow: hidden; }
+.cine-skip { position: absolute; right: 14px; bottom: 14px; z-index: 9;
+  font-size: 13px; padding: 7px 12px; margin: 0; background: rgba(0,0,0,0.6);
+  border-width: 2px; opacity: 0.75; }
+.cine-skip:hover { opacity: 1; }
+/* 자막 — c1 → c2 → c3 순차 등장 */
+.cine-cap { position: absolute; left: 0; right: 0; bottom: 58px; text-align: center;
+  font-size: 17px; color: #fff; text-shadow: 0 2px 6px #000; padding: 0 20px; }
+.cine-cap span { position: absolute; left: 0; right: 0; opacity: 0; }
+.cine-cap .c1 { animation: cap-in var(--cine-ms) linear both; }
+.cine-cap .c2 { animation: cap-in2 var(--cine-ms) linear both; }
+.cine-cap .c3 { animation: cap-in3 var(--cine-ms) linear both; }
+@keyframes cap-in  { 0%,4% { opacity: 0; } 10%,28% { opacity: 1; } 34%,100% { opacity: 0; } }
+@keyframes cap-in2 { 0%,36% { opacity: 0; } 42%,60% { opacity: 1; } 66%,100% { opacity: 0; } }
+@keyframes cap-in3 { 0%,68% { opacity: 0; } 74%,96% { opacity: 1; } 100% { opacity: 0; } }
+
+/* ── 🌙 밤 이동: 골목을 걸어 지하 계단으로 ── */
+.cw { background: linear-gradient(180deg, #0a0d28 0%, #10123a 55%, #05051a 100%); }
+.cw-sky { position: absolute; inset: 0 0 42% 0;
+  background: radial-gradient(ellipse at 70% 90%, rgba(255,68,170,0.14), transparent 60%); }
+.cw-far { position: absolute; left: 0; right: 0; bottom: 38%; height: 26%;
+  background-image: repeating-linear-gradient(90deg,
+    #161c48 0 26px, transparent 26px 34px, #10163a 34px 70px, transparent 70px 82px);
+  animation: cw-far var(--cine-ms) linear infinite; opacity: 0.85; }
+@keyframes cw-far { to { background-position-x: -246px; } }
+.cw-near { position: absolute; left: 0; right: 0; bottom: 26%; height: 16%;
+  background-image: repeating-linear-gradient(90deg, #241a2e 0 60px, #1b1424 60px 64px);
+  animation: cw-near var(--cine-ms) linear infinite; }
+@keyframes cw-near { to { background-position-x: -512px; } }
+.cw-sign { position: absolute; font-size: 30px; top: 26%;
+  filter: drop-shadow(0 0 12px rgba(255,68,170,0.9)); animation: cw-pass var(--cine-ms) linear infinite; }
+.cw-sign.s1 { animation-delay: 0s; }
+.cw-sign.s2 { animation-delay: calc(var(--cine-ms) * -0.25); top: 20%; }
+.cw-sign.s3 { animation-delay: calc(var(--cine-ms) * -0.5); top: 30%; }
+.cw-sign.s4 { animation-delay: calc(var(--cine-ms) * -0.75); top: 22%; }
+@keyframes cw-pass { from { left: 105%; } to { left: -12%; } }
+.cw-ground { position: absolute; left: 0; right: 0; bottom: 0; height: 26%;
+  background: repeating-linear-gradient(90deg, #1a1520 0 44px, #141019 44px 88px);
+  border-top: 3px solid #000; animation: cw-near var(--cine-ms) linear infinite; }
+.cw-hero { position: absolute; left: 46%; bottom: 22%; width: 54px; height: 96px;
+  animation: cw-bob 0.5s steps(2) infinite, cw-away var(--cine-ms) ease-in both; }
+@keyframes cw-bob { 50% { transform: translateY(-4px); } }
+@keyframes cw-away { 0%,70% { bottom: 22%; width: 54px; } 100% { bottom: 30%; width: 30px; opacity: 0.5; } }
+.cw-head { position: absolute; left: 50%; top: 0; width: 24px; height: 22px; margin-left: -12px;
+  background: #0a0810; border-radius: 40% 40% 30% 30%; }
+.cw-coat { position: absolute; left: 50%; top: 20px; width: 44px; height: 46px; margin-left: -22px;
+  background: #0a0810; border-radius: 8px 8px 3px 3px; }
+.cw-leg { position: absolute; top: 62px; width: 13px; height: 34px; background: #0a0810; }
+.cw-leg.l { left: 12px; animation: cw-step 0.5s steps(2) infinite; }
+.cw-leg.r { right: 12px; animation: cw-step 0.5s steps(2) 0.25s infinite; }
+@keyframes cw-step { 50% { height: 28px; } }
+.cw-door { position: absolute; font-size: 40px; bottom: 24%; left: 40%;
+  animation: cw-doorout var(--cine-ms) ease-out both; }
+@keyframes cw-doorout { 0% { left: 40%; font-size: 60px; opacity: 1; } 40%,100% { left: -20%; font-size: 20px; opacity: 0; } }
+.cw-stairs { position: absolute; right: -30%; bottom: 8%; text-align: center;
+  animation: cw-arrive var(--cine-ms) ease-in both; }
+@keyframes cw-arrive { 0%,55% { right: -30%; } 85%,100% { right: 34%; } }
+.cw-hole { width: 120px; height: 60px; background: #000; border: 4px solid #2a2038;
+  border-radius: 50% 50% 6px 6px; box-shadow: inset 0 10px 24px #000, 0 0 30px rgba(0,240,255,0.35); }
+.cw-neonsign { margin-top: 6px; font-size: 13px; color: #00f0ff; letter-spacing: 2px;
+  text-shadow: 0 0 12px rgba(0,240,255,0.9); animation: blink 0.9s steps(2) infinite; }
+
+/* ── 🚬 1막→2막: 김사장의 습격 ── */
+.ca-room { position: absolute; inset: 0; background: linear-gradient(180deg, #2a1c10 0%, #150c06 100%); }
+.ca-doorframe { position: absolute; left: 50%; top: 12%; width: 150px; height: 62%; margin-left: -75px;
+  background: #0a0604; border: 5px solid #3a2a18; overflow: hidden; }
+.ca-light { position: absolute; inset: 0; background: linear-gradient(180deg, #ffd98a, #ff9a3a);
+  transform: scaleX(0); transform-origin: center; animation: ca-open var(--cine-ms) ease-out both; }
+@keyframes ca-open { 0%,6% { transform: scaleX(0); } 16%,100% { transform: scaleX(1); opacity: 0.85; } }
+.ca-thugs .th { position: absolute; bottom: 22%; width: 44px; height: 92px; background: #05030a;
+  border-radius: 14px 14px 4px 4px; opacity: 0; transform-origin: bottom center; }
+.ca-thugs .th::before { content: ""; position: absolute; left: 50%; top: -18px; width: 26px; height: 24px;
+  margin-left: -13px; background: #05030a; border-radius: 50%; }
+.ca-thugs .t1 { left: 50%; margin-left: -22px; animation: ca-come var(--cine-ms) ease-in both; }
+.ca-thugs .t2 { left: 38%; animation: ca-come var(--cine-ms) ease-in both; animation-delay: calc(var(--cine-ms) * 0.05); }
+.ca-thugs .t3 { left: 58%; animation: ca-come var(--cine-ms) ease-in both; animation-delay: calc(var(--cine-ms) * 0.1); }
+@keyframes ca-come {
+  0%,12% { opacity: 0; transform: scale(0.35); }
+  20% { opacity: 1; transform: scale(0.5); }
+  48% { opacity: 1; transform: scale(1.9); }
+  60%,100% { opacity: 0; transform: scale(2.6); }
+}
+.ca-coins { position: absolute; left: 0; right: 0; bottom: 18%; text-align: center; }
+.ca-coins span { display: inline-block; font-size: 28px; opacity: 0; margin: 0 6px;
+  animation: ca-fly var(--cine-ms) ease-in both; }
+.ca-coins span:nth-child(2) { animation-delay: calc(var(--cine-ms) * 0.04); }
+.ca-coins span:nth-child(3) { animation-delay: calc(var(--cine-ms) * 0.08); }
+.ca-coins span:nth-child(4) { animation-delay: calc(var(--cine-ms) * 0.12); }
+.ca-coins span:nth-child(5) { animation-delay: calc(var(--cine-ms) * 0.16); }
+@keyframes ca-fly {
+  0%,34% { opacity: 0; transform: translateY(0) rotate(0); }
+  42% { opacity: 1; transform: translateY(-30px) rotate(180deg); }
+  62%,100% { opacity: 0; transform: translateY(-150px) rotate(720deg); }
+}
+.ca-flash { position: absolute; inset: 0; background: #c0303a; opacity: 0;
+  animation: ca-flash var(--cine-ms) linear both; }
+@keyframes ca-flash { 0%,14% { opacity: 0; } 16% { opacity: 0.5; } 22%,100% { opacity: 0; } }
+.ca-smoke { position: absolute; inset: 0; opacity: 0; pointer-events: none;
+  background: radial-gradient(ellipse at 50% 70%, rgba(180,170,190,0.16), transparent 62%);
+  animation: ca-smoke var(--cine-ms) ease-in both; }
+@keyframes ca-smoke { 0%,64% { opacity: 0; } 78%,100% { opacity: 1; transform: translateY(-14px); } }
+.ca-cigar { position: absolute; left: 50%; top: 44%; font-size: 40px; margin-left: -20px; opacity: 0;
+  filter: drop-shadow(0 0 14px rgba(255,90,40,0.9)); animation: ca-cigar var(--cine-ms) ease-in both; }
+@keyframes ca-cigar { 0%,66% { opacity: 0; } 80%,100% { opacity: 1; } }
+
+/* ── 👑 2막→3막: 회장의 지분 ── */
+.ca3 .ca-room { background: linear-gradient(180deg, #14101c 0%, #07050c 100%); }
+.ca3-table { position: absolute; left: 0; right: 0; bottom: 0; height: 40%;
+  background: linear-gradient(180deg, #3a2a18, #241a10); border-top: 5px solid #0a0604;
+  box-shadow: inset 0 8px 24px rgba(0,0,0,0.6); }
+.ca3-doc { position: absolute; bottom: 22%; font-size: 56px; left: -20%;
+  animation: ca3-slide var(--cine-ms) cubic-bezier(.2,.9,.3,1) both; }
+@keyframes ca3-slide { 0%,18% { left: -20%; } 40%,100% { left: 44%; } }
+.ca3-stamp { position: absolute; bottom: 30%; left: 50%; font-size: 34px; margin-left: -17px; opacity: 0;
+  animation: ca3-stamp var(--cine-ms) ease-in both; }
+@keyframes ca3-stamp {
+  0%,46% { opacity: 0; transform: translateY(-90px) scale(2.4); }
+  54% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0.9; transform: translateY(0) scale(1); }
+}
+.ca3-crown { position: absolute; left: 50%; top: -18%; font-size: 74px; margin-left: -37px; opacity: 0;
+  filter: drop-shadow(0 0 22px rgba(255,210,62,0.9)); animation: ca3-crown var(--cine-ms) ease-out both; }
+@keyframes ca3-crown { 0%,62% { opacity: 0; top: -18%; } 78%,100% { opacity: 1; top: 14%; } }
+.ca3-glow { position: absolute; inset: 0; opacity: 0; pointer-events: none;
+  background: radial-gradient(circle at 50% 30%, rgba(255,210,62,0.28), transparent 55%);
+  animation: ca3-glow var(--cine-ms) ease-out both; }
+@keyframes ca3-glow { 0%,64% { opacity: 0; } 82%,100% { opacity: 1; } }
+
+/* 모션 최소화 선호 시: 장면은 뜨되 움직임 없이 자막만 */
+@media (prefers-reduced-motion: reduce) {
+  .cine-stage * { animation: none !important; }
+  .cine-cap .c3 { opacity: 1; }
+}

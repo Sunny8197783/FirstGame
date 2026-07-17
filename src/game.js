@@ -33,6 +33,7 @@ import './ui/menus.js';
 import './ui/tips.js';
 import './ui/tutorial.js';
 import './ui/loupe.js';
+import './ui/cine.js';
 import './ui/day.js';
 import './ui/night.js';
 import './ui/fight.js';

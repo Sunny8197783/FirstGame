@@ -8,7 +8,11 @@ function startNight() {
   setTheme('night'); updateHUD();
   const evLine = S.event && (S.event.nightMatches || S.event.betCap)
     ? `<div style="font-size:15px; color:#ff44aa; margin-top:4px">${S.event.name} — ${S.event.desc}</div>` : '';
-  showTransition('<div>🌙</div><div class="blink" style="color:#ff44aa">지하 격투장</div><div style="font-size:16px;opacity:0.7">쇠 냄새와 함성이 뒤섞인 계단을 내려간다...</div>' + evLine, renderMatch, 1400);
+  // 🎬 전당포를 나와 골목을 걸어 지하 계단으로 — 그 뒤에 기존 전환 문구
+  playCine('night', () => showTransition(
+    '<div>🌙</div><div class="blink" style="color:#ff44aa">지하 격투장</div>'
+    + '<div style="font-size:16px;opacity:0.7">쇠 냄새와 함성이 뒤섞인 계단을 내려간다...</div>' + evLine,
+    renderMatch, 1200));
 }
 
 

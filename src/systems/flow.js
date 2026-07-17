@@ -40,6 +40,8 @@ function onSpaceSkip(e) {
   if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'BUTTON')) return; // 입력 중엔 무시
   // ⓪ 알바 미니게임 중엔 SPACE = 스탬프 (스킵이 아니라 조작이다)
   if (typeof S !== 'undefined' && S.work && !S.work.stamped) { e.preventDefault(); workStamp(); return; }
+  // ⓪-2 시네마틱 스킵
+  if (typeof cinePlaying === 'function' && cinePlaying()) { e.preventDefault(); endCine(); return; }
   // ① 전환 오버레이
   if (skipTransition()) { e.preventDefault(); return; }
   // ② 경기 중계
