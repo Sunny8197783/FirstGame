@@ -284,7 +284,10 @@ function renderEvening() {
       <p class="big" style="margin-top:12px">오늘 장사 손익: ${plHTML(total, ' G', { big: true })}</p>
       <p>현재 자산: <span class="accent big">${fmt(S.gold)} G</span></p>
       <div class="center" style="margin-top:14px">
-        <button class="btn-big" onclick="startNight()">🌙 지하 격투장으로 내려간다</button>
+        ${isAuctionDay()
+          ? '<button class="btn-big btn-pink" onclick="startAuction()">🔨 경매장으로 향한다</button>'
+            + '<p class="dim" style="font-size:13px; margin-top:6px">오늘은 <b class="accent">경매의 날</b> — 거물 물건이 나온다.</p>'
+          : '<button class="btn-big" onclick="startNight()">🌙 지하 격투장으로 내려간다</button>'}
       </div>
     </div>`;
   // [Phase4] 정산 결과 SFX — 잭팟이 압수보다 청각적으로 우선

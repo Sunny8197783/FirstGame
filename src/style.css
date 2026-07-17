@@ -415,6 +415,20 @@ body.theme-night .trust.high { color: #7dff7d; }
 @keyframes rival-pulse { 0%,100% { box-shadow: 0 0 0 rgba(200,162,74,0); } 50% { box-shadow: 0 0 10px rgba(255,210,62,0.55); } }
 body.no-shake .rival-badge { animation: none; }
 
+/* ── [3막] 🔨 경매의 날 ── */
+.scene-auction { background: linear-gradient(180deg, #3a2a3a 0%, #1e1420 60%, #140c14 100%); }
+.auc-crowd { position: absolute; left: 0; right: 0; bottom: 0; height: 45%; pointer-events: none; opacity: 0.55;
+  background-image: radial-gradient(circle at 14px 14px, #2e2438 0 9px, transparent 10px),
+                    radial-gradient(circle at 32px 28px, #241c2c 0 9px, transparent 10px);
+  background-size: 40px 30px, 48px 34px; }
+.panel-auction { border-color: #ffd23e; box-shadow: 0 var(--px) 0 rgba(0,0,0,0.45), 0 0 22px rgba(255,210,62,0.35); }
+.auc-rival { display: grid; grid-template-columns: 28px 1fr auto; gap: 6px; align-items: center;
+  padding: 7px 4px; border-bottom: 1px solid rgba(255,255,255,0.1); transition: opacity 0.3s; }
+.auc-rival.out { opacity: 0.38; filter: grayscale(1); }
+.auc-rival-name { font-size: 14px; }
+.auc-rival-state { font-size: 12px; white-space: nowrap; }
+.auc-rival-desc { grid-column: 2 / -1; font-size: 11px; line-height: 1.45; }
+
 /* ── 실물 검수 카드 ── */
 .inspect { background: rgba(0,0,0,0.28); border: 3px solid rgba(255,255,255,0.15);
   padding: 8px 10px; margin: 8px 0; }

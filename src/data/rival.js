@@ -34,5 +34,16 @@ const RIVAL_LINES = {
   lose: ['"고맙네. 자네 덕에 싸게 건졌어."', '"그 값에 안 부르다니, 아직 눈이 어둡군."', '"장사는 배포야. 자넨 아직 멀었어."'],
 };
 
-Object.assign(globalThis, { RIVAL, RIVAL_INTRO, RIVAL_TELLS, RIVAL_LINES });
-export { RIVAL, RIVAL_INTRO, RIVAL_TELLS, RIVAL_LINES };
+// [3막] 🔨 경매 경쟁자 — mul = 진짜 가치 대비 숨은 상한선 배율 (플레이어는 모른다)
+// desc는 성향 단서: 상한선을 직접 알려주진 않지만, 누가 어디까지 갈지 추론할 재료다.
+const AUCTION_BIDDERS = [
+  { id: 'chair', emoji: '🚬', name: '회장', mul: [0.80, 1.08],
+    desc: '돈보다 자존심. 눈독 들이면 끝까지 간다.' },
+  { id: 'rival', emoji: '🕴️', name: '나사장', mul: [0.58, 0.86],
+    desc: '황금손. 철저히 남는 장사만 — 선을 넘지 않는다.' },
+  { id: 'collector', emoji: '🎩', name: '수집가', mul: [0.62, 1.02],
+    desc: '취향에 꽂히면 값을 안 본다. 아니면 조용히 빠진다.' },
+];
+
+Object.assign(globalThis, { RIVAL, RIVAL_INTRO, RIVAL_TELLS, RIVAL_LINES, AUCTION_BIDDERS });
+export { RIVAL, RIVAL_INTRO, RIVAL_TELLS, RIVAL_LINES, AUCTION_BIDDERS };

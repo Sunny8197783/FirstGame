@@ -13,6 +13,7 @@ const ACHIEVEMENTS = [
   { id: 'jackpot-1',     icon: '🎉', name: '숨은 진품',      desc: '숨은 진품을 처음 발굴' },
   { id: 'jackpot-3',     icon: '🏺', name: '보물 사냥꾼',    desc: '숨은 진품 3회 발굴' },
   { id: 'rival-5',       icon: '🏪', name: '황금손을 이기다', desc: '라이벌 밀봉 입찰에서 5회 낙찰' },
+  { id: 'auction-2',     icon: '🔨', name: '경매장의 큰손',   desc: '3막 경매에서 2회 낙찰' },
   { id: 'trap-5',        icon: '🪤', name: '함정 무효',      desc: '함정 힌트 손님에게서 이익 낸 거래 5회' },
   { id: 'stolen-5',      icon: '🕶️', name: '위험한 장사',    desc: '장물 5개를 압수 없이 처분' },
   { id: 'clash-5',       icon: '🕵️', name: '모순 간파',      desc: '소문이 충돌한 경기에서 베팅 적중 5회' },

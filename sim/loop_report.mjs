@@ -7,7 +7,7 @@ const G = await loadGame();
 const { CONFIG } = G;
 const B = makeBots(G);
 
-const RUNS = 60;
+const RUNS = 120;
 const fmt = (n) => Math.round(n).toLocaleString('ko-KR');
 const pad = (s, w, right) => (right ? String(s).padStart(w) : String(s).padEnd(w));
 

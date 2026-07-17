@@ -43,7 +43,21 @@ export function makeBots(G) {
     S.gold -= amt;
   };
 
-  // 하루 루프: ☀️낮 흥정 → 🌆저녁 정산 → 🌙밤 베팅 → 💸빚 이자
+  // [3막] 🔨 경매의 날 — 저녁과 밤 사이. endAuction()은 밤 연출을 시작하므로 부르지 않는다.
+  const runAuction = (bot) => {
+    if (!G.isAuctionDay()) return;
+    G.startAuction();                       // 스텁 setTimeout이 즉시 renderAuction까지 진행
+    let safety = 0;
+    while (S.auction && !S.auction.done && safety++ < 60) {
+      if (!bot.auction(S.auction)) break;   // false = 여기서 손을 뗀다
+      G.raiseAuction();
+    }
+    if (S.auction && !S.auction.done) G.quitAuction();
+    S.auction = null;
+    G.hideModal();
+  };
+
+  // 하루 루프: ☀️낮 흥정 → 🌆저녁 정산 → 🔨경매(3막) → 🌙밤 베팅 → 💸빚 이자
   const runDay = (bot) => {
     S.event = { id: 'normal' };
     S.customers = G.genCustomers(); S.custIdx = 0; S.purchases = [];
@@ -52,6 +66,7 @@ export function makeBots(G) {
       bot.haggle(S.customers[i]);
     }
     G.renderEvening(); // 매입품 되팔이 정산 (진짜 가치 공개)
+    runAuction(bot);
 
     S.matches = G.genMatches(CONFIG.MATCHES_PER_NIGHT);
     for (let i = 0; i < S.matches.length; i++) {
@@ -69,6 +84,7 @@ export function makeBots(G) {
     name: 'BOT_IDLE (방치)',
     haggle() { /* 아무것도 사지 않는다 */ },
     bet() { S.currentBet = null; /* 관망만 한다 */ },
+    auction() { return false; /* 호가에 손도 대지 않는다 */ },
   };
 
   const BOT_RANDOM = {
@@ -78,6 +94,7 @@ export function makeBots(G) {
       haggleWith(c, (cc) => Math.round(cc.asking * G.rand(0.3, 1.0) / 100) * 100);
     },
     bet() { placeBet(Math.random() < 0.5 ? 'A' : 'B', S.gold * G.rand(0.02, 0.10)); },
+    auction(A) { return Math.random() < 0.5 && A.price + A.step <= S.gold; }, // 감으로 따라간다
   };
 
   const BOT_SMART = {
@@ -101,6 +118,8 @@ export function makeBots(G) {
       if (best.ev <= 0.05) return; // 우위가 없으면 관망 (방치가 아니라 절제)
       placeBet(best.side, S.gold * 0.08);
     },
+    // 이익이 남는 선까지만 따라간다 — 그 위로는 미련 없이 손을 뗀다
+    auction(A) { return A.price + A.step <= Math.min(A.lot.V * 0.85, S.gold); },
   };
 
   // [Phase5] 보통 플레이어 — 정보를 보긴 하지만 완벽히 읽지 못한다(실난이도 측정용).
@@ -123,6 +142,11 @@ export function makeBots(G) {
       const best = evA >= evB ? { side: 'A', ev: evA } : { side: 'B', ev: evB };
       if (best.ev <= 0.05) return;
       placeBet(best.side, S.gold * 0.06);
+    },
+    // 가치를 대충 어림해 그 언저리까지 따라간다 (승자의 저주에 자주 걸린다)
+    auction(A) {
+      if (A._cap == null) A._cap = A.lot.V * G.rand(0.7, 1.05);
+      return A.price + A.step <= Math.min(A._cap, S.gold);
     },
   };
 

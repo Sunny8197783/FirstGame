@@ -42,7 +42,22 @@ console.log(`[${B.BOT_RANDOM.name}] 순자산 중앙값 ${Math.round(rnd.netMed)
 const smt = runBot(B.BOT_SMART);
 console.log(`[${B.BOT_SMART.name}] 순자산 중앙값 ${Math.round(smt.netMed).toLocaleString()} G · 장사손익 평균 ${Math.round(mean(smt.trades)).toLocaleString()} G`);
 
-assert(mean(rnd.betPLs) < 0, '무작위 베팅은 하우스 마진에 갉여 기대값이 마이너스다');
+// 무작위 베팅의 기대값은 하우스 마진(5%)만큼 마이너스여야 한다.
+// 캠페인 손익 평균은 표본이 적고(무작위 봇은 대개 8일차에 파산) 분산이 커서 불안정하므로,
+// 판돈 1단위당 회수율을 대량 표본으로 직접 잰다.
+G.startGame();
+let staked = 0, ret = 0;
+for (let i = 0; i < 5000; i++) {
+  const m = G.genMatches(1)[0];
+  const side = Math.random() < 0.5 ? 'A' : 'B';
+  const aWins = Math.random() < m.pActual;
+  staked += 1;
+  if ((side === 'A') === aWins) ret += side === 'A' ? m.oddsA : m.oddsB;
+}
+const edge = ret / staked - 1;
+console.log(`[무작위 베팅 EV] 판돈 1G당 회수 ${(ret / staked).toFixed(4)} G (엣지 ${(edge * 100).toFixed(2)}%)`);
+assert(edge < 0, '무작위 베팅은 하우스 마진에 갉여 기대값이 마이너스다');
+assert(edge > -0.15, '무작위 베팅이 과도하게 불리하진 않다 (마진이 폭주하지 않음)');
 assert(smt.netMed > rnd.netMed, '정보를 읽는 쪽이 무작위보다 부유하다 (판단력 = 수익)');
 assert(smt.netMed > startNet, '정보를 활용하면 시작 순자산보다 늘어난다 (스킬 보상 존재)');
 assert(mean(smt.trades) > mean(rnd.trades), '최저 수락가를 읽으면 장사 손익이 앞선다');

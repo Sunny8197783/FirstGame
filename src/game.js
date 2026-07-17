@@ -20,6 +20,7 @@ import './ui/title.js';
 import './systems/appraisal.js';
 import './systems/haggle.js';
 import './systems/rival.js';
+import './systems/auction.js';
 import './systems/economy.js';
 import './systems/betting.js';
 import './systems/sparring.js';
