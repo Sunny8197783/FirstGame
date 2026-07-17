@@ -30,6 +30,7 @@ import './systems/work.js';
 import './systems/save.js';
 import './ui/menus.js';
 import './ui/tips.js';
+import './ui/tutorial.js';
 import './ui/day.js';
 import './ui/night.js';
 import './ui/fight.js';

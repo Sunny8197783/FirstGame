@@ -27,8 +27,9 @@ function renderSettings() {
       <button class="btn-ghost seg" onclick="$('save-import-menu').click()">📥 가져오기</button>
       <button class="btn-ghost seg" onclick="confirmDeleteSave()">🗑 삭제</button>
     </span></div>
-    <div class="set-row"><span>온보딩 팁</span><span>
-      <button class="btn-ghost seg" onclick="resetTips(); toast('1일차 팁을 다시 표시한다')">다시 보기</button>
+    <div class="set-row"><span>튜토리얼 · 온보딩 팁</span><span>
+      <button class="btn-ghost seg" onclick="renderHowTo()">❓ 플레이 방법</button>
+      <button class="btn-ghost seg" onclick="resetTips(); resetTutorial(); toast('1일차 튜토리얼·팁을 다시 표시한다')">다시 보기</button>
     </span></div>
     <input type="file" id="save-import-menu" accept=".json,application/json" style="display:none"
       onchange="if(this.files[0]) importSaveFile(this.files[0]); this.value='';">

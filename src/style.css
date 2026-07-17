@@ -435,6 +435,22 @@ body.no-shake .item-stage .art-img.ok { animation: none; transform: translate(-5
 @keyframes rival-pulse { 0%,100% { box-shadow: 0 0 0 rgba(200,162,74,0); } 50% { box-shadow: 0 0 10px rgba(255,210,62,0.55); } }
 body.no-shake .rival-badge { animation: none; }
 
+/* ── 🎓 튜토리얼 스포트라이트 ── */
+#tut { position: absolute; inset: 0; z-index: 80; display: none; pointer-events: none; }
+#tut.show { display: block; }
+/* 거대한 box-shadow로 구멍 주변만 어둡게 — 구멍 안은 그대로 보인다 */
+.tut-hole { position: absolute; border: 3px solid var(--accent); border-radius: 4px;
+  box-shadow: 0 0 0 9999px rgba(0,0,0,0.76), 0 0 18px rgba(255,210,62,0.5) inset;
+  transition: left 0.25s, top 0.25s, width 0.25s, height 0.25s; pointer-events: none; }
+.tut-box { position: absolute; pointer-events: auto; background: #14100a; color: #ffe9b8;
+  border: 3px solid var(--accent); padding: 12px 14px; box-shadow: 5px 5px 0 rgba(0,0,0,0.6);
+  animation: fade-up 0.28s both; }
+.tut-step { font-size: 11px; opacity: 0.6; letter-spacing: 1px; }
+.tut-btns { display: flex; gap: 8px; align-items: center; justify-content: space-between; margin-top: 10px; }
+.tut-btns button { margin: 0; }
+.btn-howto { width: 100% !important; background: #2a5a3a; }
+body.no-shake .tut-hole { transition: none; }
+
 /* ── 💪 알바 미니게임 ── */
 .scene-work { background: linear-gradient(180deg, #5a4630 0%, #3a2c1c 60%, #241a10 100%); }
 .work-bar { position: relative; height: 46px; margin: 14px auto 0; max-width: 520px;

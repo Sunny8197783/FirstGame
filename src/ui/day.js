@@ -117,8 +117,11 @@ function renderCustomer() {
   input.addEventListener('input', () => sync(+input.value));
   sync(start);
   updateDebug();
-  // [Phase2] 1일차 온보딩 팁
-  maybeTip('haggle'); maybeTip('inspect'); maybeTip('debt');
+  // 1일차 첫 손님: 단계별 튜토리얼이 화면 요소를 짚어 준다.
+  // 라이벌 입찰 손님은 흥정 UI가 없어 튜토리얼 앵커가 안 맞으므로 제외(2막부터라 1일차엔 안 걸린다).
+  if (!c.rival) maybeTutorial('day', TUT_DAY);
+  // [Phase2] 말풍선 팁 — 튜토리얼이 끝난 뒤의 가벼운 보조
+  maybeTip('debt');
 }
 
 /* ── 밀당 흥정 엔진 ──

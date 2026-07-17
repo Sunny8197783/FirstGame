@@ -81,9 +81,10 @@ npm run balance    # 흥정 밸런스 리포트(4가지 플레이 스타일)
 src/config.js      모든 밸런스 수치 — 튜닝은 여기부터
 src/data/          items·customers·fighters·rumors·events·story (콘텐츠)
 src/systems/       haggle·appraisal·betting·sparring·market·economy(루프)
-                   rival(2막 밀봉입찰)·auction(3막 경매)
+                   rival(2막 밀봉입찰)·auction(3막 경매)·work(알바)·art(일러스트 로더)
                    save·settings·flow·achievements (릴리스 시스템)
-src/ui/            title·day·night·fight·result·hud·menus·tips·pixelart·rig·debug
+src/ui/            title·day·night·fight·result·hud·menus·tips·tutorial·pixelart·rig·debug
+public/art/        외부 일러스트 (넣으면 자동 반영 · 없으면 픽셀아트 폴백 → ART.md)
 src/audio/         audio.js (현재 삑삑이 — Phase 4에서 확장 예정)
 sim/               헤드리스 시뮬 (stub.mjs가 DOM 스텁)
 legacy/demo_v1.html  원본 단일 파일 데모 (참고용 보존)

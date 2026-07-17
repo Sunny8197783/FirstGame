@@ -28,6 +28,9 @@ function renderTitle() {
             <button class="btn-ghost" onclick="$('save-import').click()">📥 가져오기</button>
           </div>
           <div class="menu-row">
+            <button class="btn-ghost btn-howto" onclick="renderHowTo()">❓ 플레이 방법</button>
+          </div>
+          <div class="menu-row">
             <button class="btn-ghost" onclick="renderSettings()">⚙️ 설정</button>
             <button class="btn-ghost" onclick="renderOddsInfo()">📊 확률 정보</button>
             <button class="btn-ghost" onclick="renderAchievements()">🏆 업적</button>
