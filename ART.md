@@ -136,6 +136,19 @@ subtle grain, high detail, centered composition, transparent background
 **공통**: `korean, 1980s-90s, upper body portrait, entering a pawn shop, holding an item, expressive face`
 정면 또는 살짝 측면. **표정은 중립**으로 (게임이 😐🤔😠😊 배지를 따로 올립니다).
 
+> #### 🔀 외모 변형 — 14장만 만들어도 되고, 56장까지 늘려도 됩니다
+> 손님은 **유형 14종 × 외모 4종 = 56가지**로 등장합니다. 그림은 아래 순서로 찾습니다:
+> `cust-salaryman-3.png` → `cust-salaryman.png` → 이모지
+>
+> - **최소(14장)**: `cust-salaryman.png` 처럼 유형별로 1장만 → 그 유형 전원이 같은 그림
+> - **최대(56장)**: `cust-salaryman-1.png` ~ `-4.png` 까지 → 외모마다 다른 그림
+>
+> 각 외모의 생김새 설명은 `src/data/looks.js`에 있습니다. 그대로 프롬프트에 붙이면 됩니다.
+> 예) `cust-salaryman-3.png` = "말끔한 양복인데 손끝만 떨고 있다"
+> → `neatly dressed office worker, composed posture but trembling fingertips`
+>
+> **먼저 유형별 14장**으로 시작하고, 마음에 들면 변형을 늘리시는 걸 권합니다.
+
 | 파일명 | 손님 | 프롬프트 핵심 |
 |---|---|---|
 | `cust-salaryman.png` | 급전이 필요한 회사원 | anxious office worker, loosened tie, sweating, desperate |

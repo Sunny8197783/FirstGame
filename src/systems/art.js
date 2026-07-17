@@ -83,28 +83,41 @@ const ART_SLUGS = {
 
 function artSlug(name) { return ART_SLUGS[name] || null; }
 
+function artUrlFor(kind, slug) { return `${ART_BASE}/${kind}/${slug}.${ART_EXT}`; }
+
 // 그림 URL. 슬러그가 없으면 null → 호출부는 폴백을 그린다.
 function artUrl(kind, name) {
   const slug = artSlug(name);
-  return slug ? `${ART_BASE}/${kind}/${slug}.${ART_EXT}` : null;
+  return slug ? artUrlFor(kind, slug) : null;
 }
 
-// 로드 실패(파일 없음) 슬러그 캐시 — 같은 그림을 매번 재요청하지 않는다
+// 로드 실패(파일 없음) URL 캐시 — 같은 그림을 매번 재요청하지 않는다
 const artMissing = new Set();
 
-// 그림 + 폴백을 함께 렌더한다.
-//   그림이 로드되면 폴백을 숨기고, 실패하면 <img>를 제거해 폴백만 남긴다.
-//   kind: 'items' | 'customers' | 'fighters' | 'scenes'
-function artHTML(kind, name, fallbackHTML, cls) {
-  const url = artUrl(kind, name);
-  const key = kind + '/' + name;
-  if (!url || artMissing.has(key)) return fallbackHTML; // 이미 없다고 확인된 그림은 시도조차 안 한다
+// 후보 URL을 순서대로 시도한다. 앞의 게 없으면 다음 것, 다 없으면 폴백.
+//   예) 손님: cust-salaryman-2.png → cust-salaryman.png → 이모지
+//   덕분에 그림을 유형별 14장만 만들어도 되고, 외모별 56장까지 늘려도 된다.
+function artHTMLMulti(kind, slugs, fallbackHTML, cls) {
+  const urls = slugs.filter(Boolean).map(s => artUrlFor(kind, s)).filter(u => !artMissing.has(u));
+  if (!urls.length) return fallbackHTML; // 이미 없다고 확인된 그림은 시도조차 안 한다
   // loading="lazy"는 쓰지 않는다 — 화면당 1~2장뿐이고, 지연 로드 시 폴백→그림 전환이 늦게 튄다
   return `<span class="art-slot ${cls || ''}">
-    <img class="art-img" src="${url}" alt="${name}"
-         onload="artOk(this)" onerror="artFail(this,'${key.replace(/'/g, "\\'")}')">
+    <img class="art-img" src="${urls[0]}" data-rest="${urls.slice(1).join('|')}" alt=""
+         onload="artOk(this)" onerror="artNext(this)">
     <span class="art-fb">${fallbackHTML}</span>
   </span>`;
+}
+
+function artHTML(kind, name, fallbackHTML, cls) {
+  return artHTMLMulti(kind, [artSlug(name)], fallbackHTML, cls);
+}
+
+// 손님: 외모별 그림 → 유형별 그림 → 이모지 순으로 폴백
+function customerArtHTML(c, fallbackHTML, cls) {
+  const base = artSlug(c.ctype.type);
+  if (!base) return fallbackHTML;
+  const n = c.look && c.look.n;
+  return artHTMLMulti('customers', [n ? `${base}-${n}` : null, base], fallbackHTML, cls);
 }
 
 function artOk(img) {
@@ -113,10 +126,20 @@ function artOk(img) {
   if (slot) slot.classList.add('has-art');
 }
 
-function artFail(img, key) {
-  artMissing.add(key);
-  img.remove(); // 폴백(.art-fb)만 남는다
+// 이 URL은 없다 → 캐시하고 다음 후보로. 후보가 떨어지면 <img>를 지워 폴백만 남긴다.
+function artNext(img) {
+  artMissing.add(img.getAttribute('src'));
+  const rest = (img.dataset.rest || '').split('|').filter(Boolean);
+  if (rest.length) {
+    img.dataset.rest = rest.slice(1).join('|');
+    img.src = rest[0];
+    return;
+  }
+  img.remove();
 }
 
-Object.assign(globalThis, { ART_SLUGS, ART_EXT, ART_BASE, artSlug, artUrl, artHTML, artOk, artFail });
-export { ART_SLUGS, artSlug, artUrl, artHTML, artOk, artFail };
+Object.assign(globalThis, {
+  ART_SLUGS, ART_EXT, ART_BASE, artSlug, artUrl, artUrlFor,
+  artHTML, artHTMLMulti, customerArtHTML, artOk, artNext,
+});
+export { ART_SLUGS, artSlug, artUrl, artHTML, artHTMLMulti, customerArtHTML, artOk, artNext };

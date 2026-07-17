@@ -22,9 +22,10 @@ function renderCustomer() {
       <div class="day-grid">
         <div class="panel walk-in">
           <div class="center"><span class="pframe" id="cust-frame">${
-            artHTML('customers', c.ctype.type, `<span class="face">${c.ctype.emoji}</span>`)
+            customerArtHTML(c, `<span class="face">${c.look.face}</span>`)
           }<span class="mood-badge" id="cust-mood">😐</span></span><span class="carry">${c.item.emoji}</span></div>
           <h3 class="center" style="margin-top:6px">${c.ctype.type}</h3>
+          ${c.look.desc ? `<p class="center look-desc">${c.look.desc}</p>` : ''}
           ${c.rival ? '<p class="center rival-badge">⚔️ 황금손과 경합 중 — 밀봉 입찰</p>' : ''}
           ${c.regular ? '<p class="center accent" style="font-size:13px">⭐ 단골 — 값을 잘 쳐주는 가게라 소문났다</p>' : ''}
           <p class="center dim" style="font-size:13px">${c.name} · 손님 ${S.custIdx + 1}/${S.customers.length}</p>

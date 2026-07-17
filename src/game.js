@@ -7,6 +7,7 @@ import './systems/flow.js';
 import './systems/achievements.js';
 import './data/items.js';
 import './data/customers.js';
+import './data/looks.js';
 import './data/fighters.js';
 import './data/rumors.js';
 import './data/events.js';

@@ -113,7 +113,7 @@ function genCustomers() {
       .concat(Array.from({ length: nSpark }, () => ({ e: '✨', spark: true })))
       .map(mk => ({ ...mk, x: randInt(6, 74), y: randInt(6, 62) }));
     const c = {
-      name: pick(CUSTOMER_NAMES), ctype, item, V, M, desperation, regular, t,
+      name: pick(CUSTOMER_NAMES), ctype, look: pickLook(ctype), item, V, M, desperation, regular, t,
       asking, patience, stolen, jackpot,
       hints: shuffle(hints), hasTrap, line: pick(ctype.lines), marks, nDef, nSpark, partsView,
     };

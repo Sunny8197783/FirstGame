@@ -601,3 +601,6 @@ body.no-shake .sprite-pos.rx-hit { animation: none; }
   .logo-main, .btn-start, .face, .intro-art, .px-wrap, .item-stage .item-body,
   .pframe.m-think, .drop-in, .walk-in { animation: none !important; }
 }
+
+/* 손님 외모 인상 — 유형과 별개로 매번 다른 사람이 온다는 느낌을 준다 */
+.look-desc { font-size: 12px; opacity: 0.72; line-height: 1.5; margin-top: 2px; font-style: italic; }
