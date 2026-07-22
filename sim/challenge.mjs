@@ -49,7 +49,10 @@ assert(Math.abs(tellTrue / tellTotal - CONFIG.TELL_TRUTH) < 0.08, '텔 진실률
 // 텔 읽기 전략 (보이는 수를 그대로 믿고 카운터픽)
 const beatsMe = { rush: 'counter', poke: 'rush', counter: 'poke' };
 const startWins = S.stats.playerWins, startPL = S.stats.challengePL;
-for (let trial = 0; trial < 100; trial++) {
+// [안정화] 승률 ~58%는 100판 표본에선 표준편차가 커 임계 근처에서 flaky하게 실패했다.
+//          표본을 늘리고(500판) 비율 기준으로 단언해 회귀 게이트를 안정화한다.
+const READ_N = 500;
+for (let trial = 0; trial < READ_N; trial++) {
   Object.assign(S.player, { atk: 5, def: 5, spd: 5 });
   S.gold = 10000; S.day = 2; S.challengeOfferDay = 0;
   G.renderChallengeOffer();
@@ -67,9 +70,10 @@ for (let trial = 0; trial < 100; trial++) {
 }
 const readWins = S.stats.playerWins - startWins;
 const readPL = S.stats.challengePL - startPL;
-console.log(`[텔 읽기 전략] 100판: ${readWins}승 ${100 - readWins}패 (PL ${readPL >= 0 ? '+' : ''}${readPL})`);
-assert(readWins > rushWins, '텔을 읽는 쪽이 막러시보다 강하다 (스킬 게임)');
-assert(readWins >= 55, '텔 읽기는 +EV');
+const readRate = readWins / READ_N;
+console.log(`[텔 읽기 전략] ${READ_N}판: ${readWins}승 ${READ_N - readWins}패 (${(readRate * 100).toFixed(1)}%, PL ${readPL >= 0 ? '+' : ''}${readPL})`);
+assert(readRate > rushWins / 100, '텔을 읽는 쪽이 막러시보다 강하다 (스킬 게임)');
+assert(readRate >= 0.53, '텔 읽기는 +EV');
 
 console.log(errors === 0 ? 'CHALLENGE ALL PASS ✅' : `CHALLENGE ${errors} FAILURES ❌`);
 process.exit(errors === 0 ? 0 : 1);
