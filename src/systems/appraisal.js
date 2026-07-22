@@ -95,14 +95,19 @@ function genCustomers() {
     // 부위마다 VISUAL_NOISE_RATE 확률로 ±1 오차가 생긴다 (⚖️ 정밀 저울 보유 시 오차 없음)
     const partNames = ITEM_PARTS[item.name] || ['외관', '상태', '마감'];
     const baseScore = clamp(Math.round(t * 4) + 1, 1, 5);
+    // [감정안] 이 물건 카테고리의 영구 감정 실력 특전을 읽는다 (정보 명료화만).
+    const perk = masteryPerks(catOf(item));
     // 검수 부위마다 진열대 위 좌표를 준다 — 돋보기로 훑어서 하나씩 찾아내는 지점이다.
-    // ⚠️ 점수·오차 로직은 그대로다. 바뀐 건 '한꺼번에 보여주기 → 찾아내기'라는 표현 방식뿐.
+    // ⚠️ 점수·오차 로직은 그대로다. 감정안 Lv2/5는 이 카테고리 한정으로 오차 확률만 낮춘다.
+    const noiseRate = (S.upgrades.scale || (S.event && S.event.noNoise) || perk.noNoise)
+      ? 0 : CONFIG.VISUAL_NOISE_RATE * perk.noiseMul;
     const spotSlots = shuffle([[28, 30], [70, 34], [36, 68], [66, 70], [50, 48]]);
     const partsView = partNames.map((pn, pi) => {
       let sc = baseScore;
-      if (!S.upgrades.scale && !(S.event && S.event.noNoise) && Math.random() < CONFIG.VISUAL_NOISE_RATE) sc = clamp(sc + (Math.random() < 0.5 ? -1 : 1), 1, 5); // [Phase3] 감정 세미나: 당일 오차 없음
+      if (Math.random() < noiseRate) sc = clamp(sc + (Math.random() < 0.5 ? -1 : 1), 1, 5);
       const [sx, sy] = spotSlots[pi % spotSlots.length];
-      return { name: pn, score: sc, desc: pick(STATE_DESC[sc - 1]), x: sx, y: sy, found: false };
+      // 감정안 Lv1+: 부위 하나가 처음부터 드러나 있다 (숙련자는 한눈에 짚는다)
+      return { name: pn, score: sc, desc: pick(STATE_DESC[sc - 1]), x: sx, y: sy, found: pi < perk.preReveal };
     });
     const avgScore = partsView.reduce((s, p) => s + p.score, 0) / partsView.length;
     // 진열대 마크는 검수 점수와 일치하도록 파생 (정보 채널이 어긋나지 않게)
@@ -114,7 +119,7 @@ function genCustomers() {
       .map(mk => ({ ...mk, x: randInt(6, 74), y: randInt(6, 62) }));
     const c = {
       name: pick(CUSTOMER_NAMES), ctype, look: pickLook(ctype), item, V, M, desperation, regular, t,
-      asking, patience, stolen, jackpot,
+      asking, patience, stolen, jackpot, cat: catOf(item), mastery: perk,
       hints: shuffle(hints), hasTrap, line: pick(ctype.lines), marks, nDef, nSpark, partsView,
     };
     // [2막] 🏪 라이벌 전당포: 2막부터 일부 손님은 황금손도 노린다 → 밀봉 입찰 1회 승부.

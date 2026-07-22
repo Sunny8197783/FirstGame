@@ -20,6 +20,7 @@ function renderTitle() {
           <div class="logo-main">지하경제</div>
           <div class="logo-sub">— UNDERGROUND ECONOMY —</div>
         </div>
+        <p class="title-rank" onclick="renderMasteryBook()">📖 <b class="accent">${masteryRank()}</b> <span class="dim" style="font-size:12px">· 감정안 ${totalMastery()}/30 — 눌러서 감정 수첩</span></p>
         <div class="title-menu">
           <button class="btn-big btn-start" onclick="newGameFromTitle()">▶ 새 게임</button>
           <button class="btn-big" onclick="continueFromTitle()" ${sav ? '' : 'disabled'}>⏸ 이어하기<span class="menu-sub">${preview}</span></button>

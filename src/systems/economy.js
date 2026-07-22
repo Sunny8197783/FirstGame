@@ -234,6 +234,7 @@ function renderEvening() {
   updateHUD();
   let total = 0;
   let anyJackpot = false, anySeize = false; // [Phase4] 정산 SFX 트리거
+  const levelUps = []; // [감정안] 이번 정산에서 오른 감정 레벨
   const mul = (S.event && S.event.resaleMul) || 1; // 호황/불황 이벤트 반영
   const rows = S.purchases.map(p => {
     // 🚨 장물: 매입한 게 장물이면 경찰에 압수될 수 있다 (매입가 전액 손실)
@@ -267,6 +268,9 @@ function renderEvening() {
     if (p.stolen) { S.stats.stolenSold = (S.stats.stolenSold || 0) + 1; if (S.stats.stolenSold >= 5) achieve('stolen-5'); }
     if (p.hasTrap && profit > 0) { S.stats.trapProfits = (S.stats.trapProfits || 0) + 1; if (S.stats.trapProfits >= 5) achieve('trap-5'); }
     if (profit >= 10000) achieve('big-profit');
+    // [감정안] 감정한 물건마다 그 분야 경험치 — 잘 산 만큼·진품 발굴만큼 빨리 큰다
+    const up = gainAppraisalXP(p.item, { profit, jackpot: p.jackpot });
+    if (up) levelUps.push(up);
     return `<tr>
       <td>${p.item.emoji} ${p.item.name}${tag}</td>
       <td>-${fmt(p.price)}</td><td>+${fmt(saleV)}</td>
@@ -284,6 +288,7 @@ function renderEvening() {
       </table>` : '<p class="dim">오늘 매입한 물건이 없다. 정산할 것도 없다.</p>'}
       <p class="big" style="margin-top:12px">오늘 장사 손익: ${plHTML(total, ' G', { big: true })}</p>
       <p>현재 자산: <span class="accent big">${fmt(S.gold)} G</span></p>
+      ${levelUps.map(u => `<p class="mastery-up">📖 <b>${u.emoji} ${u.name} 감정 Lv${u.lvl}</b> 달성! <span class="dim" style="font-size:13px">${u.perk}</span></p>`).join('')}
       <div class="center" style="margin-top:14px">
         ${isAuctionDay()
           ? '<button class="btn-big btn-pink" onclick="startAuction()">🔨 경매장으로 향한다</button>'
@@ -295,6 +300,7 @@ function renderEvening() {
   if (anyJackpot) sndJackpot();
   else if (anySeize) sndSeize();
   else if (total > 0) sndCoin();
+  if (levelUps.length) setTimeout(() => sndLevelUp(), 400); // [감정안] 레벨업 상승음
   updateDebug();
 }
 

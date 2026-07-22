@@ -49,10 +49,11 @@ function renderCustomer() {
               onclick="scanAll()">대충 훑어본다 (전체 확인)</button>
           </div>
           ${c.hints.map(h => `<div class="hint">👁️ ${h.text}</div>`).join('')}
-          ${S.upgrades.lens ? `<div class="hint" style="border-left-color:#7dff7d">🔎 감정 렌즈: 시세 <b>${c.t < 0.33 ? '하단' : c.t < 0.66 ? '중단' : '상단'}권</b></div>` : ''}
-          ${S.upgrades.journal ? (c.hasTrap
-            ? '<div class="hint" style="border-left-color:#ff6b6b">📖 학회지: 정보 중 <b>하나가 수상하다!</b></div>'
-            : '<div class="hint" style="border-left-color:#7dff7d">📖 학회지: 특이사항 없음</div>') : ''}
+          ${(S.upgrades.lens || c.mastery.valueHint) ? `<div class="hint" style="border-left-color:#7dff7d">🔎 ${c.mastery.valueHint && !S.upgrades.lens ? `${catInfo(c.cat).emoji} 감정안` : '감정 렌즈'}: 가치가 시세 <b>${c.t < 0.33 ? '하단' : c.t < 0.66 ? '중단' : '상단'}권</b></div>` : ''}
+          ${(S.upgrades.journal || c.mastery.trapSense) ? (c.hasTrap
+            ? '<div class="hint" style="border-left-color:#ff6b6b">📖 함정 감지: 정보 중 <b>하나가 수상하다!</b></div>'
+            : '<div class="hint" style="border-left-color:#7dff7d">📖 함정 감지: 특이사항 없음</div>') : ''}
+          ${c.mastery.lvl > 0 ? `<p class="mastery-badge">${catInfo(c.cat).emoji} ${catInfo(c.cat).name} 감정 <b>Lv${c.mastery.lvl}</b></p>` : ''}
         </div>
         ${c.rival ? `
         <div class="panel panel-rival">

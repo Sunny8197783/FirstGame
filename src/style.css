@@ -758,3 +758,25 @@ body.no-shake .sprite-pos.rx-hit { animation: none; }
   box-shadow: inset 0 2px 6px rgba(0,0,0,0.7), 0 0 14px rgba(255,60,60,0.7); }
 @keyframes spar-pulse { 50% { border-color: #ff3030; } }
 body.no-shake .spar-timer.urgent { animation: none; }
+
+/* ── 📖 감정안(마스터리) ── */
+.mastery-badge { font-size: 11px; opacity: 0.75; margin-top: 6px; text-align: center;
+  padding: 3px; background: rgba(255,210,62,0.08); border-radius: 3px; }
+.mastery-up { font-size: 14px; margin-top: 8px; padding: 7px 10px;
+  background: rgba(255,210,62,0.12); border-left: 4px solid var(--gold);
+  animation: fade-up 0.4s both; }
+.title-rank { position: relative; z-index: 2; margin: 10px auto 2px; font-size: 14px;
+  cursor: pointer; opacity: 0.92; transition: transform 0.12s; }
+.title-rank:hover { transform: scale(1.04); }
+/* 감정 수첩 모달 */
+.mb-row { padding: 8px 4px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.mb-head { display: flex; justify-content: space-between; align-items: baseline; }
+.mb-name { font-size: 14px; }
+.mb-lvl { font-size: 13px; color: var(--accent); font-weight: bold; }
+.mb-lvl.max { color: var(--gold); text-shadow: 0 0 8px rgba(255,210,62,0.5); }
+.mb-bar { position: relative; height: 16px; margin: 5px 0; background: rgba(0,0,0,0.4);
+  border: 2px solid #000; overflow: hidden; }
+.mb-fill { height: 100%; background: linear-gradient(90deg, #a3711d, var(--gold)); }
+.mb-xp { position: absolute; inset: 0; text-align: center; line-height: 16px; font-size: 10px;
+  color: #fff; text-shadow: 0 1px 2px #000; }
+.mb-perk { font-size: 12px; opacity: 0.85; padding-left: 4px; }

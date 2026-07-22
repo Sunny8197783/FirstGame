@@ -105,7 +105,8 @@ legacy/demo_v1.html  원본 단일 파일 데모 (참고용 보존)
 
 ## 5. 저장 데이터 (localStorage 키)
 - `pawnshop_save_v1` — 게임 진행(version 필드 있음, 마이그레이션 대비)
-- `pawnshop_settings_v1` / `pawnshop_achievements_v1` / `pawnshop_tips_seen_v1`
+- `pawnshop_settings_v1` / `pawnshop_achievements_v1` / `pawnshop_tips_seen_v1` / `pawnshop_tutorial_v1`
+- `pawnshop_mastery_v1` — 📖 감정안(회차 넘어 영구). 세이브와 분리 — 새 게임에도 유지되는 장기 성장
 
 ---
 

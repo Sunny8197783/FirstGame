@@ -5,6 +5,7 @@ import './config.js';
 import './systems/settings.js';
 import './systems/flow.js';
 import './systems/achievements.js';
+import './systems/mastery.js';
 import './data/items.js';
 import './data/customers.js';
 import './data/looks.js';
