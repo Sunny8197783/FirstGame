@@ -31,6 +31,9 @@ const ACHIEVEMENTS = [
   { id: 'no-bet-7',      icon: '🧘', name: '금욕의 7일',     desc: '7일 연속 베팅 없이 보내기' },
   { id: 'debt-free-5',   icon: '⛓️', name: '조기 상환',      desc: '5일차 안에 김사장 빚 완납' },
   { id: 'work-3',        icon: '💪', name: '정직한 노동',    desc: '알바로 하루를 버틴 날 3회' },
+  { id: 'master-1',      icon: '🎖️', name: '일가를 이루다',   desc: '한 분야 감정안을 만렙(Lv5)까지' },
+  { id: 'grandmaster',   icon: '📖', name: '전설의 명인',     desc: '여섯 분야 감정안을 모두 만렙' },
+  { id: 'master-deal',   icon: '👑', name: '명품을 알아보다', desc: '분야 명품을 이익 내고 매입' },
 ];
 
 let unlocked = {};

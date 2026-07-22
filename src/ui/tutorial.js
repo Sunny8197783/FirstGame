@@ -136,6 +136,13 @@ function renderHowTo() {
         <li><b>3막(15~21일)</b> 🔨 경매의 날(공개 호가 경쟁). 21일 밤 그랜드 파이널.</li>
       </ul>
 
+      <h3 style="font-size:15px; margin-top:12px">📖 감정안 (회차를 넘어 성장)</h3>
+      <ul style="font-size:13px; padding-left:18px; line-height:1.8">
+        <li>물건을 감정할수록 그 <b>분야 감정안</b>이 오른다(6분야). 새 게임에도 <b>영구히 남는다</b>.</li>
+        <li>레벨이 오르면 그 분야가 <b>더 잘 보인다</b> — 검수 오차↓·가치 위치·함정 감지. 정답이 아니라 눈이다.</li>
+        <li>한 분야를 <b>만렙</b>으로 키우면, 그 분야 <b>🎖️ 명품</b>을 든 손님이 찾아온다 — 한 방이 크지만 위작도 정교하다.</li>
+      </ul>
+
       <h3 style="font-size:15px; margin-top:12px">💡 막히면</h3>
       <ul style="font-size:13px; padding-left:18px; line-height:1.8">
         <li>돈이 마르면 아침에 <b>💪 알바</b> 선택지가 뜬다 — 확정 수익이지만 그날 장사는 못 한다.</li>

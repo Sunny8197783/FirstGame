@@ -780,3 +780,11 @@ body.no-shake .spar-timer.urgent { animation: none; }
 .mb-xp { position: absolute; inset: 0; text-align: center; line-height: 16px; font-size: 10px;
   color: #fff; text-shadow: 0 1px 2px #000; }
 .mb-perk { font-size: 12px; opacity: 0.85; padding-left: 4px; }
+
+/* ── 🎖️ 분야 명품(마스터 전용) 손님 ── */
+.master-badge { font-size: 12px; color: #ffd23e; background: rgba(255,210,62,0.14);
+  border: 2px solid #ffd23e; padding: 4px 7px; margin-top: 4px; font-weight: bold;
+  box-shadow: 0 0 14px rgba(255,210,62,0.35); animation: master-glow 1.8s ease-in-out infinite; }
+@keyframes master-glow { 0%,100% { box-shadow: 0 0 8px rgba(255,210,62,0.25); } 50% { box-shadow: 0 0 18px rgba(255,210,62,0.6); } }
+body.no-shake .master-badge { animation: none; }
+.panel.master-item { border-color: #ffd23e; box-shadow: 0 var(--px) 0 rgba(0,0,0,0.45), 0 0 20px rgba(255,210,62,0.3); }

@@ -26,6 +26,7 @@ function renderCustomer() {
           }<span class="mood-badge" id="cust-mood">😐</span></span><span class="carry">${c.item.emoji}</span></div>
           <h3 class="center" style="margin-top:6px">${c.ctype.type}</h3>
           ${c.look.desc ? `<p class="center look-desc">${c.look.desc}</p>` : ''}
+          ${c.masterClient ? `<p class="center master-badge">🎖️ ${catInfo(c.cat).emoji} ${catInfo(c.cat).name} 명품 — 당신의 감식안을 알아봤다</p>` : ''}
           ${c.rival ? '<p class="center rival-badge">⚔️ 황금손과 경합 중 — 밀봉 입찰</p>' : ''}
           ${c.regular ? '<p class="center accent" style="font-size:13px">⭐ 단골 — 값을 잘 쳐주는 가게라 소문났다</p>' : ''}
           <p class="center dim" style="font-size:13px">${c.name} · 손님 ${S.custIdx + 1}/${S.customers.length}</p>

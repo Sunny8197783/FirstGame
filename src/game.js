@@ -17,6 +17,7 @@ import './data/rival.js';
 import './audio/audio.js';
 import './systems/state.js';
 import './ui/pixelart.js';
+import './data/masterworks.js'; // items·pixelart·art 로드 후 (명품을 각 데이터에 편입)
 import './ui/rig.js';
 import './ui/hud.js';
 import './ui/title.js';

@@ -25,7 +25,8 @@ function genCustomers() {
   // [Phase3] 전설 세트(set 필드)는 시즌 모드에서 현재 시즌 세트만 로테이션 유통
   const curSet = S.season > 0 ? ((S.season - 1) % 3) + 1 : 0;
   const pool = ITEMS.filter(it => (it.act || 1) <= actOf())
-    .filter(it => !it.set || it.set === curSet);
+    .filter(it => !it.set || it.set === curSet)
+    .filter(it => !it.master); // 🎖️ 명품은 일반 유통 제외 — 아래에서 만렙 분야만 따로 주입
   // [매물 진행] 자산에 맞는 물건만 들어온다 — 자산이 늘수록 매물이 점점 비싸진다.
   // ⚠️ 예전 코드는 감당 가능/불가능을 나눈 뒤 전체를 shuffle해서 필터가 무력화됐다.
   //    (1일차 5,000G에 12만G짜리가 뜨던 원인) 이제 보이는 n명분을 직접 구성한다.
@@ -48,9 +49,19 @@ function genCustomers() {
     const lux = pool.filter(it => it.hi >= 18000);
     if (lux.length) itemPool[randInt(0, n - 1)] = pick(lux);
   }
+  // 🎖️ 분야 명품: 해당 분야 감정안 만렙(Lv5)이고 자금이 되면, 그 분야 명품을 든 손님이 온다.
+  //    새 게임을 시작해도 감정안은 남으므로 — 만렙 분야는 매 회차 명품이 다시 찾아온다.
+  const masters = ITEMS.filter(it => it.master && masteryLevel(it.master) >= (it.reqLvl || 5)
+    && cost(it) <= budget);
+  if (masters.length && S.season === 0 && Math.random() < CONFIG.MASTER_CLIENT_RATE) {
+    itemPool[randInt(0, n - 1)] = pick(masters);
+  }
+  // 명품 손님은 감식안을 알아본 연장자/전문가다 (수상한 부류가 명품을 들고 오진 않는다)
+  const connoisseurs = CUSTOMER_TYPES.filter(t => ['깐깐한 수집가', '은퇴한 골동품상', '박물관 큐레이터', '골동품 경매사', '몰락한 귀족 후예'].includes(t.type));
   return Array.from({ length: n }, (_, i) => {
-    const ctype = pick(CUSTOMER_TYPES);
     const item = itemPool[i % itemPool.length];
+    const isMaster = !!item.master;
+    const ctype = isMaster ? pick(connoisseurs) : pick(CUSTOMER_TYPES);
     const V = Math.round(rand(item.lo, item.hi) * prestigeMul() / 100) * 100; // [Phase3] 프레스티지 배율
     // 단골: 같은 유형과 REGULAR_DEALS_REQ회 이상 거래 성사 → 더 싸게 넘겨준다
     const regular = (S.regularDeals[ctype.type] || 0) >= CONFIG.REGULAR_DEALS_REQ;
@@ -58,7 +69,7 @@ function genCustomers() {
     let M = Math.round(V * desperation);
     // 밀당 흥정 파라미터: 첫 요구가(앵커 — 유형별 뻥튀기/투매 성향), 인내심
     let asking = Math.max(M + 300, Math.round(V * rand(ctype.ask[0], ctype.ask[1]) / 100) * 100);
-    let patience = ctype.pat + ((S.event && S.event.patienceBonus) || 0); // [Phase3] 거리 악사 이벤트
+    let patience = ctype.pat + ((S.event && S.event.patienceBonus) || 0) + (isMaster ? 1 : 0); // 명품 손님은 여유롭다
     // 🚨 장물: 수상한 부류가 터무니없이 싸게 서둘러 던진다 — 너무 싼 건 이유가 있다
     const stolen = !!ctype.shady && Math.random() < CONFIG.STOLEN_RATE;
     if (stolen) {
@@ -66,8 +77,8 @@ function genCustomers() {
       M = Math.min(M, Math.round(V * rand(0.33, 0.48)));
       patience = 2;
     }
-    // 🎉 숨은 진품: 저녁 되팔이 때 가치 ×2로 판명 (아무도 모른다)
-    const jackpot = !stolen && Math.random() < CONFIG.JACKPOT_RATE;
+    // 🎉 숨은 진품: 저녁 되팔이 때 가치 ×2로 판명 (아무도 모른다). 명품은 진짜 걸작일 확률이 높다.
+    const jackpot = !stolen && Math.random() < (isMaster ? CONFIG.MASTER_JACKPOT_RATE : CONFIG.JACKPOT_RATE);
     // 힌트 생성: 가치의 위치(t)에 따라 방향성 힌트 선택
     const t = (V - item.lo) / (item.hi - item.lo);
     const dir = t >= 0.55 ? 'high' : t <= 0.45 ? 'low' : 'mid';
@@ -81,7 +92,7 @@ function genCustomers() {
     if (Math.random() < 0.5) hints.push({ text: pick(NEUTRAL_HINTS), trap: false });
     // 함정 힌트: 실제 방향과 반대를 가리키는 힌트로 교체
     // [Phase3] 손님 몰림 이벤트(trapBoost) + 프레스티지(험한 동네일수록 함정↑)
-    const trapRate = (ctype.swindler ? CONFIG.TRAP_HINT_RATE_SWINDLER : CONFIG.TRAP_HINT_RATE)
+    const trapRate = (isMaster ? CONFIG.MASTER_TRAP_RATE : ctype.swindler ? CONFIG.TRAP_HINT_RATE_SWINDLER : CONFIG.TRAP_HINT_RATE)
       + ((S.event && S.event.trapBoost) || 0)
       + (S.prestige || 0) * CONFIG.PRESTIGE_TRAP_ADD;
     let hasTrap = false;
@@ -117,10 +128,16 @@ function genCustomers() {
     const marks = shuffle(DEFECTS).slice(0, nDef).map(e => ({ e, spark: false }))
       .concat(Array.from({ length: nSpark }, () => ({ e: '✨', spark: true })))
       .map(mk => ({ ...mk, x: randInt(6, 74), y: randInt(6, 62) }));
+    // 명품 손님의 첫 마디 — 당신의 감식안을 알아보고 찾아왔다는 톤
+    const masterLine = isMaster ? pick([
+      '"자네 눈이 이 바닥에서 알아준다더군. 이건 아무 데나 못 내놓는 물건이야."',
+      '"진짜를 알아보는 사람한테만 보여주는 걸세. 값은 자네가 매겨 봐."',
+      '"평생 모은 것 중 하나야. 눈 밝은 자네라면 제값을 알아보겠지."',
+    ]) : pick(ctype.lines);
     const c = {
       name: pick(CUSTOMER_NAMES), ctype, look: pickLook(ctype), item, V, M, desperation, regular, t,
-      asking, patience, stolen, jackpot, cat: catOf(item), mastery: perk,
-      hints: shuffle(hints), hasTrap, line: pick(ctype.lines), marks, nDef, nSpark, partsView,
+      asking, patience, stolen, jackpot, cat: catOf(item), mastery: perk, masterClient: isMaster,
+      hints: shuffle(hints), hasTrap, line: masterLine, marks, nDef, nSpark, partsView,
     };
     // [2막] 🏪 라이벌 전당포: 2막부터 일부 손님은 황금손도 노린다 → 밀봉 입찰 1회 승부.
     // 장물은 라이벌도 손대지 않는다(뒤탈 나는 물건은 서로 피한다).

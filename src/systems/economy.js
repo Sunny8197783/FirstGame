@@ -27,6 +27,7 @@ function startGame() {
     def: clamp(f.def + randInt(-J, J), 1, 10),
     spd: clamp(f.spd + randInt(-J, J), 1, 10),
     w: randInt(2, 5), l: randInt(1, 4) }));
+  checkMasteryAchievements(); // 이미 만렙인 분야가 있으면 업적 따라잡기
   startDay();
 }
 
@@ -270,7 +271,11 @@ function renderEvening() {
     if (profit >= 10000) achieve('big-profit');
     // [감정안] 감정한 물건마다 그 분야 경험치 — 잘 산 만큼·진품 발굴만큼 빨리 큰다
     const up = gainAppraisalXP(p.item, { profit, jackpot: p.jackpot });
-    if (up) levelUps.push(up);
+    if (up) {
+      levelUps.push(up);
+      if (up.lvl >= 5) { achieve('master-1'); if (totalMastery() >= 30) achieve('grandmaster'); }
+    }
+    if (p.item.master && profit > 0) achieve('master-deal'); // 🎖️ 명품을 이익 내고 매입
     return `<tr>
       <td>${p.item.emoji} ${p.item.name}${tag}</td>
       <td>-${fmt(p.price)}</td><td>+${fmt(saleV)}</td>

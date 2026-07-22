@@ -39,7 +39,7 @@ const ITEM_CAT = {
   '70년대 라이더스 가죽 재킷': 'misc', '운석 조각': 'misc', '고가구 문갑': 'misc',
 };
 
-function catOf(item) { return ITEM_CAT[item.name] || 'misc'; }
+function catOf(item) { return item.master || ITEM_CAT[item.name] || 'misc'; }
 function catInfo(id) { return CATEGORIES.find(c => c.id === id) || CATEGORIES[5]; }
 
 // 레벨 임계(누적 XP). Lv0~5. 한 분야를 5까지 올리려면 여러 회차가 걸린다 → 장기 성장.
@@ -116,6 +116,13 @@ function masteryRank() {
   return ranks.find(([cut]) => t >= cut)[1];
 }
 
+// 이미 만렙인 분야가 있으면 업적을 따라잡아 준다 (다른 회차에서 딴 경우·기존 세이브 대비)
+function checkMasteryAchievements() {
+  if (typeof achieve !== 'function') return;
+  if (CATEGORIES.some(c => masteryLevel(c.id) >= MAX_LEVEL)) achieve('master-1');
+  if (totalMastery() >= CATEGORIES.length * MAX_LEVEL) achieve('grandmaster');
+}
+
 function resetMastery() {
   mastery = {};
   CATEGORIES.forEach(c => { mastery[c.id] = { xp: 0, lvl: 0 }; });
@@ -165,6 +172,6 @@ function confirmResetMastery() {
 Object.assign(globalThis, {
   CATEGORIES, ITEM_CAT, catOf, catInfo, masteryLevel, totalMastery,
   masteryPerks, gainAppraisalXP, masteryRank, resetMastery,
-  renderMasteryBook, confirmResetMastery, LEVEL_PERKS,
+  renderMasteryBook, confirmResetMastery, checkMasteryAchievements, LEVEL_PERKS,
 });
 export { CATEGORIES, catOf, masteryPerks, gainAppraisalXP, masteryRank, totalMastery, renderMasteryBook, resetMastery };
