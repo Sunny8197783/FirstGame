@@ -5,7 +5,32 @@
 
 ---
 
-## 1. 넣는 법 (3단계)
+## 0. ⚡ 자동 생성 (API 키가 있다면) — `npm run art`
+
+수동으로 한 장씩 만드는 대신, **본인 API 키**로 66+장을 자동 생성할 수 있습니다.
+키는 **환경변수로 본인 컴퓨터에만** 두며, 저장소·스크립트 어디에도 저장되지 않습니다.
+
+```powershell
+# PowerShell (이 창에서만 유효한 임시 환경변수)
+$env:OPENAI_API_KEY = "sk-..."
+
+npm run art -- --dry                 # 무엇을 만들지 미리보기 (API 호출 없음, 무료)
+npm run art -- items --limit 5       # items 5장만 (비용 확인용 소량 시작 추천)
+npm run art                          # 전부 (이미 있는 파일은 자동 건너뜀)
+npm run art -- items/pocket-watch    # 한 장만
+npm run art -- --force               # 이미 있어도 다시 생성
+```
+
+- **모델/크기 바꾸기**: `$env:ART_MODEL="gpt-image-1"`, `$env:ART_SIZE="1024x1024"`, `$env:ART_QUALITY="high"`
+- **다른 제공자**(Replicate 등): `scripts/gen-art.mjs`의 `callImageAPI()`만 교체
+- 프롬프트를 다듬으려면: `scripts/art-prompts.mjs` (슬러그 → 프롬프트, 게임과 자동 정합)
+- 생성 후 게임을 **새로고침**하면 바로 반영됩니다. 실패해도 게임은 폴백으로 정상 동작.
+
+> 💡 처음엔 `--dry`로 목록을 보고, `items --limit 3` 로 3장만 뽑아 화풍을 확인한 뒤 전체를 돌리세요.
+
+---
+
+## 1. 수동으로 넣는 법 (3단계)
 
 1. 이미지를 생성한다 (Midjourney / DALL·E / Stable Diffusion 등 — 프롬프트는 아래 4장 참고)
 2. **투명 배경 PNG**로 저장하고, 아래 표의 **파일명 그대로** 이름 붙인다
