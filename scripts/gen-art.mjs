@@ -25,17 +25,48 @@ import { mkdir, writeFile, access } from 'node:fs/promises';
 import { constants as FS } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { allAssets } from './art-prompts.mjs';
+import { allAssets, PIXEL_STYLE, PIXEL_KIND_SUFFIX } from './art-prompts.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT_DIR = resolve(ROOT, 'public/art');
 const EXT = 'png';
+
+// 제공자 선택: PIXELLAB_API_KEY가 있으면 PixelLab(픽셀아트 전용) 우선. ART_PROVIDER=openai로 강제 전환 가능.
+const PIXELLAB_KEY = process.env.PIXELLAB_API_KEY || '';
+const PROVIDER = process.env.ART_PROVIDER || (PIXELLAB_KEY ? 'pixellab' : 'openai');
 
 const API_KEY = process.env.OPENAI_API_KEY || process.env.ART_API_KEY || '';
 const MODEL = process.env.ART_MODEL || 'gpt-image-1';
 const SIZE = process.env.ART_SIZE || '1024x1024';
 const ENDPOINT = process.env.ART_ENDPOINT || 'https://api.openai.com/v1/images/generations';
 const QUALITY = process.env.ART_QUALITY || 'medium';
+
+// PixelLab 픽셀 크기 (종류별). 200 이하. 아이템 아이콘·캐릭터 128, 배경은 넓게.
+const PX_SIZE = { items: 128, customers: 128, fighters: 128, scenes: 200 };
+
+// ── PixelLab (pixflux 텍스트→픽셀아트) ── 응답: { image:{base64}, usage:{generations} }
+async function callPixelLab(asset) {
+  const size = PX_SIZE[asset.kind] || 128;
+  const desc = `${asset.core}, ${PIXEL_KIND_SUFFIX[asset.kind] || ''}, ${PIXEL_STYLE}`;
+  const res = await fetch('https://api.pixellab.ai/v1/generate-image-pixflux', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${PIXELLAB_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      description: desc,
+      image_size: { width: size, height: size },
+      no_background: true,
+      negative_description: 'blurry, jpeg artifacts, photo, 3d render, text, watermark, signature',
+    }),
+  });
+  if (!res.ok) {
+    const txt = await res.text().catch(() => '');
+    const err = new Error(`PixelLab ${res.status}: ${txt.slice(0, 300)}`); err.status = res.status; throw err;
+  }
+  const json = await res.json();
+  const b64 = json.image && json.image.base64;
+  if (!b64) throw new Error('PixelLab 응답에 이미지가 없다: ' + JSON.stringify(json).slice(0, 200));
+  return Buffer.from(b64, 'base64');
+}
 
 // ── CLI 인자 ──
 const args = process.argv.slice(2);
@@ -90,10 +121,11 @@ async function callImageAPI(prompt) {
   throw new Error('응답에 이미지 데이터가 없다: ' + JSON.stringify(json).slice(0, 200));
 }
 
-// 429/5xx는 지수 백오프로 재시도
-async function generateWithRetry(prompt, tries = 4) {
+// 429/5xx는 지수 백오프로 재시도. asset = {kind, slug, core, prompt}
+async function generateWithRetry(asset, tries = 4) {
+  const gen = () => PROVIDER === 'pixellab' ? callPixelLab(asset) : callImageAPI(asset.prompt);
   for (let attempt = 1; ; attempt++) {
-    try { return await callImageAPI(prompt); }
+    try { return await gen(); }
     catch (e) {
       const retryable = e.status === 429 || (e.status >= 500 && e.status < 600) || e.code === 'ETIMEDOUT';
       if (!retryable || attempt >= tries) throw e;
@@ -122,7 +154,8 @@ async function main() {
   const skipped = plan.filter(p => p.skip).length;
 
   console.log(`\n🎨 아트 생성 — 대상 ${plan.length}장 · 생성 ${todo.length}장 · 건너뜀(이미 있음) ${skipped}장`);
-  console.log(`   모델 ${MODEL} · 크기 ${SIZE} · 저장 위치 public/art/<kind>/<slug>.png`);
+  const provLabel = PROVIDER === 'pixellab' ? 'PixelLab pixflux (픽셀아트)' : `${MODEL} · ${SIZE}`;
+  console.log(`   제공자 ${provLabel} · 저장 위치 public/art/<kind>/<slug>.png`);
 
   if (flags.dry) {
     console.log('\n[--dry] 실제 호출 없음. 만들 목록:');
@@ -130,9 +163,11 @@ async function main() {
     console.log('\n키를 넣고 --dry 없이 다시 실행하면 생성한다.');
     return;
   }
-  if (!API_KEY) {
+  if (PROVIDER === 'pixellab' ? !PIXELLAB_KEY : !API_KEY) {
     console.error('\n❌ API 키가 없다. 환경변수를 설정하라:');
-    console.error('   PowerShell:  $env:OPENAI_API_KEY = "sk-..."');
+    console.error(PROVIDER === 'pixellab'
+      ? '   PowerShell:  $env:PIXELLAB_API_KEY = "..."'
+      : '   PowerShell:  $env:OPENAI_API_KEY = "sk-..."');
     console.error('   그리고 다시 실행. (키는 저장소에 저장되지 않는다)');
     process.exit(1);
   }
@@ -145,7 +180,7 @@ async function main() {
     process.stdout.write(`(${i + 1}/${todo.length}) ${t.kind}/${t.slug} ... `);
     try {
       await mkdir(dirname(t.path), { recursive: true });
-      const buf = await generateWithRetry(t.prompt);
+      const buf = await generateWithRetry(t);
       await writeFile(t.path, buf);
       console.log(`✅ ${(buf.length / 1024).toFixed(0)}KB`);
       ok++;

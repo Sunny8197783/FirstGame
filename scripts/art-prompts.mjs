@@ -11,6 +11,15 @@ export const STYLE = [
   'no text, no watermark, no signature, not a 3d render, not a photograph',
 ].join(', ');
 
+// [PixelLab] 픽셀아트 제공자용 화풍 — painterly STYLE 대신 이걸 쓴다. 게임의 도트 정체성과 맞춘다.
+export const PIXEL_STYLE = 'high quality detailed pixel art, crisp clean pixels, limited palette, subtle dithering, dark outline, centered';
+export const PIXEL_KIND_SUFFIX = {
+  items:     'single antique object icon, transparent background',
+  customers: 'character bust portrait, facing viewer, korean person, transparent background',
+  fighters:  'full body fighter in fighting stance, transparent background',
+  scenes:    'wide background scene, atmospheric',
+};
+
 // 종류별 꼬리말 (구도·배경)
 export const KIND_SUFFIX = {
   items:     'single antique object, plain soft studio background, product illustration, subtle rim light',
@@ -113,7 +122,8 @@ export function allAssets() {
   for (const kind of Object.keys(PROMPTS)) {
     for (const [slug, core] of Object.entries(PROMPTS[kind])) {
       const suffix = KIND_SUFFIX[kind] || '';
-      out.push({ kind, slug, prompt: `${core}. ${suffix}. ${STYLE}` });
+      // core를 함께 노출 — PixelLab 제공자가 painterly STYLE 대신 PIXEL_STYLE로 다시 감싼다
+      out.push({ kind, slug, core, prompt: `${core}. ${suffix}. ${STYLE}` });
     }
   }
   return out;
