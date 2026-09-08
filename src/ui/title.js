@@ -10,7 +10,7 @@ function renderTitle() {
     ? `${sav.season > 0 ? `시즌${sav.season}` : `${sav.day}일차 · ${act}막`} · 💰 ${fmt(sav.gold)} G · ${sav.point === 'dawn' ? '🌌 새벽' : '☀️ 아침'}부터`
     : '저장된 게임이 없다';
   $('screen').innerHTML = `
-    <div class="scene scene-night center" style="min-height:540px; padding-top:48px">
+    <div class="scene scene-night scene-title center" style="min-height:540px; padding-top:48px">
       <div class="crowd"></div>
       <div class="neon neon-l"></div><div class="neon neon-r"></div>
       <div style="position:relative; z-index:2">

@@ -41,20 +41,22 @@ const SIZE = process.env.ART_SIZE || '1024x1024';
 const ENDPOINT = process.env.ART_ENDPOINT || 'https://api.openai.com/v1/images/generations';
 const QUALITY = process.env.ART_QUALITY || 'medium';
 
-// PixelLab 픽셀 크기 (종류별). 200 이하. 아이템 아이콘·캐릭터 128, 배경은 넓게.
-const PX_SIZE = { items: 128, customers: 128, fighters: 128, scenes: 200 };
+// PixelLab 픽셀 크기 (종류별). 200 이하. 아이템·캐릭터 정사각 128, 씬은 와이드 [w,h].
+const PX_SIZE = { items: 128, customers: 128, fighters: 128, scenes: [200, 120] };
 
 // ── PixelLab (pixflux 텍스트→픽셀아트) ── 응답: { image:{base64}, usage:{generations} }
 async function callPixelLab(asset) {
-  const size = PX_SIZE[asset.kind] || 128;
+  const sz = PX_SIZE[asset.kind] || 128;
+  const [w, h] = Array.isArray(sz) ? sz : [sz, sz];
   const desc = `${asset.core}, ${PIXEL_KIND_SUFFIX[asset.kind] || ''}, ${PIXEL_STYLE}`;
   const res = await fetch('https://api.pixellab.ai/v1/generate-image-pixflux', {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${PIXELLAB_KEY}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
       description: desc,
-      image_size: { width: size, height: size },
-      no_background: true,
+      image_size: { width: w, height: h },
+      // 씬은 배경이므로 불투명 전체 그림, 나머지는 투명 스프라이트
+      no_background: asset.kind !== 'scenes',
       negative_description: 'blurry, jpeg artifacts, photo, 3d render, text, watermark, signature',
     }),
   });
@@ -127,7 +129,8 @@ async function generateWithRetry(asset, tries = 4) {
   for (let attempt = 1; ; attempt++) {
     try { return await gen(); }
     catch (e) {
-      const retryable = e.status === 429 || (e.status >= 500 && e.status < 600) || e.code === 'ETIMEDOUT';
+      // status 없는 오류 = 네트워크 레벨 실패(fetch failed 등) → 이것도 재시도한다
+      const retryable = !e.status || e.status === 429 || (e.status >= 500 && e.status < 600) || e.code === 'ETIMEDOUT';
       if (!retryable || attempt >= tries) throw e;
       const wait = 2000 * attempt;
       console.log(`   ⏳ ${e.status || e.code} — ${wait / 1000}s 후 재시도 (${attempt}/${tries - 1})`);

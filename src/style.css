@@ -216,6 +216,8 @@ td:first-child, th:first-child { text-align: left; }
 .scene { position: relative; border: var(--px) solid #000; margin-top: 10px; padding: 12px; overflow: hidden;
   box-shadow: 0 var(--px) 0 rgba(0,0,0,0.45), inset 0 0 60px rgba(0,0,0,0.35); }
 /* 낮: 전당포 내부 — 선반, 카운터, 창문 빛 */
+/* 낮 씬은 그라디언트+선반 유지 — 배경 일러스트를 깔아봤으나 패널이 화면 대부분을 덮어
+   어두운 노이즈로만 남고 따뜻한 톤을 잃었다. (생성물은 public/art/scenes/pawnshop-day.png에 보존) */
 .scene-day { background: linear-gradient(180deg, #6b4a2a 0%, #58371c 55%, #3a2413 100%); }
 .scene-day::before { content: ''; position: absolute; right: 6%; top: 0; width: 150px; height: 200px;
   background: linear-gradient(205deg, rgba(255,220,150,0.22), transparent 65%); pointer-events: none; }
@@ -277,6 +279,16 @@ body.theme-night .trust.high { color: #7dff7d; }
 .inspect-row.dim { opacity: 0.5; font-style: italic; }
 /* 밤: 지하 격투장 — 관중, 네온, 링 */
 .scene-night { background: linear-gradient(180deg, #0a0d28 0%, #05051a 100%); }
+/* [배경아트] 패널이 덮지 않는 타이틀 화면에서만 아레나 일러스트를 깐다.
+   경기 화면은 CSS 링·로프와 겹쳐 오히려 탁해져서 쓰지 않는다. 파일이 없으면 그라디언트 폴백. */
+.scene-title {
+  background:
+    linear-gradient(180deg, rgba(6,8,26,0.34), rgba(4,6,20,0.62)),
+    url('/art/scenes/arena-night.png') center/cover no-repeat,
+    linear-gradient(180deg, #0a0d28 0%, #05051a 100%);
+  image-rendering: pixelated;
+}
+.scene-title .crowd { display: none; }
 .crowd { position: absolute; left: 0; right: 0; bottom: 0; height: 55%; pointer-events: none; opacity: 0.8;
   background-image:
     radial-gradient(circle at 12px 12px, #171d48 0 8px, transparent 9px),

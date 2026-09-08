@@ -100,6 +100,11 @@ export const PROMPTS = {
     'cust-fallen-heir': 'fallen chaebol heir, designer sunglasses, arrogant but broke',
   },
 
+  scenes: {
+    'pawnshop-day': 'cozy 1980s korean pawn shop interior seen from behind the counter, warm amber lamplight, wooden shelves crammed with antiques and clocks, dusty back-alley mood',
+    'arena-night': 'underground fight club arena at night, empty boxing ring with red ropes, cheering silhouette crowd, hazy neon pink and cyan lights, smoky gritty basement',
+  },
+
   fighters: {
     'fighter-bear': 'huge burly brawler, bear-like build, brown tones, heavy fists',
     'fighter-viper': 'lean fast striker, snake tattoo, green accents, coiled pose',
