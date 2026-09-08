@@ -185,6 +185,7 @@ function initAudio() {
 }
 
 Object.assign(globalThis, {
+  tone, noise, // [fix] sparring·cine 등 타 모듈이 globalThis로 부른다 (미등록 시 ReferenceError)
   beep, sndClick, sndGood, sndBad, sndDrop,
   sndHaggleOk, sndHaggleFail, sndInsult, sndJackpot, sndSeize,
   sndBetWin, sndBetLose, sndAwaken, sndHit, sndLevelUp, sndCoin,
