@@ -55,8 +55,8 @@ function renderMatch() {
         <div class="ring" id="arena">
           <div class="ring-ropes"><i></i><i></i><i></i></div>
           <div class="ring-floor"></div>
-          ${rigHTML('A', A.color, 'idle')}
-          ${rigHTML('B', B.color, 'idle')}
+          ${rigHTML('A', A.color, 'idle', artSlug(A.name))}
+          ${rigHTML('B', B.color, 'idle', artSlug(B.name))}
         </div>
         ${fighterCardHTML(B, m, 'B')}
       </div>

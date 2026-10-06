@@ -89,10 +89,11 @@ button {
   border: var(--px) solid #000; color: #fff;
   background: #7a4a1e;
   box-shadow: 0 var(--px) 0 #000, inset 0 var(--px) 0 rgba(255,255,255,0.25);
+  transition: transform 0.12s ease-out, filter 0.12s, box-shadow 0.12s; /* [UX] 눌림/호버가 뚝 끊기지 않게 */
 }
-button:hover { filter: brightness(1.15); }
-button:active { transform: translateY(2px); box-shadow: 0 2px 0 #000; }
-button:disabled { opacity: 0.4; cursor: not-allowed; }
+button:hover:not(:disabled) { filter: brightness(1.15); transform: translateY(-1px); }
+button:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px 0 #000; transition-duration: 0.04s; }
+button:disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(0.6); }
 body.theme-night button { background: #23308f; }
 body.theme-night button.btn-pink { background: #a01a66; }
 button.btn-ghost { background: #444; }
@@ -101,7 +102,9 @@ input[type=range] { width: 100%; accent-color: var(--accent); height: 28px; }
 input[type=number] {
   font-family: inherit; font-size: 18px; width: 130px;
   padding: 6px; border: 3px solid #000; background: #1c1008; color: #ffd98a;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
+input[type=number]:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(255,200,80,0.25); }
 body.theme-night input[type=number] { background: #080a20; color: #9ff; }
 .portrait {
   font-size: 56px; line-height: 1;
@@ -150,10 +153,10 @@ td:first-child, th:first-child { text-align: left; }
 .fighter-card {
   flex: 1; min-width: 200px; padding: 12px; cursor: pointer;
   background: rgba(0,0,0,0.25); border: 4px solid rgba(255,255,255,0.15);
-  transition: border-color 0.15s;
+  transition: border-color 0.15s, background 0.15s, transform 0.15s ease-out, box-shadow 0.15s;
 }
-.fighter-card.selected { border-color: #00f0ff; background: rgba(0,240,255,0.12); }
-.fighter-card:hover { border-color: rgba(255,255,255,0.5); }
+.fighter-card.selected { border-color: #00f0ff; background: rgba(0,240,255,0.12); box-shadow: 0 0 14px rgba(0,240,255,0.35); }
+.fighter-card:hover { border-color: rgba(255,255,255,0.5); transform: translateY(-2px); }
 .statbar { display: inline-block; letter-spacing: 1px; }
 
 /* 전환 오버레이 */
@@ -391,6 +394,23 @@ body.theme-night .trust.high { color: #7dff7d; }
 .sprite-pos.idle { animation: idlebob 1s steps(2) infinite; }
 @keyframes winjump { 0%,100% { margin-bottom: 0; } 50% { margin-bottom: 26px; } }
 .sprite-pos.win-pose { animation: winjump 0.45s steps(3) 4; }
+/* ── [아트] PixelLab 스프라이트시트 (64px×7프레임을 2배로) — 리그와 같은 모션 클래스로 프레임만 바꾼다 ──
+   0 기본 | 1 펀치준비 | 2 펀치 | 3 킥접기 | 4 킥 | 5 피격 | 6 크게 피격. 타격 판정(200ms)보다 먼저 뻗도록 40%에서 전환 */
+.rig .spr { position: absolute; left: 50%; bottom: -6px; width: 128px; height: 128px; margin-left: -64px;
+  overflow: hidden; pointer-events: none; }
+.spr-sheet { position: absolute; left: 0; top: 0; width: 896px; height: 128px; max-width: none; image-rendering: pixelated; }
+.rig.has-spr > div { display: none; }
+/* 한 링에 스프라이트·관절 리그가 섞이면 어색하다 — 한쪽이라도 그림이 없으면 둘 다 리그로 */
+.ring:has(.rig:not(.has-spr)) .rig.has-spr > div { display: block; }
+.ring:has(.rig:not(.has-spr)) .spr { display: none; }
+@keyframes spr-punch { 0% { transform: translateX(-128px); } 40%, 100% { transform: translateX(-256px); } }
+@keyframes spr-kick  { 0% { transform: translateX(-384px); } 40%, 100% { transform: translateX(-512px); } }
+.rig:is(.act-punch, .act-lowblow, .act-throw) .spr-sheet { animation: spr-punch 0.36s step-end both; }
+.rig:is(.act-flypunch, .act-slam) .spr-sheet { animation: spr-punch 0.5s step-end both; }
+.rig:is(.act-kick, .act-sweep) .spr-sheet { animation: spr-kick 0.36s step-end both; }
+.rig.act-flykick .spr-sheet { animation: spr-kick 0.5s step-end both; }
+.sprite-pos.rx-hit .spr-sheet { transform: translateX(-640px); }
+.sprite-pos:is(.rx-lowblow, .rx-slammed, .rx-thrown, .rx-tripped, .ko) .spr-sheet { transform: translateX(-768px); }
 .fx-pop { position: absolute; bottom: 148px; font-size: 38px; z-index: 4; pointer-events: none;
   animation: fxpop 0.55s steps(5) both; }
 @keyframes fxpop { from { opacity: 1; transform: scale(0.4); } to { opacity: 0; transform: scale(1.7); } }
@@ -536,7 +556,8 @@ body.no-shake .tut-hole { transition: none; }
 .move-btn small { display: block; font-size: 11px; opacity: 0.75; margin-top: 3px; }
 .tell-box { background: rgba(0,0,0,0.35); border: 3px solid #ff44aa; padding: 10px 14px;
   font-size: 15px; margin: 8px 0; animation: fade-up 0.4s both; }
-.chal-card { cursor: pointer; }
+.chal-card { cursor: pointer; transition: border-color 0.15s, background 0.15s, transform 0.15s ease-out; }
+.chal-card:hover { transform: translateX(3px); }
 .chal-card.selected { border-color: #00f0ff !important; background: rgba(0,240,255,0.1) !important; }
 
 /* ── [Phase 1] 토스트 알림 ── */
@@ -612,6 +633,8 @@ body.no-shake .sprite-pos.rx-hit { animation: none; }
 @media (prefers-reduced-motion: reduce) {
   .logo-main, .btn-start, .face, .intro-art, .px-wrap, .item-stage .item-body,
   .pframe.m-think, .drop-in, .walk-in { animation: none !important; }
+  button, .fighter-card, .chal-card { transition: none !important; }
+  button:hover, .fighter-card:hover, .chal-card:hover { transform: none !important; }
 }
 
 /* 손님 외모 인상 — 유형과 별개로 매번 다른 사람이 온다는 느낌을 준다 */

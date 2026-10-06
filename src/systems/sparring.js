@@ -133,8 +133,8 @@ function renderChallengeRound() {
         <div class="ring" id="arena">
           <div class="ring-ropes"><i></i><i></i><i></i></div>
           <div class="ring-floor"></div>
-          ${rigHTML('A', PLAYER_COLOR, 'idle')}
-          ${rigHTML('B', O.color, 'idle')}
+          ${rigHTML('A', PLAYER_COLOR, 'idle', 'player')}
+          ${rigHTML('B', O.color, 'idle', artSlug(O.name))}
         </div>
         <div class="panel" id="night-console" style="margin-bottom:0">
           <div class="tell-box">👁️ ${O.name}의 움직임 — ${C.tell}</div>

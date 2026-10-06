@@ -28,6 +28,21 @@ npm run art -- --force               # 이미 있어도 다시 생성
 
 > 💡 처음엔 `--dry`로 목록을 보고, `items --limit 3` 로 3장만 뽑아 화풍을 확인한 뒤 전체를 돌리세요.
 
+### 링 격투 스프라이트 — `npm run sprites` (PixelLab 전용)
+
+`$env:PIXELLAB_API_KEY`만 있으면 됩니다. 캐릭터당 약 4 generation.
+베이스(옆모습 64px) → 관절 추정 → 관절 좌표로 펀치·킥·피격 포즈를 뽑아 `public/art/sprites/<slug>.png`
+(64px × 7프레임: 기본|펀치준비|펀치|킥접기|킥|피격|크게피격)로 합칩니다.
+
+```powershell
+npm run sprites                               # 없는 것만 전부 (12파이터 + player)
+npm run sprites -- fighter-wolf               # 한 명
+npm run sprites -- fighter-wolf --pose kick   # 캐시된 베이스로 킥만 다시 (scripts/.sprite-cache/)
+```
+
+- 검수: `scripts/.sprite-cache/<slug>/preview-x3.png`
+- 링의 두 선수 중 **한쪽이라도 시트가 없으면 둘 다 기존 관절 리그**로 그려진다(섞임 방지). 시트를 채우면 자동 전환.
+
 ---
 
 ## 1. 수동으로 넣는 법 (3단계)

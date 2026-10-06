@@ -139,7 +139,7 @@ function artNext(img) {
 }
 
 Object.assign(globalThis, {
-  ART_SLUGS, ART_EXT, ART_BASE, artSlug, artUrl, artUrlFor,
+  ART_SLUGS, ART_EXT, ART_BASE, artSlug, artUrl, artUrlFor, artMissing,
   artHTML, artHTMLMulti, customerArtHTML, artOk, artNext,
 });
 export { ART_SLUGS, artSlug, artUrl, artHTML, artHTMLMulti, customerArtHTML, artOk, artNext };

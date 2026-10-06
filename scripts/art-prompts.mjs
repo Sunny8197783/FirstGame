@@ -121,6 +121,24 @@ export const PROMPTS = {
   },
 };
 
+// [링 스프라이트] gen-sprites.mjs용 — 64px 옆모습 전신. 소품(방패·무기)은 몸을 가리고 애니가 깨져서 뺀다.
+// 슬러그는 카드 초상(fighters)과 같고, 'player'는 스파링의 나.
+export const SPRITE_PROMPTS = {
+  'fighter-bear':      'huge burly bearded brawler, brown fur vest, brown pants, heavy fists',
+  'fighter-viper':     'lean fast street fighter, green snake tattoos on arms, green sleeveless top, black pants',
+  'fighter-hammer':    'thick-armed slugger, grey steel-colored work overalls, rolled sleeves, heavy fists',
+  'fighter-shadow':    'agile fighter in a dark hooded ninja outfit, black mask, dark grey clothes',
+  'fighter-tank':      'huge muscular bald street brawler, olive green tank top, dark cargo pants, taped fists',
+  'fighter-lightning': 'slim fast boxer, spiky blond hair, electric yellow tracksuit',
+  'fighter-scorpion':  'wiry counter-striker, burnt orange sleeveless gi, black headband',
+  'fighter-wolf':      'balanced fighter with grey wolf-like messy hair, steel blue jacket, dark pants',
+  'fighter-ogre':      'monstrous giant red-skinned brute with small horns, korean dokkaebi, loincloth',
+  'fighter-falcon':    'nimble aerial fighter, purple vest, feathered hair, purple pants',
+  'fighter-boar':      'stocky charging bruiser, shaved head, brown leather vest, earth brown pants',
+  'fighter-joker':     'trickster fighter in a magenta and black harlequin outfit, painted face',
+  'player':            'young korean pawnshop owner street fighter, short black hair, blue zip-up track jacket, jeans, wrapped fists',
+};
+
 // 전체 (kind, slug, prompt) 목록으로 펼친다
 export function allAssets() {
   const out = [];

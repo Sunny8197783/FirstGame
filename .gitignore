@@ -3,3 +3,4 @@ dist/
 *.zip
 src/_body_snippet.html
 *.pdf
+scripts/.sprite-cache/
