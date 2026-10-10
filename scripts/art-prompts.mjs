@@ -146,6 +146,7 @@ export const PROMPTS = {
   scenes: {
     'pawnshop-day': 'cozy 1980s korean pawn shop interior seen from behind the counter, warm amber lamplight, wooden shelves crammed with antiques and clocks, dusty back-alley mood',
     'arena-night': 'underground fight club arena at night, empty boxing ring with red ropes, cheering silhouette crowd, hazy neon pink and cyan lights, smoky gritty basement',
+    'vip-office': 'dim luxurious underground crime boss office, leather armchair behind a dark wooden desk, red lampshade glow, cigar smoke haze, gold trophies on shelves',
   },
 
   fighters: {

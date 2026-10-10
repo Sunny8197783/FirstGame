@@ -709,7 +709,11 @@ body.no-shake .sprite-pos.rx-hit { animation: none; }
   text-shadow: 0 0 12px rgba(0,240,255,0.9); animation: blink 0.9s steps(2) infinite; }
 
 /* ── 🚬 1막→2막: 김사장의 습격 ── */
-.ca-room { position: absolute; inset: 0; background: linear-gradient(180deg, #2a1c10 0%, #150c06 100%); }
+/* [아트] 방 배경 일러스트 — 실루엣이 묻히지 않게 어둡게 누르고, 그림이 없으면 맨 뒤 그라디언트 */
+.ca-room { position: absolute; inset: 0; image-rendering: pixelated;
+  background: linear-gradient(180deg, rgba(12,7,3,0.62), rgba(6,3,1,0.86)),
+    url('/art/scenes/pawnshop-day.png') center/cover no-repeat,
+    linear-gradient(180deg, #2a1c10 0%, #150c06 100%); }
 .ca-doorframe { position: absolute; left: 50%; top: 12%; width: 150px; height: 62%; margin-left: -75px;
   background: #0a0604; border: 5px solid #3a2a18; overflow: hidden; }
 .ca-light { position: absolute; inset: 0; background: linear-gradient(180deg, #ffd98a, #ff9a3a);
@@ -752,7 +756,9 @@ body.no-shake .sprite-pos.rx-hit { animation: none; }
 @keyframes ca-cigar { 0%,66% { opacity: 0; } 80%,100% { opacity: 1; } }
 
 /* ── 👑 2막→3막: 회장의 지분 ── */
-.ca3 .ca-room { background: linear-gradient(180deg, #14101c 0%, #07050c 100%); }
+.ca3 .ca-room { background: linear-gradient(180deg, rgba(10,6,16,0.25), rgba(5,3,8,0.62)),
+  url('/art/scenes/vip-office.png') center 30%/cover no-repeat,
+  linear-gradient(180deg, #14101c 0%, #07050c 100%); }
 .ca3-table { position: absolute; left: 0; right: 0; bottom: 0; height: 40%;
   background: linear-gradient(180deg, #3a2a18, #241a10); border-top: 5px solid #0a0604;
   box-shadow: inset 0 8px 24px rgba(0,0,0,0.6); }
