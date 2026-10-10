@@ -117,7 +117,8 @@ function customerArtHTML(c, fallbackHTML, cls) {
   const base = artSlug(c.ctype.type);
   if (!base) return fallbackHTML;
   const n = c.look && c.look.n;
-  return artHTMLMulti('customers', [n ? `${base}-${n}` : null, base], fallbackHTML, cls);
+  // 1번 외모 = 기본 초상(cust-x.png)이 이미 그 묘사로 그려져 있다 → -1 파일은 없다
+  return artHTMLMulti('customers', [n > 1 ? `${base}-${n}` : null, base], fallbackHTML, cls);
 }
 
 function artOk(img) {
