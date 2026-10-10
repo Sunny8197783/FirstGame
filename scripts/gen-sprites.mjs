@@ -100,9 +100,15 @@ const POSES = {
               { 'F ELBOW': ['F SHOULDER', 0.15, 0.02], 'F ARM': ['F SHOULDER', 0.30, 0.01], lean: 0.05 }],
   kick:  [{}, { 'F KNEE': ['F HIP', 0.12, -0.04], 'F LEG': ['F HIP', 0.10, 0.14], lean: -0.03 },
               { 'F KNEE': ['F HIP', 0.18, -0.04], 'F LEG': ['F HIP', 0.34, -0.07], lean: -0.06 }],
-  hurt:  [{}, { 'F ELBOW': ['F SHOULDER', 0.02, 0.14], 'F ARM': ['F SHOULDER', 0.05, 0.24], lean: -0.05 },
+  // 덩치 큰 체형(엉덩이 낮고 다리 짧음)은 수평 하이킥이 뭉개진다 → 중단 앞차기 (LOW_KICK 슬러그만)
+  kickLow: [{}, { 'F KNEE': ['F HIP', 0.12, 0.04], 'F LEG': ['F HIP', 0.08, 0.20], lean: -0.02 },
+                { 'F KNEE': ['F HIP', 0.16, 0.06], 'F LEG': ['F HIP', 0.30, 0.12], lean: -0.05 }],
+  hurt:  [{},{ 'F ELBOW': ['F SHOULDER', 0.02, 0.14], 'F ARM': ['F SHOULDER', 0.05, 0.24], lean: -0.05 },
               { 'F ELBOW': ['F SHOULDER', -0.02, 0.15], 'F ARM': ['F SHOULDER', 0.0, 0.26], lean: -0.10 }],
 };
+const LOW_KICK = new Set(['fighter-ogre', 'fighter-boar']);
+const SHEET_POSES = ['punch', 'kick', 'hurt']; // 시트에 들어가는 포즈 (kickLow는 kick 자리에 대신 쓰인다)
+
 function poseFrames(skel, name) {
   const get = l => skel.find(k => k.label === l);
   const need = l => { const k = get(l); if (!k) throw new Error(`관절 ${l} 없음 — 베이스를 다시 뽑아라 (--force)`); return k; };
@@ -140,11 +146,12 @@ async function build(slug, { force, pose }) {
     await writeFile(skelPath, JSON.stringify(j.keypoints));
   }
   const skel = JSON.parse(await readFile(skelPath, 'utf8'));
-  await Promise.all(Object.keys(POSES).map(async name => {
+  await Promise.all(SHEET_POSES.map(async name => {
     const p = resolve(dir, `${name}.json`);
     if (!force && pose !== name && await exists(p)) return;
+    const shape = name === 'kick' && LOW_KICK.has(slug) ? 'kickLow' : name;
     const j = await post('/animate-with-skeleton', { image_size: SZ, view: 'side', direction: 'east', guidance_scale: 4,
-      reference_image: img(baseB64), skeleton_keypoints: poseFrames(skel, name) });
+      reference_image: img(baseB64), skeleton_keypoints: poseFrames(skel, shape) });
     await writeFile(p, JSON.stringify(j.images.map(i => i.base64)));
   }));
   const pf = async name => JSON.parse(await readFile(resolve(dir, `${name}.json`), 'utf8')).map(b => decodePNG(Buffer.from(b, 'base64')));
@@ -160,7 +167,7 @@ const args = process.argv.slice(2);
 const flags = { force: args.includes('--force'), pose: args.includes('--pose') ? args[args.indexOf('--pose') + 1] : null };
 const slugs = args.filter((a, i) => !a.startsWith('--') && args[i - 1] !== '--pose');
 const targets = slugs.length ? slugs : Object.keys(SPRITE_PROMPTS);
-if (flags.pose && !POSES[flags.pose]) { console.error(`포즈는 ${Object.keys(POSES).join('|')}`); process.exit(1); }
+if (flags.pose && !SHEET_POSES.includes(flags.pose)) { console.error(`포즈는 ${SHEET_POSES.join('|')}`); process.exit(1); }
 const unknown = targets.filter(s => !SPRITE_PROMPTS[s]);
 if (unknown.length) { console.error(`모르는 슬러그: ${unknown.join(', ')}`); process.exit(1); }
 if (!KEY) { console.error('❌ PIXELLAB_API_KEY 환경변수가 없다. (키는 저장소에 저장되지 않는다)'); process.exit(1); }
