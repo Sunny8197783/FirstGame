@@ -239,3 +239,20 @@ subtle grain, high detail, centered composition, transparent background
 - 한 번 실패한 그림은 캐시해서 재요청하지 않음
 
 새 아이템·손님을 추가하면 `art.js`의 `ART_SLUGS`에 한 줄 추가하세요.
+
+---
+
+## 6. 현재 채워진 그림 · 파일명 규칙 (PixelLab, 총 ~1.8MB)
+
+| 폴더 | 장수 | 파일명 규칙 | 쓰이는 곳 |
+|---|---|---|---|
+| `items/` | 46 | `ART_SLUGS` 슬러그 (명품 `mw-*`) | 감정대·진열대 |
+| `customers/` | 56 | `cust-<유형>` = 1번 외모, `cust-<유형>-2..4` = looks.js 2~4번 외모 | 낮 손님 초상 |
+| `fighters/` | 13 | `fighter-*` + `player` | 밤 파이터 카드·스파링·후원 카드 |
+| `sprites/` | 13 | `fighter-*` + `player` (64px×7프레임 시트, `npm run sprites`) | 링 격투 애니메이션 |
+| `npcs/` | 4 | `npc-<chair\|rival\|collector>` (AUCTION_BIDDERS id), `npc-kim` | 경매 입찰자·밀봉 입찰·빚 상환 창구 |
+| `upgrades/` | 7 | events.js `UPGRADES` id | 새벽 암시장 상품 |
+| `scenes/` | 25 | `arena-night`(타이틀) · `pawnshop-day`/`vip-office`(막 전환 시네마틱) · `intro-1..5`(INTRO_BEATS 순서) · `interlude-<키>` · `event-<DAILY_EVENTS id>` · `work-<WORK_JOBS id>` | 각 화면 삽화 |
+
+- 프롬프트는 전부 `scripts/art-prompts.mjs`. 새 콘텐츠를 추가하면 위 규칙대로 슬러그를 붙이고 `npm run art -- <kind>/<slug>` 한 줄이면 된다 — 코드는 그림이 없으면 이모지/그라디언트로 폴백한다.
+- 씬(200×120)에 글자가 생기기 쉽다. 간판·달력·계약서 같은 단어를 빼고 `no lettering`을 붙여라.
