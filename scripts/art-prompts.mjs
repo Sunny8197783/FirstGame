@@ -180,6 +180,17 @@ export const PROMPTS = {
     'interlude-act3': 'blank parchment scroll sealed with a red wax seal lying on a dark desk beside a golden crown, dramatic spotlight, no writing, no lettering',
     'interlude-season': 'neon korean city skyline at dusk seen from a rooftop, busy streets below, money and opportunity mood',
     'interlude-prestige': 'rough dangerous narrow back alley at night with a shabby pawn shop, cardboard moving boxes stacked at the door, tangled wires, dim red glow, no signs, no lettering',
+    // ── 아침 선택 이벤트 10종 (events.js DAILY_EVENTS id → event-<id>) ──
+    'event-boom': 'bustling antique market street in the morning, crowds eagerly haggling over antiques, golden light, excited mood, no lettering',
+    'event-bust': 'empty gloomy antique market street on a grey rainy morning, closed shutters, puddles, deserted stalls, no lettering',
+    'event-vip': 'mysterious wealthy tycoon in a fur coat stepping out of a black luxury car in a back alley, bodyguard holding the door, no lettering',
+    'event-fest': 'underground fight club entrance packed with an excited crowd, fire barrels and neon glow, festival night, no lettering',
+    'event-raid': 'police officers with flashlights patrolling a dark alley near a hidden club entrance, red and blue siren glow, no lettering',
+    'event-seminar': 'old master appraiser lecturing in a small classroom, antiques displayed on the table, attentive students, no lettering',
+    'event-informer': 'shady informant whispering from a dark alley doorway, cigarette glow, trench coat, rain, no lettering',
+    'event-crowd': 'long line of customers queuing outside a small korean pawn shop in the morning, busy street, no lettering',
+    'event-scandal': 'secret gossip flyers with fighter silhouettes passed hand to hand in a smoky underground bar, no lettering',
+    'event-busker': 'street violinist performing on a sunny sidewalk, open violin case with coins, smiling passersby, plain brick wall behind, no signs, no lettering',
     'vip-office':'dim luxurious underground crime boss office, leather armchair behind a dark wooden desk, red lampshade glow, cigar smoke haze, gold trophies on shelves',
   },
 

@@ -439,6 +439,9 @@ body.theme-night .trust.high { color: #7dff7d; }
 .intro-text { animation: fade-up 0.6s 0.25s both; }
 /* [아트] 인트로·막간 삽화 (public/art/scenes/intro-N, interlude-<key>) — 그림이면 통통 튀지 않게 등장만 */
 .intro-art:has(.art-img.ok) { animation: pop-in 0.5s cubic-bezier(.34,1.56,.64,1) both; }
+/* [아트] 아침 선택 이벤트 삽화 (scenes/event-<id>) — 없으면 아무것도 안 그린다 */
+.ev-pic .art-img.ok { width: 100%; aspect-ratio: 5 / 3; height: auto; max-height: 36vh; object-fit: cover; image-rendering: pixelated;
+  border: 3px solid #000; border-radius: 4px; margin-bottom: 8px; }
 .intro-art .art-img.ok { width: min(400px, 82vw); aspect-ratio: 5 / 3; height: auto; image-rendering: pixelated;
   border: 3px solid #000; border-radius: 4px; box-shadow: 0 0 0 2px rgba(255,255,255,0.12), 0 6px 18px rgba(0,0,0,0.55); }
 

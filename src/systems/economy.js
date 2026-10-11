@@ -181,6 +181,7 @@ function showEventChoice() {
   const ev = S.pendingEvent;
   if (!ev) { startCustomers(); return; }
   showModal(`
+    ${artHTMLMulti('scenes', ['event-' + ev.id], '', 'ev-pic')}
     <h2 class="accent">${ev.name}</h2>
     <p style="font-size:14px">${ev.desc}</p>
     <div style="margin-top:10px">
