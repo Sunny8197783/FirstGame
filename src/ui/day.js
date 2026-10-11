@@ -60,7 +60,7 @@ function renderCustomer() {
         <div class="panel panel-rival">
           <h3 class="accent">🏪 밀봉 입찰</h3>
           <div class="bubble" style="font-size:13px">${c.rivalLine}</div>
-          <p class="rival-warn"><span class="pframe rival-warn-face">${artHTMLMulti('npcs', ['npc-rival'], RIVAL.face)}</span>⚔️ <b>${RIVAL.name}</b>도 이 물건을 노린다.<br>
+          <p class="rival-warn"><span class="pframe npc-float" style="width:40px; height:40px; font-size:20px">${artHTMLMulti('npcs', ['npc-rival'], RIVAL.face)}</span>⚔️ <b>${RIVAL.name}</b>도 이 물건을 노린다.<br>
             <b>단 한 번</b>만 부를 수 있다 — 높은 쪽이 가져간다.</p>
           ${c.rivalTell
             ? `<div class="hint rival-tell">🕵️ ${c.rivalTell.text}</div>`

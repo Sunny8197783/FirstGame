@@ -162,6 +162,8 @@ export const PROMPTS = {
   npcs: {
     'npc-chair': 'elderly crime boss chairman, slicked silver hair, expensive black suit, cigar in hand, cold commanding stare',
     'npc-rival': 'middle-aged rival pawnbroker, thin mustache, gold-rimmed glasses, gold rings, pinstripe vest, smug calculating smile',
+    // 1막 사채업자 김사장 (인트로 2장면 scenes/intro-2와 같은 인물: 흰 양복)
+    'npc-kim': 'menacing loan shark boss in a white suit, slicked-back black hair, short goatee, gold chain, cigar, sly grin',
     'npc-collector': 'eccentric wealthy art collector in a top hat and monocle, velvet coat, dreamy obsessed eyes',
   },
 

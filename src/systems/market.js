@@ -25,7 +25,8 @@ function renderDawnShop() {
     S.sponsorOffersDay = S.day;
   }
   const debtPanel = `
-    <div class="panel" style="margin:6px 0; padding:12px; border-color:#a03a3a">
+    <div class="panel" style="margin:6px 0; padding:12px; border-color:#a03a3a; display:flow-root">
+      <span class="pframe npc-float" style="width:60px; height:60px; font-size:30px">${artHTMLMulti('npcs', ['npc-kim'], '💸')}</span>
       <h3 style="font-size:16px">💸 김사장 빚 상환 창구</h3>
       ${S.debt > 0 ? `
         <p style="font-size:14px">남은 빚: <b class="bad">${fmt(S.debt)} G</b> <span class="dim">(내일 아침 이자 +${Math.round(CONFIG.DEBT_INTEREST * 100)}%)</span></p>
