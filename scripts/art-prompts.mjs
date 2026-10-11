@@ -19,6 +19,7 @@ export const PIXEL_KIND_SUFFIX = {
   fighters:  'full body fighter in fighting stance, transparent background',
   scenes:    'wide background scene, atmospheric',
   npcs:      'character bust portrait, facing viewer, korean person, transparent background',
+  upgrades:  'single game item icon, transparent background',
 };
 
 // 종류별 꼬리말 (구도·배경)
@@ -28,6 +29,7 @@ export const KIND_SUFFIX = {
   fighters:  'full body character, dynamic fighting stance, gritty neon-lit underground arena',
   scenes:    'wide cinematic background illustration, atmospheric depth',
   npcs:      'upper body character portrait, facing the viewer, korean person',
+  upgrades:  'single object icon, plain soft background',
 };
 
 // slug → 프롬프트 핵심(구체 묘사). STYLE + KIND_SUFFIX가 자동으로 감싼다.
@@ -143,6 +145,17 @@ export const PROMPTS = {
     'cust-fallen-heir-2': 'fallen chaebol heir with perfectly styled hair but a wrinkled out-of-season designer coat',
     'cust-fallen-heir-3': 'fallen rich heir with hand on forehead, regretful, expensive but worn shirt',
     'cust-fallen-heir-4': 'arrogant fallen heir with dyed hair and chin raised, flashy leather jacket, broke',
+  },
+
+  // 새벽 암시장 상품 (events.js UPGRADES id)
+  upgrades: {
+    'scale': 'precision brass jeweler balance scale with tiny weights, gleaming',
+    'lens': 'jeweler loupe magnifying lens with a brass rim, glinting glass',
+    'journal': 'thick leather-bound appraisal journal with a gold bookmark ribbon and brass corners',
+    'informant': 'spy informant man in a beige trench coat with collar up and dark fedora, holding a small sealed envelope, sly side glance, detailed face',
+    'expand': 'new wooden display shelf crowded with antiques, hammer and plank leaning on it',
+    'remodel': 'elegant renovated shop facade with marble columns, gold trim and warm lights, no lettering',
+    'bigshot': 'black silk top hat with a fat stack of cash and a gold signet ring',
   },
 
   // 3막 경매 경쟁자 (rival.js AUCTION_BIDDERS id → npc-<id>)

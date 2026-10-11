@@ -10,7 +10,7 @@ function renderDawnShop() {
     return `
       <div class="panel" style="margin:6px 0; padding:12px">
         <div class="row" style="align-items:center; flex-wrap:nowrap; gap:10px">
-          <span style="font-size:34px">${u.emoji}</span>
+          <span class="pframe" style="width:56px; height:56px; font-size:34px; flex:none">${artHTMLMulti('upgrades', [u.id], u.emoji)}</span>
           <div style="flex:1">
             <h3 style="font-size:16px">${u.name} ${owned ? '<span class="good">— 보유 중 ✔</span>' : ''}</h3>
             <p class="dim" style="font-size:13px">${u.desc}</p>

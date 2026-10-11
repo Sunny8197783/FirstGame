@@ -4,6 +4,11 @@
 //   너무 높으면 → 낙찰돼도 손해 (승자의 저주)
 // 흥정 엔진(보존 대상)은 건드리지 않는다 — 별도 경로다.
 
+// [아트] 나사장 초상 + 옆 내용 (npcs/npc-rival.png, 없으면 RIVAL.face 이모지)
+function rivalFaceRow(inner, size = 52) {
+  return `<div class="rival-face-row"><span class="pframe" style="width:${size}px; height:${size}px; font-size:${Math.round(size / 2)}px; flex:none">${artHTMLMulti('npcs', ['npc-rival'], RIVAL.face)}</span>${inner}</div>`;
+}
+
 // 입찰 확정. X = 내 입찰가
 function submitBid() {
   const c = S.customers[S.custIdx];
@@ -45,7 +50,7 @@ function submitBid() {
     const why = X < c.M ? '내 입찰가가 손님의 최저선에도 못 미쳤다.' : '한 끗 차이로 밀렸다.';
     showModal(`
       <h2 class="bad">🏪 황금손에 뺏겼다!</h2>
-      <div class="speech">"${pick(RIVAL_LINES.lose)}" — ${RIVAL.boss}</div>
+      ${rivalFaceRow(`<div class="speech">${pick(RIVAL_LINES.lose)} — ${RIVAL.boss}</div>`)}
       <p>${c.name}은(는) 물건을 들고 옆 골목으로 걸어갔다. ${why}</p>
       ${reveal}
       <p class="dim" style="font-size:13px">💡 ${X < c.rivalBid && c.rivalBid > c.V
@@ -62,7 +67,7 @@ function submitBid() {
   // closeDeal이 띄운 모달을 입찰 결과 화면으로 교체 (매입 처리는 그대로 둔다)
   showModal(`
     <h2 class="good">🏆 낙찰!</h2>
-    <div class="speech">"${pick(RIVAL_LINES.win)}" — ${RIVAL.boss}</div>
+    ${rivalFaceRow(`<div class="speech">${pick(RIVAL_LINES.win)} — ${RIVAL.boss}</div>`)}
     <p>${c.item.emoji} ${c.item.name}을(를) <b class="accent">${fmt(X)} G</b>에 낙찰받았다
        — 황금손보다 <b>${fmt(margin)} G</b> 높게 불렀다.</p>
     ${reveal}
@@ -72,5 +77,5 @@ function submitBid() {
     <div class="center"><button onclick="nextCustomer()">다음 →</button></div>`);
 }
 
-Object.assign(globalThis, { submitBid });
-export { submitBid };
+Object.assign(globalThis, { submitBid, rivalFaceRow });
+export { submitBid, rivalFaceRow };

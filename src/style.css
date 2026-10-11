@@ -483,6 +483,10 @@ body.no-shake .item-stage .art-img.ok { animation: none; transform: translate(-5
   border: 2px solid #c8a24a; padding: 3px 6px; margin-top: 4px; animation: rival-pulse 1.6s ease-in-out infinite; }
 .rival-warn { font-size: 13px; line-height: 1.6; margin-top: 8px; padding: 6px 8px;
   background: rgba(200,162,74,0.12); border-left: 4px solid #c8a24a; }
+.rival-face-row { display: flex; gap: 8px; align-items: center; }
+.rival-face-row > :last-child { flex: 1; min-width: 0; }
+.rival-warn::after { content: ''; display: block; clear: both; }
+.rival-warn-face { float: right; width: 40px; height: 40px; font-size: 20px; margin: 2px 0 4px 6px; }
 .hint.rival-tell { border-left-color: #ffd23e; background: rgba(255,210,62,0.10); }
 @keyframes rival-pulse { 0%,100% { box-shadow: 0 0 0 rgba(200,162,74,0); } 50% { box-shadow: 0 0 10px rgba(255,210,62,0.55); } }
 body.no-shake .rival-badge { animation: none; }
