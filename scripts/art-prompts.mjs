@@ -146,7 +146,17 @@ export const PROMPTS = {
   scenes: {
     'pawnshop-day': 'cozy 1980s korean pawn shop interior seen from behind the counter, warm amber lamplight, wooden shelves crammed with antiques and clocks, dusty back-alley mood',
     'arena-night': 'underground fight club arena at night, empty boxing ring with red ropes, cheering silhouette crowd, hazy neon pink and cyan lights, smoky gritty basement',
-    'vip-office': 'dim luxurious underground crime boss office, leather armchair behind a dark wooden desk, red lampshade glow, cigar smoke haze, gold trophies on shelves',
+    // ── 오프닝 인트로 5장면 (story.js INTRO_BEATS 순서) · 막간 4종 (INTERLUDES 키) ──
+    'intro-1': 'dusty abandoned old pawn shop at the dead end of a korean back alley at night, faded shop sign, cobwebs on the door, single flickering street lamp',
+    'intro-2': 'menacing loan shark boss in a white suit with a cigar holding out a thick stack of cash across a desk, dim smoky office, sly grin',
+    'intro-3': 'pawnbroker hands holding a jeweler loupe over a gold pocket watch on a wooden counter, warm daylight through the shop window, antiques around',
+    'intro-4': 'two fighters facing off in an underground boxing ring, silhouette crowd cheering, neon pink and cyan lights, smoky basement',
+    'intro-5': 'small cozy korean pawn shop storefront in a back alley at sunset, warm golden light glowing in the window, orange sky, hopeful determined mood, no lettering',
+    'interlude-act2': 'mysterious crime boss chairman silhouette in a high-backed chair, glowing cigar ember, thick smoke, single red lamp, deepest room of an underground fight club',
+    'interlude-act3': 'blank parchment scroll sealed with a red wax seal lying on a dark desk beside a golden crown, dramatic spotlight, no writing, no lettering',
+    'interlude-season': 'neon korean city skyline at dusk seen from a rooftop, busy streets below, money and opportunity mood',
+    'interlude-prestige': 'rough dangerous narrow back alley at night with a shabby pawn shop, cardboard moving boxes stacked at the door, tangled wires, dim red glow, no signs, no lettering',
+    'vip-office':'dim luxurious underground crime boss office, leather armchair behind a dark wooden desk, red lampshade glow, cigar smoke haze, gold trophies on shelves',
   },
 
   fighters: {

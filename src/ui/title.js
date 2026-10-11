@@ -82,7 +82,7 @@ function renderIntroBeat() {
     <div class="scene scene-${b.theme === 'day' ? 'day' : 'night'} intro-scene" onclick="nextIntroBeat()" style="cursor:pointer; min-height:420px">
       ${b.theme !== 'day' ? '<div class="crowd"></div><div class="neon neon-l"></div><div class="neon neon-r"></div>' : '<div class="shop-counter"></div>'}
       <div class="center" style="position:relative; z-index:2; padding:46px 20px">
-        <div class="intro-art">${b.art}</div>
+        <div class="intro-art">${artHTMLMulti('scenes', ['intro-' + (introIdx + 1)], b.art)}</div>
         <h2 class="accent" style="margin-top:14px; font-size:26px">${b.title}</h2>
         <p class="intro-text" style="margin-top:14px; font-size:17px; line-height:2">${b.text}</p>
         <p class="dim blink" style="margin-top:30px; font-size:13px">▼ 클릭해서 계속 (${introIdx + 1}/${INTRO_BEATS.length})</p>
@@ -111,7 +111,7 @@ function renderInterlude(key, val, next) {
       <div class="crowd"></div>
       <div class="neon neon-l"></div><div class="neon neon-r"></div>
       <div class="center" style="position:relative; z-index:2; padding:30px 24px">
-        <div class="intro-art">${it.art}</div>
+        <div class="intro-art">${artHTMLMulti('scenes', ['interlude-' + key], it.art)}</div>
         <h2 class="accent" style="margin:12px 0; font-size:24px">${it.title}</h2>
         <div style="text-align:left; max-width:560px; margin:0 auto">
           ${it.paras.map((p, i) => `<p class="intro-text" style="font-size:15px; line-height:1.9; margin-top:10px; animation-delay:${0.25 + i * 0.35}s">${p}</p>`).join('')}
