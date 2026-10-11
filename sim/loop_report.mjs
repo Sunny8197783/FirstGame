@@ -62,3 +62,16 @@ results.forEach(({ bot, runs }) => {
 
 console.log('\n💡 판독: 방치는 전 구간 변화 0(보상 없음), 무작위는 하우스 마진에 마모,');
 console.log('   정보 활용만 우상향해야 한다 — 이 순서가 깨지면 밸런스가 무너진 것이다.\n');
+
+// ── [리텐션] 🔥 험한 골목(하드) — 21일 완주 후 해금되는 고수용 난이도 ──
+// 목표: 보통은 대부분 관문에서 꺾이고, 정보 활용(완벽 판독 상한) 봇도 진엔딩이 독식이 아니게 (약 40~60%)
+G.S.hard = true;
+console.log('── 🔥 험한 골목 ──');
+for (const bot of [B.BOT_AVERAGE, B.BOT_SMART]) {
+  const endings = {};
+  for (let i = 0; i < RUNS; i++) { const r = B.runCampaign(bot); const e = endingOf(r, CONFIG); endings[e] = (endings[e] || 0) + 1; }
+  console.log(pad(bot.name, 24) + Object.entries(endings).sort((a, b) => b[1] - a[1])
+    .map(([e, n]) => `${e} ${Math.round(n / RUNS * 100)}%`).join(' · '));
+}
+console.log(`   (하드 기준선: 2막 ${fmt(CONFIG.ACT2_TARGET)} · 격투장 ${fmt(CONFIG.ENDING_RING)} · 진엔딩 ${fmt(CONFIG.ENDING_TRUE)})\n`);
+G.S.hard = false; G.applyDifficulty();

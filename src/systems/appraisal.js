@@ -9,6 +9,8 @@ function seasonDayOf() {
 }
 // [Phase3] 프레스티지(가게 이전) 배율 — 아이템 가치가 험한 동네일수록 커진다
 function prestigeMul() { return 1 + (S.prestige || 0) * CONFIG.PRESTIGE_VALUE_MUL; }
+// 함정·헛소문 위험도 — 가게 이전 횟수 + 🔥 험한 골목(하드) 1단계 (보상인 가치 배율은 붙지 않는다)
+function dangerLv() { return (S.prestige || 0) + (S.hard ? 1 : 0); }
 
 function customersPerDay() {
   return CONFIG.CUSTOMERS_PER_DAY
@@ -94,7 +96,7 @@ function genCustomers() {
     // [Phase3] 손님 몰림 이벤트(trapBoost) + 프레스티지(험한 동네일수록 함정↑)
     const trapRate = (isMaster ? CONFIG.MASTER_TRAP_RATE : ctype.swindler ? CONFIG.TRAP_HINT_RATE_SWINDLER : CONFIG.TRAP_HINT_RATE)
       + ((S.event && S.event.trapBoost) || 0)
-      + (S.prestige || 0) * CONFIG.PRESTIGE_TRAP_ADD;
+      + dangerLv() * CONFIG.PRESTIGE_TRAP_ADD;
     let hasTrap = false;
     if (Math.random() < trapRate) {
       hasTrap = true;
@@ -154,5 +156,5 @@ function genCustomers() {
   });
 }
 
-Object.assign(globalThis, { actOf, seasonDayOf, prestigeMul, customersPerDay, genCustomers });
+Object.assign(globalThis, { actOf, seasonDayOf, prestigeMul, dangerLv, customersPerDay, genCustomers });
 export { actOf, seasonDayOf, prestigeMul, customersPerDay, genCustomers };

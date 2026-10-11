@@ -1,7 +1,15 @@
 // ⚠️ Phase 1 자동 이식: 데모 index.html에서 원문 그대로 분리한 코드 (로직 변경 금지 구역)
 // 모듈 간 호출·인라인 onclick은 아래 globalThis 등록을 통해 해석된다.
+// [리텐션] 🔥 험한 골목 — 관문·엔딩 기준선을 배율로 바꾼다. S.hard는 새 게임 선택/세이브에서 온다
+const DIFF_BASE = Object.fromEntries(Object.keys(CONFIG.HARD_MUL).map(k => [k, CONFIG[k]]));
+function applyDifficulty() {
+  for (const k in DIFF_BASE) CONFIG[k] = Math.round(DIFF_BASE[k] * (S.hard ? CONFIG.HARD_MUL[k] : 1));
+}
+function hardPreview(k) { return Math.round(DIFF_BASE[k] * CONFIG.HARD_MUL[k]); }
+
 function startGame() {
   sndClick();
+  applyDifficulty();
   S.day = 0; S.gold = CONFIG.START_GOLD;
   S.season = 0;                 // [Phase3] 0 = 캠페인, 1+ = 시즌 모드
   S.contracts = null;           // [리텐션] 시즌 의뢰
@@ -320,5 +328,5 @@ function renderEvening() {
    밤 루프 — 지하 격투장 베팅
    ═══════════════════════════════════════════════════════════════ */
 
-Object.assign(globalThis, { startGame, startDay, beginDay, recordHistory, showEventChoice, chooseEvent, startCustomers, nextCustomer, startEvening, renderEvening, startSeasonMode, rotateSeason, makeRookie });
+Object.assign(globalThis, { applyDifficulty, hardPreview, startGame, startDay, beginDay, recordHistory, showEventChoice, chooseEvent, startCustomers, nextCustomer, startEvening, renderEvening, startSeasonMode, rotateSeason, makeRookie });
 export { startGame, startDay, beginDay, recordHistory, showEventChoice, chooseEvent, startCustomers, nextCustomer, startEvening, renderEvening, startSeasonMode, rotateSeason, makeRookie };

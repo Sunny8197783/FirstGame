@@ -11,7 +11,7 @@ const ENDING_BOOK = [
   { key: 'king', icon: '👑', name: '지하경제의 왕 (진엔딩)', hint: () => `21일 완주, 순자산 ${fmt(CONFIG.ENDING_TRUE)} G 이상` },
 ];
 
-let records = { endings: {}, bestNet: null, seasons: 0, contracts: 0, bestSeason: null };
+let records = { endings: {}, hardEndings: {}, bestNet: null, seasons: 0, contracts: 0, bestSeason: null };
 try {
   const raw = localStorage.getItem(REC_KEY);
   if (raw) records = { ...records, ...JSON.parse(raw) };
@@ -26,6 +26,8 @@ function recordEnding(key, net) {
   if (!ENDING_BOOK.some(e => e.key === key)) return;
   const first = !records.endings[key];
   if (first) records.endings[key] = Date.now();
+  if (S.hard && !records.hardEndings[key]) records.hardEndings[key] = Date.now(); // 🔥
+  if (S.hard && key === 'king') achieve('hard-king');
   if (key !== 'debt' && key !== 'appraiser' && (records.bestNet === null || net > records.bestNet)) records.bestNet = net;
   persistRecords();
   if (first) toast(`🏛️ 엔딩 도감 — ${ENDING_BOOK.find(e => e.key === key).name} 등록 (${endingsSeen()}/${ENDING_BOOK.length})`, 3200);
@@ -40,6 +42,8 @@ function recordSeason(season, grade, done) {
   persistRecords();
 }
 
+function hardUnlocked() { return ['shop', 'ring', 'king'].some(k => records.endings[k]); }
+
 function endingsSeen() { return ENDING_BOOK.filter(e => records.endings[e.key]).length; }
 
 function renderRecords() {
@@ -48,7 +52,7 @@ function renderRecords() {
     <h2 class="accent">🏛️ 기록실</h2>
     <h3 style="font-size:15px; margin-top:6px">엔딩 도감 ${endingsSeen()}/${ENDING_BOOK.length}</h3>
     ${ENDING_BOOK.map(e => records.endings[e.key]
-      ? `<div class="contract-row done"><span>${e.icon} <b>${e.name}</b></span><span class="good">✔</span></div>`
+      ? `<div class="contract-row done"><span>${e.icon} <b>${e.name}</b></span><span class="good">${records.hardEndings[e.key] ? '🔥 ' : ''}✔</span></div>`
       : `<div class="contract-row"><span class="dim">🔒 ??? — ${e.hint()}</span></div>`).join('')}
     <table style="margin-top:10px; font-size:14px">
       <tr><td>캠페인 최고 순자산</td><td class="accent">${records.bestNet === null ? '-' : fmt(records.bestNet) + ' G'}</td></tr>
@@ -58,5 +62,5 @@ function renderRecords() {
     <div class="center" style="margin-top:10px"><button onclick="hideModal()">닫기</button></div>`);
 }
 
-Object.assign(globalThis, { ENDING_BOOK, recordEnding, recordSeason, endingsSeen, renderRecords });
-export { ENDING_BOOK, recordEnding, recordSeason, endingsSeen, renderRecords };
+Object.assign(globalThis, { ENDING_BOOK, recordEnding, recordSeason, endingsSeen, hardUnlocked, renderRecords });
+export { ENDING_BOOK, recordEnding, recordSeason, endingsSeen, hardUnlocked, renderRecords };

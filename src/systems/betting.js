@@ -60,7 +60,7 @@ function genMatches(count) {
           sign: theme.sign, fake: false, effect: theme.sign * mag / picked.length,
         }));
         // [Phase3] 프레스티지: 험한 동네일수록 헛소문이 더 잘 낀다
-        if (Math.random() < CONFIG.RUMOR_EXTRA_FAKE + (S.prestige || 0) * CONFIG.PRESTIGE_FAKE_ADD) {
+        if (Math.random() < CONFIG.RUMOR_EXTRA_FAKE + dangerLv() * CONFIG.PRESTIGE_FAKE_ADD) {
           out.push(fakeFrom(pick(RUMOR_THEMES.filter(t => t.id !== theme.id))));
         }
       } else {

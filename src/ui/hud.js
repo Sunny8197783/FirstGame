@@ -39,7 +39,8 @@ function updateHUD() {
   $('hud-time').textContent = S.timeLabel || '';
   $('hud-debt').textContent = S.debt > 0 ? `💸 빚 ${fmt(S.debt)} G` : '✔ 빚 청산';
   $('hud-parts').textContent = (S.stats.drops ? `✦ ${S.stats.drops} 전설 부품` : '')
-    + (S.prestige ? ` 🏚️×${S.prestige}` : ''); // [Phase3]
+    + (S.prestige ? ` 🏚️×${S.prestige}` : '') // [Phase3]
+    + (S.hard ? ' 🔥 험한 골목' : ''); // [리텐션]
   const labels = { day: '☀️ 낮 — 전당포', evening: '🌆 저녁 — 정산', night: '🌙 밤 — 지하 격투장', dawn: '🌌 새벽 — 암시장' };
   $('hud-phase').textContent = labels[S.phase] || '';
   const eb = $('event-banner');

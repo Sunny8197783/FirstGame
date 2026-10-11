@@ -3,6 +3,7 @@
 // [Phase 1 개편] 타이틀 = 메뉴 화면 (새 게임 / 이어하기 미리보기 / 백업 / 설정·확률·업적 자리)
 function renderTitle() {
   S.phase = 'title'; setTheme('night'); updateHUD();
+  S.hard = false; applyDifficulty(); // [리텐션] 판 밖에선 일반 기준선 (기록실 힌트·미리보기 기준)
   setBgm('title'); // [Phase4] 타이틀 BGM
   const sav = loadSaveData();
   const act = sav ? (sav.day <= CONFIG.ACT1_END ? 1 : sav.day <= CONFIG.ACT2_END ? 2 : 3) : 0;
@@ -30,12 +31,12 @@ function renderTitle() {
           </div>
           <div class="menu-row">
             <button class="btn-ghost btn-howto" onclick="renderHowTo()">❓ 플레이 방법</button>
+            <button class="btn-ghost" onclick="renderRecords()">🏛️ 기록실 <span class="dim" style="font-size:12px">${endingsSeen()}/${ENDING_BOOK.length}</span></button>
           </div>
           <div class="menu-row">
             <button class="btn-ghost" onclick="renderSettings()">⚙️ 설정</button>
             <button class="btn-ghost" onclick="renderOddsInfo()">📊 확률 정보</button>
             <button class="btn-ghost" onclick="renderAchievements()">🏆 업적</button>
-            <button class="btn-ghost" onclick="renderRecords()">🏛️ 기록실 <span class="dim" style="font-size:12px">${endingsSeen()}/${ENDING_BOOK.length}</span></button>
           </div>
         </div>
         <input type="file" id="save-import" accept=".json,application/json" style="display:none"
@@ -48,15 +49,27 @@ function renderTitle() {
 // 새 게임: 기존 세이브가 있으면 덮어쓰기 확인
 function newGameFromTitle() {
   sndClick();
-  if (!hasSave()) { startIntro(); return; }
+  if (!hasSave()) { pickDifficulty(); return; }
   showModal(`
     <h2 class="accent">⚠️ 새 게임</h2>
     <p>저장된 게임이 있다. 새 게임을 시작하면 <b>다음 아침 자동 저장 때 덮어써진다.</b></p>
     <p class="dim" style="font-size:13px">지금 백업하려면 타이틀의 [📤 내보내기]를 먼저 사용하라.</p>
     <div class="center" style="margin-top:10px">
-      <button class="btn-big" onclick="hideModal(); startIntro()">새로 시작한다</button>
+      <button class="btn-big" onclick="hideModal(); pickDifficulty()">새로 시작한다</button>
       <button class="btn-ghost" onclick="hideModal()">취소</button>
     </div>`);
+}
+
+// [리텐션] 🔥 험한 골목 — 21일을 한 번 완주하면 새 게임에서 고를 수 있다
+function pickDifficulty() {
+  S.hard = false;
+  if (!hardUnlocked()) { startIntro(); return; }
+  showModal(`
+    <h2 class="accent">어느 골목에서 시작할까?</h2>
+    <button class="btn-big" style="width:100%; margin:6px 0" onclick="hideModal(); S.hard = false; startIntro()">🏪 평범한 골목<span class="menu-sub">처음 그 이야기 그대로</span></button>
+    <button class="btn-big btn-pink" style="width:100%; margin:6px 0" onclick="hideModal(); S.hard = true; startIntro()">🔥 험한 골목
+      <span class="menu-sub">함정 힌트·헛소문 증가 · 회장의 시험 ${fmt(hardPreview('ACT2_TARGET'))} G · 진엔딩 ${fmt(hardPreview('ENDING_TRUE'))} G</span></button>
+    <p class="dim center" style="font-size:12px">험한 골목에서 본 엔딩은 기록실 도감에 🔥로 남는다.</p>`);
 }
 
 function continueFromTitle() {
@@ -129,5 +142,5 @@ function afterInterlude() {
   if (f) f();
 }
 
-Object.assign(globalThis, { renderTitle, newGameFromTitle, continueFromTitle, startIntro, renderIntroBeat, nextIntroBeat, renderInterlude, afterInterlude });
+Object.assign(globalThis, { renderTitle, newGameFromTitle, pickDifficulty, continueFromTitle, startIntro, renderIntroBeat, nextIntroBeat, renderInterlude, afterInterlude });
 export { renderTitle, newGameFromTitle, continueFromTitle, startIntro, renderIntroBeat, nextIntroBeat, renderInterlude, afterInterlude };
