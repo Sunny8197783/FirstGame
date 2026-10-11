@@ -27,7 +27,7 @@ function renderChallengeOffer() {
         <p class="center dim" style="font-size:14px">데스크: "직접 뛰어보겠나? 판돈은 이기면 <b>두 배</b>. 몸으로 갚는 거지."</p>
         <div class="night-grid" style="margin-top:10px">
           <div class="panel">
-            <div class="center"><span class="pframe">${P.emoji}</span></div>
+            <div class="center"><span class="pframe">${artHTMLMulti('fighters', ['player'], P.emoji)}</span></div>
             <h3 class="center" style="font-size:15px; margin-top:4px">${P.name} (전당포 주인)</h3>
             <p class="center dim" style="font-size:12px">스파링 전적 ${P.w}승 ${P.l}패</p>
             <p style="font-size:13px; margin-top:4px">공격력 <span class="statbar">${statBar(P.atk)}</span> ${P.atk}<br>
@@ -44,7 +44,7 @@ function renderChallengeOffer() {
             ${S.challengeOffers.map(i => { const f = S.fighters[i]; return `
               <div class="panel chal-card" id="chal-${i}" onclick="selectChallengeOpp(${i})" style="margin:0 0 8px; padding:10px">
                 <div class="row" style="gap:8px; align-items:center; flex-wrap:nowrap">
-                  <span class="pframe" style="width:52px; height:52px; font-size:32px">${f.emoji}</span>
+                  <span class="pframe" style="width:52px; height:52px; font-size:32px">${artHTML('fighters', f.name, f.emoji)}</span>
                   <div>
                     <p style="font-size:14px">${f.name}</p>
                     <p class="dim" style="font-size:12px">${f.w}승 ${f.l}패 · 공${f.atk}/방${f.def}/속${f.spd}</p>

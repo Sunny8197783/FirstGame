@@ -18,6 +18,7 @@ export const PIXEL_KIND_SUFFIX = {
   customers: 'character bust portrait, facing viewer, korean person, transparent background',
   fighters:  'full body fighter in fighting stance, transparent background',
   scenes:    'wide background scene, atmospheric',
+  npcs:      'character bust portrait, facing viewer, korean person, transparent background',
 };
 
 // 종류별 꼬리말 (구도·배경)
@@ -26,6 +27,7 @@ export const KIND_SUFFIX = {
   customers: 'upper body character portrait, neutral calm expression, facing the viewer, korean person',
   fighters:  'full body character, dynamic fighting stance, gritty neon-lit underground arena',
   scenes:    'wide cinematic background illustration, atmospheric depth',
+  npcs:      'upper body character portrait, facing the viewer, korean person',
 };
 
 // slug → 프롬프트 핵심(구체 묘사). STYLE + KIND_SUFFIX가 자동으로 감싼다.
@@ -143,6 +145,13 @@ export const PROMPTS = {
     'cust-fallen-heir-4': 'arrogant fallen heir with dyed hair and chin raised, flashy leather jacket, broke',
   },
 
+  // 3막 경매 경쟁자 (rival.js AUCTION_BIDDERS id → npc-<id>)
+  npcs: {
+    'npc-chair': 'elderly crime boss chairman, slicked silver hair, expensive black suit, cigar in hand, cold commanding stare',
+    'npc-rival': 'middle-aged rival pawnbroker, thin mustache, gold-rimmed glasses, gold rings, pinstripe vest, smug calculating smile',
+    'npc-collector': 'eccentric wealthy art collector in a top hat and monocle, velvet coat, dreamy obsessed eyes',
+  },
+
   scenes: {
     'pawnshop-day': 'cozy 1980s korean pawn shop interior seen from behind the counter, warm amber lamplight, wooden shelves crammed with antiques and clocks, dusty back-alley mood',
     'arena-night': 'underground fight club arena at night, empty boxing ring with red ropes, cheering silhouette crowd, hazy neon pink and cyan lights, smoky gritty basement',
@@ -172,6 +181,8 @@ export const PROMPTS = {
     'fighter-falcon': 'aerial fast attacker, falcon motif, purple tones',
     'fighter-boar': 'charging bruiser, wild boar motif, earth brown',
     'fighter-joker': 'unpredictable trickster fighter, harlequin motif, magenta',
+    // 스파링 카드의 '나' (링 스프라이트 SPRITE_PROMPTS.player와 같은 인물)
+    'player': 'young korean pawnshop owner street fighter, short black hair, blue zip-up track jacket, jeans, wrapped fists',
   },
 };
 

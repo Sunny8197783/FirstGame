@@ -50,7 +50,7 @@ function renderDawnShop() {
       <div class="row" style="margin-top:6px">
         ${S.sponsorOffers.map(i => { const f = S.fighters[i]; return `
           <div class="panel" style="flex:1; min-width:170px; margin:0; padding:8px">
-            <p class="center" style="font-size:26px">${f.emoji}</p>
+            <p class="center"><span class="pframe" style="width:56px; height:56px; font-size:26px">${artHTML('fighters', f.name, f.emoji)}</span></p>
             <p class="center" style="font-size:13px">${f.name}</p>
             <p class="center dim" style="font-size:12px">${f.w}승 ${f.l}패 · 공${f.atk}/방${f.def}/속${f.spd}</p>
             <div class="center"><button class="btn-ghost" style="font-size:13px" onclick="signSponsor(${i})" ${CONFIG.SPONSOR_COST > S.gold ? 'disabled' : ''}>계약</button></div>

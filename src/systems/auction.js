@@ -117,7 +117,7 @@ function rivalOf(id) { return S.auction.rivals.find(r => r.id === id); }
 function rivalsHTML() {
   return S.auction.rivals.map(r => `
     <div class="auc-rival ${r.out ? 'out' : ''}">
-      <span style="font-size:22px">${r.emoji}</span>
+      <span class="pframe auc-face">${artHTMLMulti('npcs', ['npc-' + r.id], r.emoji)}</span>
       <span class="auc-rival-name">${r.name}</span>
       <span class="auc-rival-state">${r.out ? '<span class="dim">손 뗌</span>' : '<span class="accent blink">경합 중</span>'}</span>
       <div class="auc-rival-desc dim">${r.desc}</div>

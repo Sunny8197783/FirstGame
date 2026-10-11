@@ -42,7 +42,7 @@ const ENDPOINT = process.env.ART_ENDPOINT || 'https://api.openai.com/v1/images/g
 const QUALITY = process.env.ART_QUALITY || 'medium';
 
 // PixelLab 픽셀 크기 (종류별). 200 이하. 아이템·캐릭터 정사각 128, 씬은 와이드 [w,h].
-const PX_SIZE = { items: 128, customers: 128, fighters: 128, scenes: [200, 120] };
+const PX_SIZE = { items: 128, customers: 128, fighters: 128, npcs: 128, scenes: [200, 120] };
 
 // ── PixelLab (pixflux 텍스트→픽셀아트) ── 응답: { image:{base64}, usage:{generations} }
 async function callPixelLab(asset) {

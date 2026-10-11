@@ -538,11 +538,12 @@ body.no-shake .tut-hole { transition: none; }
                     radial-gradient(circle at 32px 28px, #241c2c 0 9px, transparent 10px);
   background-size: 40px 30px, 48px 34px; }
 .panel-auction { border-color: #ffd23e; box-shadow: 0 var(--px) 0 rgba(0,0,0,0.45), 0 0 22px rgba(255,210,62,0.35); }
-.auc-rival { display: grid; grid-template-columns: 28px 1fr auto; gap: 6px; align-items: center;
+.auc-rival { display: grid; grid-template-columns: 44px 1fr auto; gap: 6px; align-items: center;
   padding: 7px 4px; border-bottom: 1px solid rgba(255,255,255,0.1); transition: opacity 0.3s; }
 .auc-rival.out { opacity: 0.38; filter: grayscale(1); }
 .auc-rival-name { font-size: 14px; }
 .auc-rival-state { font-size: 12px; white-space: nowrap; }
+.auc-face { width: 44px; height: 44px; font-size: 22px; grid-row: span 2; } /* [아트] npcs/npc-<id> 초상 */
 .auc-rival-desc { grid-column: 2 / -1; font-size: 11px; line-height: 1.45; }
 
 /* ── 실물 검수 카드 ── */
@@ -554,6 +555,13 @@ body.no-shake .tut-hole { transition: none; }
 .inspect-name { min-width: 72px; color: var(--accent); }
 .inspect-desc { flex: 1; opacity: 0.9; }
 .inspect-dots { letter-spacing: 2px; font-size: 11px; color: #ffd23e; white-space: nowrap; }
+/* [fix] 좁은 패널(경매 왼쪽 열 등)에선 설명 칸이 한 글자 폭이 돼 세로로 깨졌다 → 설명을 다음 줄 전체 폭으로 */
+.inspect { container-type: inline-size; }
+@container (max-width: 280px) {
+  .inspect-row { flex-wrap: wrap; row-gap: 0; }
+  .inspect-name { flex: 1; min-width: 0; }
+  .inspect-desc { order: 3; flex-basis: 100%; font-size: 12px; }
+}
 
 /* ── 직접 출전 (스파링) ── */
 .move-btn { font-size: 18px; padding: 12px 20px; min-width: 130px; }
