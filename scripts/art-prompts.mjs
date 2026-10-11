@@ -191,6 +191,10 @@ export const PROMPTS = {
     'event-crowd': 'long line of customers queuing outside a small korean pawn shop in the morning, busy street, no lettering',
     'event-scandal': 'secret gossip flyers with fighter silhouettes passed hand to hand in a smoky underground bar, no lettering',
     'event-busker': 'street violinist performing on a sunny sidewalk, open violin case with coins, smiling passersby, plain brick wall behind, no signs, no lettering',
+    // ── 알바 3종 (work.js WORK_JOBS id → work-<id>) ──
+    'work-dishes': 'busy korean diner kitchen, stacks of dirty dishes in a steel sink, rubber gloves, steam, fluorescent light, no lettering',
+    'work-floor': 'smoky second-floor billiard hall with green pool tables, mop and bucket on the wooden floor, dim hanging lamps, no lettering',
+    'work-carry': 'early morning korean produce market, trucks unloading crates of fruit and cabbage, workers carrying boxes, dawn light, no lettering',
     'vip-office':'dim luxurious underground crime boss office, leather armchair behind a dark wooden desk, red lampshade glow, cigar smoke haze, gold trophies on shelves',
   },
 

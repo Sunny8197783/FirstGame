@@ -40,6 +40,7 @@ function offerWork(next) {
   const job = pick(WORK_JOBS);
   S.workJob = job;
   showModal(`
+    ${artHTMLMulti('scenes', ['work-' + job.id], '', 'ev-pic')}
     <h2 class="bad">💸 주머니가 비었다</h2>
     <p>보유 골드 <b class="bad">${fmt(S.gold)} G</b> — 이 돈으로는 쓸 만한 물건을 잡기 어렵다.</p>
     <p style="font-size:14px">${job.emoji} <b>${job.place}</b>에서 사람을 구한다는 얘기를 들었다.
@@ -82,6 +83,7 @@ function renderWork() {
   $('screen').innerHTML = `
     <div class="scene scene-work">
       <div class="panel center" style="max-width:640px; margin:0 auto">
+        ${artHTMLMulti('scenes', ['work-' + job.id], '', 'ev-pic work-pic')}
         <h2>${job.emoji} ${job.name}</h2>
         <p class="dim" style="font-size:13px">${job.tip}</p>
         <p style="margin-top:10px">일감 <b class="accent" id="work-round">${W.round + 1}</b> / ${CONFIG.WORK_ROUNDS}
