@@ -17,6 +17,7 @@ function snapshotState(point) {
     debt: S.debt,
     season: S.season || 0,     // [Phase3]
     prestige: S.prestige || 0, // [Phase3]
+    contracts: S.contracts || null, // [리텐션] 시즌 의뢰
     endingId: S.endingId || null,
     upgrades: { ...S.upgrades },
     regularDeals: { ...S.regularDeals },
@@ -64,6 +65,7 @@ function continueGame() {
   S.debt = d.debt;
   S.season = d.season || 0;     // [Phase3]
   S.prestige = d.prestige || 0; // [Phase3]
+  S.contracts = d.contracts || null; // [리텐션]
   S.endingId = d.endingId || null;
   S.upgrades = d.upgrades || {};
   S.regularDeals = d.regularDeals || {};

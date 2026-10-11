@@ -82,10 +82,11 @@ function endingKey() {
   return 'season'; // 중간 결산
 }
 
-function renderResult() {
+function renderResult(final) {
   S.phase = 'result'; setTheme('night'); updateHUD();
   const st = S.stats;
   const net = S.gold - S.debt; // 순자산 = 보유 골드 − 남은 빚
+  if (final) recordEnding(endingKey(), net); // [리텐션] 🏛️ 엔딩 도감
   const delta = net - (CONFIG.START_GOLD - CONFIG.DEBT_START);
   const avgBuyRatio = st.deals ? st.buyRatioSum / st.deals : 0; // 진짜 가치 대비 평균 매입가율
   const hitRate = st.bets ? st.betWins / st.bets : 0;

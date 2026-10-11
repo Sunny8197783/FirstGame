@@ -3,7 +3,8 @@
 function proceedAfterChallenge() {
   sndClick();
   S.challenge = null;
-  if (S.day >= CONFIG.DAYS) renderResult();
+  // [fix] 시즌 모드에선 day가 늘 DAYS 이상이라 매일 밤 결과 화면에 갇혀 하루가 반복됐다 → 캠페인 마지막 밤만
+  if (S.season === 0 && S.day >= CONFIG.DAYS) renderResult(true);
   else renderDawnShop();
 }
 

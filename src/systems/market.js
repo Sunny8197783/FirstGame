@@ -65,6 +65,7 @@ function renderDawnShop() {
       <div style="position:relative; z-index:2">
         <h2 class="center neon-pink" style="margin-top:4px">🌌 새벽 암시장</h2>
         <p class="center dim" style="font-size:14px">격투장 뒷골목의 장물아비가 좌판을 벌였다.<br>밤에 번 돈으로 빚을 갚거나, 낮 장사를 강화하거나 — 선택은 당신 몫이다.</p>
+        ${contractsPanelHTML()}
         ${debtPanel}
         ${sponsorPanel}
         ${items}

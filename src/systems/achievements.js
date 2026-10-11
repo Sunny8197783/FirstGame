@@ -34,6 +34,9 @@ const ACHIEVEMENTS = [
   { id: 'master-1',      icon: '🎖️', name: '일가를 이루다',   desc: '한 분야 감정안을 만렙(Lv5)까지' },
   { id: 'grandmaster',   icon: '📖', name: '전설의 명인',     desc: '여섯 분야 감정안을 모두 만렙' },
   { id: 'master-deal',   icon: '👑', name: '명품을 알아보다', desc: '분야 명품을 이익 내고 매입' },
+  // ── 장기 (회차를 넘어) ──
+  { id: 'season-s',      icon: '📜', name: '회장의 오른팔',   desc: '시즌 의뢰 3개를 모두 달성 (시즌 S등급)' },
+  { id: 'all-endings',   icon: '🏛️', name: '모든 길을 걷다',  desc: '엔딩 5종을 모두 본다' },
 ];
 
 let unlocked = {};

@@ -555,6 +555,12 @@ body.no-shake .tut-hole { transition: none; }
 .auc-face { width: 44px; height: 44px; font-size: 22px; grid-row: span 2; } /* [아트] npcs/npc-<id> 초상 */
 .auc-rival-desc { grid-column: 2 / -1; font-size: 11px; line-height: 1.45; }
 
+/* ── [리텐션] 시즌 의뢰·기록실 행 ── */
+.contract-row { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: 13px;
+  padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.contract-row:last-of-type { border-bottom: none; }
+.contract-row > :last-child { white-space: nowrap; }
+
 /* ── 실물 검수 카드 ── */
 .inspect { background: rgba(0,0,0,0.28); border: 3px solid rgba(255,255,255,0.15);
   padding: 8px 10px; margin: 8px 0; }

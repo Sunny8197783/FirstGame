@@ -169,6 +169,7 @@ function settleFight(m, aWins) {
       if (clash) { S.stats.clashWins = (S.stats.clashWins || 0) + 1; if (S.stats.clashWins >= 5) achieve('clash-5'); }
       const goldBeforeBet = S.gold - payout + bet.amount;
       if (m.final && bet.amount >= goldBeforeBet * 0.5) achieve('allin-final');
+      if (m.final) S.stats.finalWins = (S.stats.finalWins || 0) + 1; // [리텐션] 시즌 의뢰용
       // 희귀 드롭: 언더독 적중일수록 확률 상승
       const dropP = CONFIG.DROP_BASE * (1 + (1 - estChosen) * CONFIG.DROP_UNDERDOG_COEF);
       if (Math.random() < dropP) {

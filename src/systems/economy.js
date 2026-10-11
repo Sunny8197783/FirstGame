@@ -4,6 +4,7 @@ function startGame() {
   sndClick();
   S.day = 0; S.gold = CONFIG.START_GOLD;
   S.season = 0;                 // [Phase3] 0 = 캠페인, 1+ = 시즌 모드
+  S.contracts = null;           // [리텐션] 시즌 의뢰
   S.prestige = 0;               // [Phase3] 가게 이전 횟수
   S.endingId = null;            // 막 전환 판정에서 정해지는 엔딩 분기
   S.debt = CONFIG.DEBT_START;   // 김사장에게 진 빚 — 매일 아침 이자가 붙는다
@@ -63,6 +64,7 @@ function rotateSeason() {
   S.sponsorOffersDay = 0; S.challengeOfferDay = 0;
   const setName = ['왕실 예물', '전장 유물', '밀수 보물'][(S.season - 1) % 3];
   toast(`🌆 시즌 ${S.season} 개막! ${retired.join('·')} 은퇴 → 신인 데뷔 · 전설 세트: ${setName}`, 4200);
+  drawContracts(); // [리텐션] 📜 회장의 시즌 의뢰 3개
 }
 
 function makeRookie() {
@@ -81,7 +83,11 @@ function startDay() {
   S.day++;
   // [Phase3] 시즌 모드: 막 판정 없음 — 시즌 첫날마다 리그 물갈이 + 세트 로테이션
   if (S.season > 0) {
-    if (seasonDayOf() === 1) rotateSeason();
+    if (seasonDayOf() === 1) {
+      // [리텐션] 지난 시즌 의뢰가 있으면 결산 화면을 먼저 (첫 시즌 진입 땐 없음)
+      if (S.contracts) { renderSeasonReport(() => { rotateSeason(); beginDay(); }); return; }
+      rotateSeason();
+    }
     beginDay();
     return;
   }
@@ -96,7 +102,7 @@ function startDay() {
       renderInterlude('act2', collected, beginDay);
     } else {
       S.endingId = 'debt_fail';
-      renderResult();
+      renderResult(true);
     }
     return;
   }
@@ -107,7 +113,7 @@ function startDay() {
       renderInterlude('act3', net, beginDay);
     } else {
       S.endingId = 'act2_fail';
-      renderResult();
+      renderResult(true);
     }
     return;
   }
@@ -164,7 +170,7 @@ function beginDay() {
     ? `<div style="font-size:18px; color:#ffb347; margin-top:6px">${S.event.name}<br><span style="font-size:14px; opacity:0.85">${S.event.desc}</span></div>` : '';
   // 막 목표 리마인더 / [Phase3] 시즌 모드 후일담
   const goalLine = S.season > 0
-    ? (Math.random() < 0.25 ? `<div style="font-size:13px; color:#8fa3ff; margin-top:6px">${pick(EPILOGUE_LINES)}</div>` : '')
+    ? contractsMorningLine() + (Math.random() < 0.25 ? `<div style="font-size:13px; color:#8fa3ff; margin-top:6px">${pick(EPILOGUE_LINES)}</div>` : '')
     : actOf() === 2
       ? `<div style="font-size:13px; color:#8fa3ff; margin-top:6px">🎯 회장의 시험: ${CONFIG.ACT2_END}일차까지 순자산 ${fmt(CONFIG.ACT2_TARGET)} G (현재 ${fmt(S.gold - S.debt)} G)</div>`
       : actOf() === 3

@@ -31,6 +31,8 @@ import './systems/sparring.js';
 import './systems/market.js';
 import './systems/work.js';
 import './systems/save.js';
+import './systems/season.js';
+import './systems/records.js';
 import './ui/menus.js';
 import './ui/tips.js';
 import './ui/tutorial.js';

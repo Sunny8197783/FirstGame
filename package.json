@@ -10,7 +10,8 @@
     "simulate": "node sim/haggle.mjs && node sim/challenge.mjs && node sim/invariants.mjs",
     "balance": "node sim/balance_report.mjs && node sim/loop_report.mjs",
     "art": "node scripts/gen-art.mjs",
-    "sprites": "node scripts/gen-sprites.mjs"
+    "sprites": "node scripts/gen-sprites.mjs",
+    "season": "node sim/season_report.mjs"
   },
   "devDependencies": {
     "vite": "^5.4.0"

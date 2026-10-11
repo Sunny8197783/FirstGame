@@ -35,6 +35,7 @@ function renderTitle() {
             <button class="btn-ghost" onclick="renderSettings()">⚙️ 설정</button>
             <button class="btn-ghost" onclick="renderOddsInfo()">📊 확률 정보</button>
             <button class="btn-ghost" onclick="renderAchievements()">🏆 업적</button>
+            <button class="btn-ghost" onclick="renderRecords()">🏛️ 기록실 <span class="dim" style="font-size:12px">${endingsSeen()}/${ENDING_BOOK.length}</span></button>
           </div>
         </div>
         <input type="file" id="save-import" accept=".json,application/json" style="display:none"
