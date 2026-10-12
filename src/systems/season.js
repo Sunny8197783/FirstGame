@@ -25,13 +25,14 @@ const SEASON_GRADES = ['C', 'B', 'A', 'S']; // 달성 수 0~3
 const TRUST_MAX = 5;
 const trustStars = t => '★'.repeat(t) + '☆'.repeat(TRUST_MAX - t);
 const contractTrust = () => (S.contracts && S.contracts.trust) || 0; // 의뢰를 뽑은 시점의 단계
-const contractBounty = () => Math.round(150000 * prestigeMul() * (1 + 0.5 * contractTrust()) / 1000) * 1000;
+// 보수도 목표치처럼 뽑는 시점의 가게 이전 배율로 고정 — 시즌 도중 이전해 보수만 부풀리는 허점 차단
+const contractBounty = () => Math.round(150000 * ((S.contracts && S.contracts.pm) || prestigeMul()) * (1 + 0.5 * contractTrust()) / 1000) * 1000;
 
 // 시즌 시작: 의뢰 3개 + 통계 기준점. 목표치는 뽑는 순간 고정한다 (도중 가게 이전에도 안 바뀜)
 function drawContracts() {
   const trust = S.trust || 0;
   S.contracts = {
-    season: S.season, trust,
+    season: S.season, trust, pm: prestigeMul(),
     base: { ...S.stats },
     list: shuffle(SEASON_CONTRACTS.slice()).slice(0, 3).map(c => ({ id: c.id, target: c.target(trust) })),
   };

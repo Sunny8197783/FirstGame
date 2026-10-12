@@ -87,6 +87,8 @@ function renderResult(final) {
   const st = S.stats;
   const net = S.gold - S.debt; // 순자산 = 보유 골드 − 남은 빚
   if (final) recordEnding(endingKey(), net); // [리텐션] 🏛️ 엔딩 도감
+  // [리텐션] 21일 완주: 여기서 창을 닫아도 '이어하기'가 21일차 아침(파이널 재도전)이 아니라 시즌 모드 입구로 이어진다
+  if (final && !S.endingId && S.season === 0) saveGame('cleared');
   const delta = net - (CONFIG.START_GOLD - CONFIG.DEBT_START);
   const avgBuyRatio = st.deals ? st.buyRatioSum / st.deals : 0; // 진짜 가치 대비 평균 매입가율
   const hitRate = st.bets ? st.betWins / st.bets : 0;
@@ -116,8 +118,9 @@ function renderResult(final) {
       : `📜 ${S.day}일차의 중간 결산. 이야기는 아직 끝나지 않았다.`;
   }
   // [Phase3] 캠페인 정상 완주(엔딩 도달) 시 시즌 모드 해금 버튼 노출
-  const seasonUnlock = !S.endingId && S.season === 0 && S.day >= CONFIG.DAYS;
-  const canResume = typeof hasSave === 'function' && hasSave() && !S.endingId;
+  // [fix] 진짜 완주(21일 밤 종료)일 때만 — 21일차 아침 HUD '결과 화면 보기'로 파이널을 건너뛰고 시즌에 들어가던 것 차단
+  const seasonUnlock = !!final && !S.endingId && S.season === 0;
+  const canResume = !seasonUnlock && typeof hasSave === 'function' && hasSave() && !S.endingId;
   showTransition(`<div>🌅</div><div>${S.season > 0 ? '시즌 결산의 시간...' : '장부를 덮는다...'}</div>`, () => {
     $('screen').innerHTML = `
       <div class="panel center">

@@ -8,7 +8,7 @@ function renderTitle() {
   const sav = loadSaveData();
   const act = sav ? (sav.day <= CONFIG.ACT1_END ? 1 : sav.day <= CONFIG.ACT2_END ? 2 : 3) : 0;
   const preview = sav
-    ? `${sav.season > 0 ? `시즌${sav.season}` : `${sav.day}일차 · ${act}막`} · 💰 ${fmt(sav.gold)} G · ${sav.point === 'dawn' ? '🌌 새벽' : '☀️ 아침'}부터`
+    ? `${sav.season > 0 ? `시즌${sav.season}` : `${sav.day}일차 · ${act}막`} · 💰 ${fmt(sav.gold)} G · ${sav.point === 'dawn' ? '🌌 새벽' : sav.point === 'cleared' ? '🌆 시즌 모드' : '☀️ 아침'}부터`
     : '저장된 게임이 없다';
   $('screen').innerHTML = `
     <div class="scene scene-night scene-title center" style="min-height:540px; padding-top:48px">

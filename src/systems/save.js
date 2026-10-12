@@ -2,6 +2,7 @@
 // 저장 시점은 두 곳뿐이다:
 //   'morning' : 매일 아침 beginDay() 진입 직후 자동 (이벤트·손님 생성 전 → 이어하기 시 아침부터 재개)
 //   'dawn'    : 새벽 암시장의 수동 저장 버튼 (이어하기 시 새벽 암시장부터 재개)
+//   'cleared' : [리텐션] 21일 완주 결과 화면 (이어하기 시 시즌 모드 입구로)
 // 낮/밤 진행 중 상태(손님·경기·흥정)는 저장하지 않는다 — 세이브 데이터를 작고 견고하게 유지.
 
 const SAVE_KEY = 'pawnshop_save_v1';
@@ -88,7 +89,9 @@ function continueGame() {
   S.customers = []; S.custIdx = 0; S.purchases = [];
   S.matches = []; S.matchIdx = 0;
   S.event = null; S._afterInterlude = null;
-  if (d.point === 'dawn') {
+  if (d.point === 'cleared') {
+    startSeasonMode(); // [리텐션] 캠페인 완주 직후 저장 — 시즌 모드로 바로 이어간다
+  } else if (d.point === 'dawn') {
     S.phase = 'dawn';
     setTheme('night');
     renderDawnShop();
