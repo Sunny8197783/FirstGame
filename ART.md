@@ -248,8 +248,8 @@ subtle grain, high detail, centered composition, transparent background
 |---|---|---|---|
 | `items/` | 46 | `ART_SLUGS` 슬러그 (명품 `mw-*`) | 감정대·진열대 |
 | `customers/` | 56 | `cust-<유형>` = 1번 외모, `cust-<유형>-2..4` = looks.js 2~4번 외모 | 낮 손님 초상 |
-| `fighters/` | 13 | `fighter-*` + `player` | 밤 파이터 카드·스파링·후원 카드 |
-| `sprites/` | 13 | `fighter-*` + `player` (64px×7프레임 시트, `npm run sprites`) | 링 격투 애니메이션 |
+| `fighters/` | 21 | `fighter-*` + `player` + `rookie-<동물>`(시즌 신인 8종, art.js `ROOKIE_ART`) | 밤 파이터 카드·스파링·후원 카드 |
+| `sprites/` | 21 | `fighter-*` + `player` + `rookie-*` (64px×7프레임 시트, `npm run sprites`) | 링 격투 애니메이션 |
 | `npcs/` | 4 | `npc-<chair\|rival\|collector>` (AUCTION_BIDDERS id), `npc-kim` | 경매 입찰자·밀봉 입찰·빚 상환 창구 |
 | `upgrades/` | 7 | events.js `UPGRADES` id | 새벽 암시장 상품 |
 | `scenes/` | 25 | `arena-night`(타이틀) · `pawnshop-day`/`vip-office`(막 전환 시네마틱) · `intro-1..5`(INTRO_BEATS 순서) · `interlude-<키>` · `event-<DAILY_EVENTS id>` · `work-<WORK_JOBS id>` | 각 화면 삽화 |

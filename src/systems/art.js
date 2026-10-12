@@ -83,6 +83,11 @@ const ART_SLUGS = {
 
 function artSlug(name) { return ART_SLUGS[name] || null; }
 
+// [리텐션] 시즌 신인은 이름이 무작위라 이모지(makeRookie 풀 8종)로 그림을 고른다
+const ROOKIE_ART = { '🐯': 'rookie-tiger', '🦁': 'rookie-lion', '🐲': 'rookie-dragon', '🦈': 'rookie-shark',
+  '🐆': 'rookie-leopard', '🦍': 'rookie-gorilla', '🦏': 'rookie-rhino', '🦊': 'rookie-fox' };
+function fighterSlug(f) { return artSlug(f.name) || ROOKIE_ART[f.emoji] || null; }
+
 function artUrlFor(kind, slug) { return `${ART_BASE}/${kind}/${slug}.${ART_EXT}`; }
 
 // 그림 URL. 슬러그가 없으면 null → 호출부는 폴백을 그린다.
@@ -140,7 +145,7 @@ function artNext(img) {
 }
 
 Object.assign(globalThis, {
-  ART_SLUGS, ART_EXT, ART_BASE, artSlug, artUrl, artUrlFor, artMissing,
+  ART_SLUGS, ART_EXT, ART_BASE, artSlug, fighterSlug, artUrl, artUrlFor, artMissing,
   artHTML, artHTMLMulti, customerArtHTML, artOk, artNext,
 });
 export { ART_SLUGS, artSlug, artUrl, artHTML, artHTMLMulti, customerArtHTML, artOk, artNext };

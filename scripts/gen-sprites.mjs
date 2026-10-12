@@ -106,7 +106,7 @@ const POSES = {
   hurt:  [{},{ 'F ELBOW': ['F SHOULDER', 0.02, 0.14], 'F ARM': ['F SHOULDER', 0.05, 0.24], lean: -0.05 },
               { 'F ELBOW': ['F SHOULDER', -0.02, 0.15], 'F ARM': ['F SHOULDER', 0.0, 0.26], lean: -0.10 }],
 };
-const LOW_KICK = new Set(['fighter-ogre', 'fighter-boar']);
+const LOW_KICK = new Set(['fighter-ogre', 'fighter-boar', 'rookie-gorilla', 'rookie-rhino']);
 const SHEET_POSES = ['punch', 'kick', 'hurt']; // 시트에 들어가는 포즈 (kickLow는 kick 자리에 대신 쓰인다)
 
 function poseFrames(skel, name) {
@@ -133,7 +133,7 @@ async function build(slug, { force, pose }) {
   const basePath = resolve(dir, 'base.png'), skelPath = resolve(dir, 'skel.json');
   if (force || !(await exists(basePath))) {
     const j = await post('/generate-image-pixflux', {
-      description: `${SPRITE_PROMPTS[slug]}, full body, side view, fighting guard stance, facing right`,
+      description: `${SPRITE_PROMPTS[slug]}, full body, side view, fighting guard stance, facing right, entire body visible from head to feet, small in frame`,
       negative_description: 'weapon, shield, prop, text, multiple characters',
       image_size: SZ, view: 'side', direction: 'east', no_background: true,
       outline: 'single color black outline', shading: 'medium shading', detail: 'highly detailed' });

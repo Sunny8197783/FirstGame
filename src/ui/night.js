@@ -11,7 +11,7 @@ function fighterCardHTML(f, m, side) {
   return `
     <div class="fighter-card" id="fcard-${side}" onclick="selectFighter('${side}')">
       <div class="row" style="gap:8px; align-items:center; flex-wrap:nowrap">
-        <span class="pframe" style="width:64px; height:64px; font-size:40px">${artHTML('fighters', f.name, f.emoji)}</span>
+        <span class="pframe" style="width:64px; height:64px; font-size:40px">${artHTMLMulti('fighters', [fighterSlug(f)], f.emoji)}</span>
         <div>
           <h3 style="font-size:15px">파이터 ${side}${sponsored ? ' <span class="accent" style="font-size:12px">🤝 후원 중</span>' : ''}</h3>
           <p style="font-size:14px">${f.name}</p>
@@ -55,8 +55,8 @@ function renderMatch() {
         <div class="ring" id="arena">
           <div class="ring-ropes"><i></i><i></i><i></i></div>
           <div class="ring-floor"></div>
-          ${rigHTML('A', A.color, 'idle', artSlug(A.name))}
-          ${rigHTML('B', B.color, 'idle', artSlug(B.name))}
+          ${rigHTML('A', A.color, 'idle', fighterSlug(A))}
+          ${rigHTML('B', B.color, 'idle', fighterSlug(B))}
         </div>
         ${fighterCardHTML(B, m, 'B')}
       </div>

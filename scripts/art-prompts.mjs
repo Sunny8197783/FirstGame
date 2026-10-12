@@ -211,6 +211,15 @@ export const PROMPTS = {
     'fighter-falcon': 'aerial fast attacker, falcon motif, purple tones',
     'fighter-boar': 'charging bruiser, wild boar motif, earth brown',
     'fighter-joker': 'unpredictable trickster fighter, harlequin motif, magenta',
+    // 시즌 신인 8종 (economy.js makeRookie 이모지 → art.js ROOKIE_ART)
+    'rookie-tiger': 'young fighter with tiger stripe tattoos, orange and black tank top, fierce grin',
+    'rookie-lion': 'proud muscular fighter with a big golden mane of hair, gold shorts',
+    'rookie-dragon': 'martial artist in a green jacket with a dragon embroidery, red sash belt',
+    'rookie-shark': 'brawler with a shark tooth necklace, teal rash guard, buzz cut',
+    'rookie-leopard': 'agile female fighter in a leopard print top, ponytail, black pants',
+    'rookie-gorilla': 'huge hairy powerhouse brawler, black tank top, long arms, hunched posture',
+    'rookie-rhino': 'heavy bruiser with a horn-like grey mohawk, thick grey jacket, stocky',
+    'rookie-fox': 'sly slim fighter with red fox-colored hair, orange hoodie, white scarf',
     // 스파링 카드의 '나' (링 스프라이트 SPRITE_PROMPTS.player와 같은 인물)
     'player': 'young korean pawnshop owner street fighter, short black hair, blue zip-up track jacket, jeans, wrapped fists',
   },
@@ -231,6 +240,15 @@ export const SPRITE_PROMPTS = {
   'fighter-falcon':    'nimble aerial fighter, purple vest, feathered hair, purple pants',
   'fighter-boar':      'stocky charging bruiser, shaved head, brown leather vest, earth brown pants',
   'fighter-joker':     'trickster fighter in a magenta and black harlequin outfit, painted face',
+  // 시즌 신인 8종
+  'rookie-tiger': 'young fighter with tiger stripe tattoos, orange and black tank top, fierce grin',
+  'rookie-lion': 'proud muscular fighter with a big golden mane of hair, gold shorts',
+  'rookie-dragon': 'martial artist in a green jacket with a dragon embroidery, red sash belt',
+  'rookie-shark': 'brawler with a shark tooth necklace, teal rash guard, buzz cut',
+  'rookie-leopard': 'agile female fighter in a leopard print top, ponytail, black pants',
+  'rookie-gorilla': 'huge hairy powerhouse brawler, black tank top, long arms, hunched posture',
+  'rookie-rhino': 'heavy bruiser with a horn-like grey mohawk, thick grey jacket, stocky',
+  'rookie-fox': 'sly slim fighter with red fox-colored hair, orange hoodie, white scarf',
   'player':            'young korean pawnshop owner street fighter, short black hair, blue zip-up track jacket, jeans, wrapped fists',
 };
 

@@ -45,7 +45,7 @@ function renderChallengeOffer() {
             ${S.challengeOffers.map(i => { const f = S.fighters[i]; return `
               <div class="panel chal-card" id="chal-${i}" onclick="selectChallengeOpp(${i})" style="margin:0 0 8px; padding:10px">
                 <div class="row" style="gap:8px; align-items:center; flex-wrap:nowrap">
-                  <span class="pframe" style="width:52px; height:52px; font-size:32px">${artHTML('fighters', f.name, f.emoji)}</span>
+                  <span class="pframe" style="width:52px; height:52px; font-size:32px">${artHTMLMulti('fighters', [fighterSlug(f)], f.emoji)}</span>
                   <div>
                     <p style="font-size:14px">${f.name}</p>
                     <p class="dim" style="font-size:12px">${f.w}승 ${f.l}패 · 공${f.atk}/방${f.def}/속${f.spd}</p>
@@ -135,7 +135,7 @@ function renderChallengeRound() {
           <div class="ring-ropes"><i></i><i></i><i></i></div>
           <div class="ring-floor"></div>
           ${rigHTML('A', PLAYER_COLOR, 'idle', 'player')}
-          ${rigHTML('B', O.color, 'idle', artSlug(O.name))}
+          ${rigHTML('B', O.color, 'idle', fighterSlug(O))}
         </div>
         <div class="panel" id="night-console" style="margin-bottom:0">
           <div class="tell-box">👁️ ${O.name}의 움직임 — ${C.tell}</div>
