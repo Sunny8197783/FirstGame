@@ -3,32 +3,37 @@
 //     진행도를 보여 주고, 시즌이 끝나면 결산(등급·보수)을 낸다.
 // 원칙: 의뢰는 전부 '시즌 동안 늘어난 통계(델타)'로만 판정한다 — 기존 엔진·밸런스는 건드리지 않는다.
 //       보수는 능동 플레이의 결과에만 붙는다 (방치 보상 = 0 그대로).
-// 목표치는 sim/season_report.mjs 분포로 보정: 보통 봇 기준 의뢰마다 대략 40~55% 달성.
+// 목표치는 sim/season_report.mjs 분포로 보정: 보통 봇 기준 의뢰마다 대략 40~55% 달성 (신임 0단계 기준).
+// ⭐ 회장의 신임(0~5): 시즌 S면 +1, C면 −1. 단계가 오를수록 목표치·보수가 함께 오른다 — 시즌을 넘는 사다리.
 
 const SEASON_CONTRACTS = [
-  { id: 'trade', icon: '💰', name: '큰 장사', target: () => Math.round(1100000 * prestigeMul() / 10000) * 10000,
+  { id: 'trade', icon: '💰', name: '큰 장사', target: t => Math.round(1100000 * prestigeMul() * (1 + 0.2 * t) / 10000) * 10000,
     desc: t => `시즌 장사 순익 ${fmt(t)} G`, cur: d => d.tradePL },
-  { id: 'eye', icon: '🧐', name: '매의 눈', target: () => 74, le: true, keep: true,
+  { id: 'eye', icon: '🧐', name: '매의 눈', target: t => Math.max(70, 74 - t), le: true, keep: true,
     desc: t => `평균 매입가율 ${t}% 이하로 마감 (10건 이상)`,
     cur: d => d.deals >= 10 ? Math.round(d.buyRatioSum / d.deals * 100) : null, unit: '%' },
-  { id: 'jackpot', icon: '🎉', name: '보물 사냥', target: () => 7, desc: t => `숨은 진품 ${t}회 발굴`, cur: d => d.jackpots },
-  { id: 'clean', icon: '🧼', name: '깨끗한 장부', target: () => 1, le: true, keep: true,
+  { id: 'jackpot', icon: '🎉', name: '보물 사냥', target: t => 7 + t, desc: t => `숨은 진품 ${t}회 발굴`, cur: d => d.jackpots },
+  { id: 'clean', icon: '🧼', name: '깨끗한 장부', target: t => (t >= 3 ? 0 : 1), le: true, keep: true,
     desc: t => `장물 압수 ${t}회 이하로 마감`, cur: d => d.stolenLost },
-  { id: 'clash', icon: '⚔️', name: '소문 감별사', target: () => 14,
+  { id: 'clash', icon: '⚔️', name: '소문 감별사', target: t => 14 + 2 * t,
     desc: t => `좋은·나쁜 소문이 엇갈린 경기 적중 ${t}회`, cur: d => d.clashWins },
   { id: 'final', icon: '👑', name: '파이널의 눈', target: () => 1, desc: () => '시즌 그랜드 파이널 적중', cur: d => d.finalWins },
-  { id: 'spar', icon: '🥋', name: '링 위의 주인', target: () => 5, desc: t => `직접 출전 ${t}승`, cur: d => d.playerWins },
-  { id: 'rival', icon: '🏪', name: '황금손 사냥', target: () => 60, desc: t => `밀봉 입찰 ${t}회 낙찰`, cur: d => d.rivalWon },
+  { id: 'spar', icon: '🥋', name: '링 위의 주인', target: t => 5 + t, desc: t => `직접 출전 ${t}승`, cur: d => d.playerWins },
+  { id: 'rival', icon: '🏪', name: '황금손 사냥', target: t => 60 + 5 * t, desc: t => `밀봉 입찰 ${t}회 낙찰`, cur: d => d.rivalWon },
 ];
 const SEASON_GRADES = ['C', 'B', 'A', 'S']; // 달성 수 0~3
-const contractBounty = () => Math.round(150000 * prestigeMul() / 1000) * 1000;
+const TRUST_MAX = 5;
+const trustStars = t => '★'.repeat(t) + '☆'.repeat(TRUST_MAX - t);
+const contractTrust = () => (S.contracts && S.contracts.trust) || 0; // 의뢰를 뽑은 시점의 단계
+const contractBounty = () => Math.round(150000 * prestigeMul() * (1 + 0.5 * contractTrust()) / 1000) * 1000;
 
 // 시즌 시작: 의뢰 3개 + 통계 기준점. 목표치는 뽑는 순간 고정한다 (도중 가게 이전에도 안 바뀜)
 function drawContracts() {
+  const trust = S.trust || 0;
   S.contracts = {
-    season: S.season,
+    season: S.season, trust,
     base: { ...S.stats },
-    list: shuffle(SEASON_CONTRACTS.slice()).slice(0, 3).map(c => ({ id: c.id, target: c.target() })),
+    list: shuffle(SEASON_CONTRACTS.slice()).slice(0, 3).map(c => ({ id: c.id, target: c.target(trust) })),
   };
 }
 
@@ -59,7 +64,7 @@ function contractsPanelHTML() {
   const cs = evaluateContracts();
   return `
     <div class="panel" style="margin:6px 0; padding:12px; border-color:#c8a24a">
-      <h3 style="font-size:16px">📜 회장의 시즌 의뢰 <span class="dim" style="font-size:12px">(D${seasonDayOf()}/${CONFIG.SEASON_LEN} · 하나당 보수 ${fmt(contractBounty())} G · 시즌 끝에 정산)</span></h3>
+      <h3 style="font-size:16px">📜 회장의 시즌 의뢰 <span class="accent" title="회장의 신임 — 시즌 S면 오르고 C면 내려간다">${trustStars(contractTrust())}</span> <span class="dim" style="font-size:12px">(D${seasonDayOf()}/${CONFIG.SEASON_LEN} · 하나당 보수 ${fmt(contractBounty())} G · 시즌 끝에 정산)</span></h3>
       ${cs.map(contractLineHTML).join('')}
     </div>`;
 }
@@ -71,19 +76,28 @@ function contractsMorningLine() {
   return `<div style="font-size:13px; color:#ffd23e; margin-top:6px">📜 시즌 의뢰 ${cs.filter(c => c.done).length}/${cs.length} · ${cs.map(c => `${c.def.icon}${c.done ? '✔' : ''}`).join(' ')}</div>`;
 }
 
-// 시즌 결산 — 그랜드 파이널 다음 날 아침, 다음 시즌으로 넘어가기 전에 한 번
-function renderSeasonReport(next) {
+// 시즌 정산 — 상태만 바꾼다 (화면과 분리: 시뮬도 같은 규칙으로 여러 시즌을 돌린다)
+function settleSeason() {
   const cs = evaluateContracts();
   const done = cs.filter(c => c.done).length;
   const grade = SEASON_GRADES[done];
   const bounty = done * contractBounty();
   const b = S.contracts.base;
   const trade = S.stats.tradePL - (b.tradePL || 0), bet = S.stats.betPL - (b.betPL || 0);
+  const trustBefore = S.trust || 0;
+  S.trust = Math.max(0, Math.min(TRUST_MAX, trustBefore + (done === 3 ? 1 : done === 0 ? -1 : 0)));
   S.gold += bounty;
   const season = S.contracts.season;
   S.contracts = null;
-  recordSeason(season, grade, done); // 기록실 (회차 넘어 영구)
+  recordSeason(season, grade, done, S.trust); // 기록실 (회차 넘어 영구)
   if (done === 3) achieve('season-s');
+  if (S.trust === TRUST_MAX) achieve('trust-max');
+  return { cs, done, grade, bounty, trade, bet, season, trustBefore, trust: S.trust };
+}
+
+// 시즌 결산 화면 — 그랜드 파이널 다음 날 아침, 다음 시즌으로 넘어가기 전에 한 번
+function renderSeasonReport(next) {
+  const { cs, done, grade, bounty, trade, bet, season, trustBefore, trust } = settleSeason();
   S.phase = 'result'; setTheme('night'); updateHUD(); // 결과 화면처럼 HUD를 숨긴다 (지난 시즌 D1 표기 방지)
   S._afterSeasonReport = next;
   $('screen').innerHTML = `
@@ -99,6 +113,8 @@ function renderSeasonReport(next) {
         <tr><td>의뢰 보수</td><td class="good">+${fmt(bounty)} G</td></tr>
         <tr><td>시즌 장사 손익</td><td>${plHTML(trade, ' G')}</td></tr>
         <tr><td>시즌 베팅 손익</td><td>${plHTML(bet, ' G')}</td></tr>
+        <tr><td>회장의 신임 <span class="dim" style="font-size:12px">(S면 ↑ · C면 ↓ — 단계만큼 의뢰 목표·보수 ↑)</span></td>
+            <td class="accent">${trustStars(trustBefore)}${trust !== trustBefore ? ` → ${trustStars(trust)}` : ''}</td></tr>
       </table>
     </div>
     <div class="center" style="margin:14px 0">
@@ -112,5 +128,5 @@ function afterSeasonReport() {
   if (f) f();
 }
 
-Object.assign(globalThis, { SEASON_CONTRACTS, drawContracts, evaluateContracts, contractsPanelHTML, contractsMorningLine, renderSeasonReport, afterSeasonReport });
-export { SEASON_CONTRACTS, drawContracts, evaluateContracts, contractsPanelHTML, contractsMorningLine, renderSeasonReport, afterSeasonReport };
+Object.assign(globalThis, { SEASON_CONTRACTS, drawContracts, evaluateContracts, settleSeason, contractsPanelHTML, contractsMorningLine, renderSeasonReport, afterSeasonReport });
+export { SEASON_CONTRACTS, drawContracts, evaluateContracts, settleSeason, contractsPanelHTML, contractsMorningLine, renderSeasonReport, afterSeasonReport };

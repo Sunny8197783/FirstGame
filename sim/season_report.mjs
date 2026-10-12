@@ -28,7 +28,7 @@ function runSeason(bot) {
     const cs = G.evaluateContracts();
     delta.contracts = cs.filter(c => c.done).length; // 의뢰 도입 후 달성 수
     // 의뢰별 달성률 집계를 위해 전 의뢰를 같은 기준점으로 평가 (뽑힌 3개와 무관하게)
-    S.contracts.list = G.SEASON_CONTRACTS.map(c => ({ id: c.id, target: c.target() }));
+    S.contracts.list = G.SEASON_CONTRACTS.map(c => ({ id: c.id, target: c.target(S.contracts.trust || 0) }));
     delta.byId = Object.fromEntries(G.evaluateContracts().map(c => [c.def.id, c.done]));
   }
   return delta;
@@ -51,4 +51,24 @@ for (const bot of [B.BOT_AVERAGE, B.BOT_SMART]) {
     const ids = Object.keys(rows[0].byId);
     console.log('의뢰별 달성률: ' + ids.map(id => `${id} ${Math.round(rows.filter(r => r.byId[id]).length / rows.length * 100)}%`).join(' · '));
   }
+}
+
+// ── ⭐ 회장의 신임 사다리 — 5시즌 연속. S면 +1·C면 −1, 단계만큼 목표치가 오른다 ──
+// 목표: 보통은 0~1단계 언저리, 정보 활용도 꼭대기(★5)는 쉽게 못 닿는 '긴 사다리'
+const SEASONS = 5, RUNS2 = 16;
+for (const bot of [B.BOT_AVERAGE, B.BOT_SMART]) {
+  const finals = [], sRate = Array(SEASONS).fill(0);
+  let n = 0;
+  for (let i = 0; i < RUNS2; i++) {
+    if (B.runCampaign(bot).ending) continue;
+    n++; S.season = 1; S.trust = 0;
+    for (let s = 0; s < SEASONS; s++) {
+      for (let d = 0; d < CONFIG.SEASON_LEN; d++) { if (G.seasonDayOf() === 1) G.rotateSeason(); B.runDay(bot); }
+      if (G.settleSeason().done === 3) sRate[s]++;
+    }
+    finals.push(S.trust);
+  }
+  const hist = [0, 1, 2, 3, 4, 5].map(t => `★${t} ${finals.filter(x => x === t).length}`).join(' · ');
+  console.log(`\n⭐ ${bot.name} — ${SEASONS}시즌 후 신임 분포 (${n}런): ${hist}`);
+  console.log(`   시즌별 S등급률: ${sRate.map((c, i) => `S${i + 1} ${Math.round(c / Math.max(1, n) * 100)}%`).join(' · ')}`);
 }

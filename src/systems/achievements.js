@@ -38,6 +38,7 @@ const ACHIEVEMENTS = [
   { id: 'season-s',      icon: '📜', name: '회장의 오른팔',   desc: '시즌 의뢰 3개를 모두 달성 (시즌 S등급)' },
   { id: 'all-endings',   icon: '🏛️', name: '모든 길을 걷다',  desc: '엔딩 5종을 모두 본다' },
   { id: 'hard-king',     icon: '🔥', name: '험한 골목의 왕',  desc: '🔥 험한 골목에서 진엔딩' },
+  { id: 'trust-max',     icon: '⭐', name: '회장의 후계자',   desc: '회장의 신임 ★5 달성' },
 ];
 
 let unlocked = {};

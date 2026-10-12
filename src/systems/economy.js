@@ -13,6 +13,7 @@ function startGame() {
   S.day = 0; S.gold = CONFIG.START_GOLD;
   S.season = 0;                 // [Phase3] 0 = 캠페인, 1+ = 시즌 모드
   S.contracts = null;           // [리텐션] 시즌 의뢰
+  S.trust = 0;                  // [리텐션] ⭐ 회장의 신임 (시즌 사다리)
   S.prestige = 0;               // [Phase3] 가게 이전 횟수
   S.endingId = null;            // 막 전환 판정에서 정해지는 엔딩 분기
   S.debt = CONFIG.DEBT_START;   // 김사장에게 진 빚 — 매일 아침 이자가 붙는다

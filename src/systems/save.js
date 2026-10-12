@@ -19,6 +19,7 @@ function snapshotState(point) {
     prestige: S.prestige || 0, // [Phase3]
     contracts: S.contracts || null, // [리텐션] 시즌 의뢰
     hard: !!S.hard,                 // [리텐션] 🔥 험한 골목
+    trust: S.trust || 0,            // [리텐션] ⭐ 회장의 신임
     endingId: S.endingId || null,
     upgrades: { ...S.upgrades },
     regularDeals: { ...S.regularDeals },
@@ -68,6 +69,7 @@ function continueGame() {
   S.prestige = d.prestige || 0; // [Phase3]
   S.contracts = d.contracts || null; // [리텐션]
   S.hard = !!d.hard; applyDifficulty(); // [리텐션] 🔥
+  S.trust = d.trust || 0;               // [리텐션] ⭐
   S.endingId = d.endingId || null;
   S.upgrades = d.upgrades || {};
   S.regularDeals = d.regularDeals || {};

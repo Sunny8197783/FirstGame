@@ -11,7 +11,7 @@ const ENDING_BOOK = [
   { key: 'king', icon: '👑', name: '지하경제의 왕 (진엔딩)', hint: () => `21일 완주, 순자산 ${fmt(CONFIG.ENDING_TRUE)} G 이상` },
 ];
 
-let records = { endings: {}, hardEndings: {}, bestNet: null, seasons: 0, contracts: 0, bestSeason: null };
+let records = { endings: {}, hardEndings: {}, bestNet: null, seasons: 0, contracts: 0, bestSeason: null, bestTrust: 0 };
 try {
   const raw = localStorage.getItem(REC_KEY);
   if (raw) records = { ...records, ...JSON.parse(raw) };
@@ -34,9 +34,10 @@ function recordEnding(key, net) {
   if (endingsSeen() === ENDING_BOOK.length) achieve('all-endings');
 }
 
-function recordSeason(season, grade, done) {
+function recordSeason(season, grade, done, trust) {
   records.seasons++;
   records.contracts += done;
+  records.bestTrust = Math.max(records.bestTrust || 0, trust || 0);
   const rank = g => ['C', 'B', 'A', 'S'].indexOf(g);
   if (!records.bestSeason || rank(grade) > rank(records.bestSeason.grade)) records.bestSeason = { grade, season };
   persistRecords();
@@ -58,6 +59,7 @@ function renderRecords() {
       <tr><td>캠페인 최고 순자산</td><td class="accent">${records.bestNet === null ? '-' : fmt(records.bestNet) + ' G'}</td></tr>
       <tr><td>시즌 최고 등급</td><td class="accent">${records.bestSeason ? `${records.bestSeason.grade} (시즌 ${records.bestSeason.season})` : '-'}</td></tr>
       <tr><td>마친 시즌 · 달성한 의뢰</td><td>${records.seasons}시즌 · ${records.contracts}개</td></tr>
+      <tr><td>회장의 신임 최고</td><td class="accent">${'★'.repeat(records.bestTrust || 0) || '-'}</td></tr>
     </table>
     <div class="center" style="margin-top:10px"><button onclick="hideModal()">닫기</button></div>`);
 }
